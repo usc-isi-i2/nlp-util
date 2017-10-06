@@ -135,22 +135,27 @@ public final class CoreNLPXMLLoader {
     final CoreNLPSentence.StanfordSentenceBuilder ret = CoreNLPSentence.builder();
     ImmutableList<CoreNLPToken> tokens = null;
     final String id = e.getAttribute("id");
-    for (Node child = e.getFirstChild(); child != null; child = child.getNextSibling()) {
-      if (child instanceof Element) {
-        final Element childElement = (Element) child;
-        if (childElement.getTagName().equalsIgnoreCase("tokens")) {
-          if (tokens != null) {
-            throw new RuntimeException("Can't have tokens twice!");
+    try {
+      for (Node child = e.getFirstChild(); child != null; child = child.getNextSibling()) {
+        if (child instanceof Element) {
+          final Element childElement = (Element) child;
+          if (childElement.getTagName().equalsIgnoreCase("tokens")) {
+            if (tokens != null) {
+              throw new RuntimeException("Can't have tokens twice!");
+            }
+            tokens = toTokens(childElement);
+            ret.withTokens(tokens);
           }
-          tokens = toTokens(childElement);
-          ret.withTokens(tokens);
-        }
-        if (childElement.getTagName().equals("parse")) {
-          final CoreNLPConstituencyParse parse =
-              CoreNLPConstituencyParse.create(headFinder, tokens, childElement.getTextContent(), stripFunctionTags);
-          ret.withParse(Optional.of(parse));
+          if (childElement.getTagName().equals("parse")) {
+            final CoreNLPConstituencyParse parse =
+                CoreNLPConstituencyParse
+                    .create(headFinder, tokens, childElement.getTextContent(), stripFunctionTags);
+            ret.withParse(Optional.of(parse));
+          }
         }
       }
+    } catch (Exception cause) {
+      throw new RuntimeException("Error parsing CoreNLP document in sentence " + id, cause);
     }
     return ret.build();
   }
