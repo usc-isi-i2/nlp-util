@@ -231,7 +231,7 @@ public abstract class BootstrapWriter {
 
     ret.append(String.format("%20s", name));
     for (double val : values) {
-      ret.append(String.format("%15.2f", 100.0 * val));
+      ret.append(String.format("%15.2f", val));
     }
     ret.append("\n");
     return ret.toString();
@@ -240,7 +240,7 @@ public abstract class BootstrapWriter {
   private List<String> renderDoubles(final List<Double> values) {
     final ImmutableList.Builder<String> ret = ImmutableList.builder();
     for (final double val : values) {
-      ret.add(String.format("%.2f", 100.0 * val));
+      ret.add(String.format("%.2f", val));
     }
     return ret.build();
   }
