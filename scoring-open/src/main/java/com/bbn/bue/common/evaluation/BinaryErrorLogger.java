@@ -71,7 +71,7 @@ public final class BinaryErrorLogger<KeyT extends HasDocID, TestT extends HasDoc
       final Optional<Symbol> docID = searchForDocID(alignment);
       if (docID.isPresent()) {
         final File docDir =
-            new File(outputDirectory, docID.get().asString());
+            new File(new File(outputDirectory, "perDocument"), docID.get().asString());
         docDir.mkdir();
         Files.asCharSink(new File(docDir, "confusionMatrix.txt"), Charsets.UTF_8).write(
             confusionMatrixBuilder.build().prettyPrintWithFillerOrdering(Ordering.usingToString()));
