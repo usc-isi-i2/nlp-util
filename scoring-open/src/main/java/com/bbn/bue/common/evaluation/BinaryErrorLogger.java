@@ -1,9 +1,10 @@
 package com.bbn.bue.common.evaluation;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.bbn.bue.common.HasDocID;
 import com.bbn.bue.common.Inspector;
 import com.bbn.bue.common.symbols.Symbol;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -12,11 +13,8 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.io.Files;
-
 import java.io.File;
 import java.io.IOException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An inspector which logs to a file the binary confusion matrix for an alignment. If an item is
@@ -72,7 +70,7 @@ public final class BinaryErrorLogger<KeyT extends HasDocID, TestT extends HasDoc
       if (docID.isPresent()) {
         final File docDir =
             new File(new File(outputDirectory, "perDocument"), docID.get().asString());
-        docDir.mkdir();
+        docDir.mkdirs();
         Files.asCharSink(new File(docDir, "confusionMatrix.txt"), Charsets.UTF_8).write(
             confusionMatrixBuilder.build().prettyPrintWithFillerOrdering(Ordering.usingToString()));
       }
