@@ -1,11 +1,12 @@
 package com.bbn.bue.common.evaluation;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.bbn.bue.common.OptionalUtils;
 import com.bbn.bue.common.TextGroupImmutable;
 import com.bbn.bue.common.collections.MapUtils;
 import com.bbn.bue.common.math.PercentileComputer;
 import com.bbn.bue.common.serialization.jackson.JacksonSerializer;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Charsets;
@@ -20,15 +21,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.primitives.Doubles;
-
-import org.immutables.value.Value;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import org.immutables.value.Value;
 
 /**
  * Writes files describing some scoring metric which has been bootstrapped.
@@ -113,8 +110,8 @@ public abstract class BootstrapWriter {
           ImmutableMap.builder();
 
       final ImmutableMap.Builder<String, PercentileComputer.Percentiles> percentileMapB = ImmutableMap.builder();
-      final ImmutableMap.Builder<String, ImmutableList<Double>> keySamples =
-          ImmutableMap.builder();
+      final ImmutableListMultimap.Builder<String, Double> keySamples = ImmutableListMultimap
+          .builder();
 
       for (final Map.Entry<String, ImmutableListMultimap<String, Double>> e : measuresToBreakdownsToStats
           .entrySet()) {
@@ -126,7 +123,7 @@ public abstract class BootstrapWriter {
         percentileMapB.put(measureName, percentiles);
 
         // Raw samples
-        keySamples.put(measureName, samplesForBreakdownKey);
+        keySamples.putAll(measureName, samplesForBreakdownKey);
 
         // Aggregate medians
         mediansMapBuilder.put(measureName, percentiles.median().or(Double.NaN));
@@ -139,7 +136,9 @@ public abstract class BootstrapWriter {
 
       final JacksonSerializer serializer = JacksonSerializer.builder().forJson().prettyOutput().build();
       serializer.serializeTo(new SerializedBootstrapResults.Builder()
-          .percentilesMap(percentilesMap).build(), Files.asByteSink(new File(bootstrapDataDir,
+          .percentilesMap(percentilesMap)
+          .rawSamples(keySamples.build())
+          .build(), Files.asByteSink(new File(bootstrapDataDir,
           breakdownKey + ".percentile.json")));
 
       // Write to delim
@@ -159,9 +158,6 @@ public abstract class BootstrapWriter {
     // Write means-only delimited
     Files.asCharSink(new File(outputDir, name + ".bootstrapped.medians.csv"),
         Charsets.UTF_8).write(mediansDelim.toString());
-    // Write raw data
-    Files.asCharSink(new File(outputDir, name + ".bootstrapped.raw"),
-        Charsets.UTF_8).write(renderSamples(samples.build()));
   }
 
   private void dumpPercentilesForMetric(String chartTitle,
@@ -276,6 +272,8 @@ public abstract class BootstrapWriter {
   @JsonDeserialize(as=ImmutableSerializedBootstrapResults.class)
   public static abstract class SerializedBootstrapResults {
     public abstract ImmutableMap<String, PercentileComputer.Percentiles> percentilesMap();
+
+    public abstract ImmutableListMultimap<String, Double> rawSamples();
 
     public static class Builder extends ImmutableSerializedBootstrapResults.Builder {}
   }
