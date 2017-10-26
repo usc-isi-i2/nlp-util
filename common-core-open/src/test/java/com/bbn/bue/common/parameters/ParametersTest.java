@@ -46,6 +46,22 @@ public final class ParametersTest {
     assertEquals("", Parameters.joinNamespace(ImmutableList.of("")));
     assertEquals("foo", Parameters.joinNamespace(ImmutableList.of("foo")));
     assertEquals("foo.bar", Parameters.joinNamespace(ImmutableList.of("foo", "bar")));
+    assertEquals("foo.bar.baz", Parameters.joinNamespace(ImmutableList.of("foo.bar", "baz")));
+
+    assertEquals("", Parameters.joinNamespace(""));
+    assertEquals("foo", Parameters.joinNamespace("foo"));
+    assertEquals("foo.bar", Parameters.joinNamespace("foo", "bar"));
+    assertEquals("foo.bar.baz", Parameters.joinNamespace("foo.bar", "baz"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testJoinNamespaceEndsWithPeriod() {
+    Parameters.joinNamespace(ImmutableList.of("foo.bar.", "baz"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testJoinNamespaceStarsWithPeriod() {
+    Parameters.joinNamespace(ImmutableList.of("foo.bar", ".baz"));
   }
 
   @Test
@@ -64,6 +80,44 @@ public final class ParametersTest {
     assertEquals("foo", fromMap(map, ImmutableList.of("foo")).modifiedCopyBuilder().build().namespace());
     assertEquals("foo.bar", builder(ImmutableList.of("foo", "bar")).putAll(map).build().namespace());
     assertEquals("foo.bar", fromMap(map, ImmutableList.of("foo", "bar")).modifiedCopyBuilder().build().namespace());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testBuilderEmptyKey() {
+    final Parameters.Builder builder = Parameters.builder();
+    builder.set("", "bar");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testBuilderWhitespaceKey() {
+    final Parameters.Builder builder = Parameters.builder();
+    builder.set("fo o", "bar");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testBuilderOnlyWhitespaceKey() {
+    final Parameters.Builder builder = Parameters.builder();
+    builder.set(" ", "bar");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testBuilderEmptyValue() {
+    final Parameters.Builder builder = Parameters.builder();
+    builder.set("foo", "");
+  }
+
+  @Test
+  public void testBuilderWhitespaceValue() {
+    final Parameters.Builder builder = Parameters.builder();
+    builder.set("foo", " ba r ");
+    // Leading and trailing whitespace should be trimmed
+    assertEquals("ba r", builder.build().getString("foo"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testBuilderOnlyWhitespaceValue() {
+    final Parameters.Builder builder = Parameters.builder();
+    builder.set("foo", " ");
   }
 
   @Test

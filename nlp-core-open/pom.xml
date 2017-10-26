@@ -2,7 +2,7 @@
     <parent>
         <artifactId>common-all-open</artifactId>
         <groupId>com.bbn.bue</groupId>
-        <version>5.1.1-SNAPSHOT</version>
+        <version>7.6.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -47,12 +47,12 @@
         <dependency>
             <groupId>com.bbn.bue</groupId>
             <artifactId>common-core-open</artifactId>
-            <version>5.1.1-SNAPSHOT</version>
+            <version>7.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.bbn.bue</groupId>
             <artifactId>scoring-open</artifactId>
-            <version>5.1.1-SNAPSHOT</version>
+            <version>7.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -73,6 +73,50 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>func</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <!-- this is just for some annotations, don't need it at runtime unless you
+            are using Jackson -->
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-multibindings</artifactId>
+            <version>4.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-grapher</artifactId>
+            <version>4.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -20,6 +20,7 @@ import com.google.common.io.LineProcessor;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.MatchResult;
@@ -36,6 +37,59 @@ public final class StringUtils {
 
   private StringUtils() {
     throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Makes a string into a {@link UnicodeFriendlyString}. See that interface's Javadoc for more
+   * details.
+   */
+  public static UnicodeFriendlyString unicodeFriendly(String utf16CodeUnits) {
+    if (utf16CodeUnits.codePointCount(0, utf16CodeUnits.length()) == utf16CodeUnits.length()) {
+      return StringWithoutNonBmp.of(utf16CodeUnits);
+    } else {
+      return StringWithNonBmp.of(utf16CodeUnits);
+    }
+  }
+
+  /**
+   * Applies {@link #unicodeFriendly(String)} to the contents of a list.
+   */
+  public static ImmutableList<UnicodeFriendlyString> unicodeFriendlyList(Iterable<String> strings) {
+    final ImmutableList.Builder<UnicodeFriendlyString> ret = ImmutableList.builder();
+
+    for (final String s : strings) {
+      ret.add(unicodeFriendly(s));
+    }
+
+    return ret.build();
+  }
+
+  /**
+   * Applies {@link #unicodeFriendly(String)} to the contents of a set.
+   */
+  public static ImmutableSet<UnicodeFriendlyString> unicodeFriendlySet(Iterable<String> strings) {
+    final ImmutableSet.Builder<UnicodeFriendlyString> ret = ImmutableSet.builder();
+
+    for (final String s : strings) {
+      ret.add(unicodeFriendly(s));
+    }
+
+    return ret.build();
+  }
+
+  public static ImmutableSet<UnicodeFriendlyString> unicodeFriendlySet(String s1, String... strings) {
+    final ImmutableSet.Builder<UnicodeFriendlyString> ret = ImmutableSet.builder();
+
+    ret.add(unicodeFriendly(s1));
+    for (final String s : strings) {
+      ret.add(unicodeFriendly(s));
+    }
+
+    return ret.build();
+  }
+
+  public static String codepointToString(int codePoint) {
+    return new String(Character.toChars(codePoint));
   }
 
   /**
@@ -125,7 +179,7 @@ public final class StringUtils {
   /**
    * Returns a Function which will join the string with the specified separator
    */
-  public static final Function<Iterable<?>, String> joinFunction(final Joiner joiner) {
+  public static Function<Iterable<?>, String> joinFunction(final Joiner joiner) {
     return new Function<Iterable<?>, String>() {
       @Override
       public String apply(final Iterable<?> list) {
@@ -135,8 +189,22 @@ public final class StringUtils {
   }
 
   @SuppressWarnings("deprecation")
-  public static final Joiner spaceJoiner() {
+  public static Joiner spaceJoiner() {
     return SpaceJoiner;
+  }
+
+  @SuppressWarnings("deprecation")
+  public static Joiner commaSpaceJoiner() {
+    return CommaSpaceJoiner;
+  }
+
+  private static final Joiner OR_JOINER = Joiner.on("|");
+
+  /**
+   * A {@link Joiner} which joins on |.  Handy for constructing regular expressions.
+   */
+  public static Joiner pipeJoiner() {
+    return OR_JOINER;
   }
 
   /**
@@ -146,7 +214,7 @@ public final class StringUtils {
   public static final Joiner SpaceJoiner = Joiner.on(" ");
 
   @SuppressWarnings("deprecation")
-  public static final Joiner unixNewlineJoiner() {
+  public static Joiner unixNewlineJoiner() {
     return NewlineJoiner;
   }
 
@@ -157,12 +225,12 @@ public final class StringUtils {
   public static final Joiner NewlineJoiner = Joiner.on("\n");
 
   @SuppressWarnings("deprecation")
-  public static final Joiner commaJoiner() {
+  public static Joiner commaJoiner() {
     return CommaJoiner;
   }
 
   @SuppressWarnings("deprecation")
-  public static final Joiner dotJoiner() {
+  public static Joiner dotJoiner() {
     return DotJoiner;
   }
 
@@ -276,6 +344,25 @@ public final class StringUtils {
       @Override
       public String apply(final String s) {
         return s.toLowerCase(locale);
+      }
+
+      @Override
+      public String toString() {
+        return "toLowercase(" + locale + ")";
+      }
+    };
+  }
+
+  public static Function<String, String> toUpperCaseFunction(final Locale locale) {
+    return new Function<String, String>() {
+      @Override
+      public String apply(final String s) {
+        return s.toUpperCase(locale);
+      }
+
+      @Override
+      public String toString() {
+        return "toUppercase(" + locale + ")";
       }
     };
   }
@@ -403,21 +490,81 @@ public final class StringUtils {
     return CodepointCountFunction.INSTANCE;
   }
 
-  public static String substring(String s, OffsetRange<CharOffset> substringBounds) {
-    return s.substring(substringBounds.startInclusive().asInt(),
-        substringBounds.endInclusive().asInt() + 1);
+  /**
+   * Returns the substring of {@code s} which starts at the Unicode codepoint offset at
+   * {@code startIndexInclusive} and ends before the Unicode codepoint offset at
+   * {@code endIndexExclusive}. You should typically use this instead
+   * of {@link String#substring(int)} because the latter will fail badly in the presence of
+   * non-BMP characters.
+   *
+   * Beware this takes linear time according to the end index of the substring, rather than the
+   * substring's length, like for {@link String#substring(int)}
+   */
+  public static String substringByCodepoints(String s, int startIndexInclusive,
+      int endIndexExclusive) {
+    return substringByCodepoints(s, startIndexInclusive, endIndexExclusive, false);
   }
 
   /**
-   * Acts just like {@link String#substring(int, int)} except that if either index is out-of-bounds,
-   * it is clipped to the most extreme legal value.  This guarantees that as long as {@code s} is
-   * non-null and {@code endIndexExclusive>=startIndexInclusive}, no exception will be thrown when
+   * Returns the substring of {@code s} indicated by {@code substringBounds}, where the character
+   * offsets are interpreted as Unicode code point offsets.  You should typically use this instead
+   * of {@link String#substring(int)} because the latter will fail badly in the presence of
+   * non-BMP characters.
+   *
+   * Beware this takes linear time according to the end index of the substring, rather than the
+   * substring's length, like for {@link String#substring(int)}
+   */
+  public static String substringByCodepoints(String s, OffsetRange<CharOffset> substringBounds) {
+    return substringByCodepoints(s, substringBounds.startInclusive().asInt(),
+        // +1 because called method takes exclusive end offset like String#substring
+        substringBounds.endInclusive().asInt() + 1 );
+  }
+
+  /**
+   * Acts just like {@link #laxSubstringByCodepoints(String, int, int)} except that if either
+   * index is out-of-bounds, it is clipped to the most extreme legal value.
+   * This guarantees that as long as {@code s} is non-null and
+   * {@code endIndexExclusive>=startIndexInclusive}, no exception will be thrown when
    * calling this method.
    */
-  public static String safeSubstring(String s, int startIndexInclusive, int endIndexExclusive) {
-    final int trueStartIndex = Math.max(0, startIndexInclusive);
-    final int trueEndIndex = Math.min(endIndexExclusive, s.length());
-    return s.substring(trueStartIndex, trueEndIndex);
+  public static String laxSubstringByCodepoints(String s, int startIndexInclusive,
+      int endIndexExclusive) {
+    return substringByCodepoints(s, startIndexInclusive, endIndexExclusive, true);
+  }
+
+  private static String substringByCodepoints(String s, int startIndexInclusive,
+      int endIndexExclusive, boolean lax) {
+    checkArgument(startIndexInclusive <= endIndexExclusive);
+    if (lax) {
+      startIndexInclusive = Math.max(startIndexInclusive, 0);
+    }
+    checkArgument(startIndexInclusive >= 0);
+
+    final int startCharIdx = s.offsetByCodePoints(0, startIndexInclusive);
+
+    final int substringCodePointLength = endIndexExclusive - startIndexInclusive;
+    final int endCharIdxInclusive;
+    try {
+      endCharIdxInclusive = s.offsetByCodePoints(startCharIdx, substringCodePointLength - 1);
+    } catch (IndexOutOfBoundsException ibe) {
+      if (lax) {
+        // handle clipping at the end in lax mode
+        return s.substring(startCharIdx, s.length());
+      } else {
+        throw ibe;
+      }
+    }
+
+    // we want an exclusive character offset for toString below, so we need to go one more codepoint.
+    // However, that may be one or two characters depending on exactly what the last code point is
+    final int lastCodePoint = s.codePointAt(endCharIdxInclusive);
+    int endCharIdxExclusive = endCharIdxInclusive + Character.charCount(lastCodePoint);
+
+    if (lax && endCharIdxExclusive > s.length()) {
+      // if we are requested to substring "safely", clip the substring to the end of the string
+      endCharIdxExclusive = s.length();
+    }
+    return s.substring(startCharIdx, endCharIdxExclusive);
   }
 
   /**
@@ -473,6 +620,27 @@ public final class StringUtils {
     return ret.build();
   }
 
+  @SuppressWarnings("deprecation")
+  public static Function<String, Integer> lengthFunction() {
+    return ToLength;
+  }
+
+  /**
+   * Guava {@link Function} which runs {@link String#trim()} on all inputs.
+   */
+  public static Function<String, String> trimFunction() {
+    return TrimFunction.INSTANCE;
+  }
+
+  private enum TrimFunction implements Function<String, String> {
+    INSTANCE;
+
+    @Override
+    public String apply(final String input) {
+      return input.trim();
+    }
+  }
+
   private enum CodepointCountFunction implements Function<String, Integer> {
     INSTANCE;
 
@@ -480,6 +648,20 @@ public final class StringUtils {
     public Integer apply(final String input) {
       return input.codePointCount(0, input.length());
     }
+  }
+
+  // \p{M} means all Unicode "marks"
+  private static final Pattern ACCENT_STRIPPER = Pattern.compile("[\\p{M}]");
+
+  /**
+   * Removes all Unicode marks from a string. As a side effect, applies NFD normalization.
+   */
+  public static UnicodeFriendlyString stripAccents(final UnicodeFriendlyString input) {
+    // this nifty normalization courtesy of http://stackoverflow.com/questions/3322152/is-there-a-way-to-get-rid-of-accents-and-convert-a-whole-string-to-regular-lette
+    return StringUtils.unicodeFriendly(ACCENT_STRIPPER.matcher(
+        Normalizer.normalize(input.utf16CodeUnits(), Normalizer.Form.NFD))
+        // note this replaceAll is really deleteAll
+        .replaceAll(""));
   }
 
   /******************************** Deprecated code ************************************/
@@ -602,4 +784,22 @@ public final class StringUtils {
     return prefixWithFunction(prefix);
   }
 
+  /**
+   * @deprecated Prefer {@link #substringByCodepoints(String, OffsetRange)} for most NLP uses.
+   */
+  @Deprecated
+  public static String substring(String s, OffsetRange<CharOffset> substringBounds) {
+    return s.substring(substringBounds.startInclusive().asInt(),
+        substringBounds.endInclusive().asInt() + 1);
+  }
+
+  /**
+   * @deprecated Prefer {@link #laxSubstringByCodepoints(String, int, int)}
+   */
+  @Deprecated
+  public static String safeSubstring(String s, int startIndexInclusive, int endIndexExclusive) {
+    final int trueStartIndex = Math.max(0, startIndexInclusive);
+    final int trueEndIndex = Math.min(endIndexExclusive, s.length());
+    return s.substring(trueStartIndex, trueEndIndex);
+  }
 }

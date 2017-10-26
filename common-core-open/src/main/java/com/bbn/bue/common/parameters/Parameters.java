@@ -12,6 +12,7 @@ import com.bbn.bue.common.converters.StringToStringList;
 import com.bbn.bue.common.converters.StringToStringSet;
 import com.bbn.bue.common.converters.StringToSymbolList;
 import com.bbn.bue.common.converters.StringToSymbolSet;
+import com.bbn.bue.common.files.FileUtils;
 import com.bbn.bue.common.parameters.exceptions.InvalidEnumeratedPropertyException;
 import com.bbn.bue.common.parameters.exceptions.MissingRequiredParameter;
 import com.bbn.bue.common.parameters.exceptions.ParameterConversionException;
@@ -32,6 +33,8 @@ import com.bbn.bue.common.validators.ValidationException;
 import com.bbn.bue.common.validators.Validator;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -42,6 +45,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
+import com.google.common.io.CharSource;
+import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,8 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 
-import static com.bbn.bue.common.StringUtils.dotJoiner;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.in;
@@ -75,11 +80,16 @@ import static com.google.common.base.Predicates.not;
  * MissingRequiredParameter} exception.
  *
  * @author rgabbard
+ * @author clignos
  */
 @Beta
 public final class Parameters {
 
   public static final String DO_OS_CONVERSION_PARAM = "os_filepath_conversion";
+
+  private static final String DELIM = ".";
+  private static final Joiner JOINER = Joiner.on(DELIM);
+  private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
 
   /**
    * Constructs a Parameters object from a <code>Map</code>.  The Map may contain neither null keys,
@@ -110,9 +120,9 @@ public final class Parameters {
    */
   public Parameters copyNamespace(final String requestedNamespace) {
     checkArgument(!requestedNamespace.isEmpty());
-    checkArgument(!requestedNamespace.endsWith("."));
+    checkArgument(!requestedNamespace.endsWith(DELIM));
     final ImmutableMap.Builder<String, String> ret = ImmutableMap.builder();
-    final String dottedNamespace = requestedNamespace + ".";
+    final String dottedNamespace = requestedNamespace + DELIM;
     for (final Map.Entry<String, String> param : params.entrySet()) {
       if (param.getKey().startsWith(dottedNamespace)) {
         ret.put(param.getKey().substring(dottedNamespace.length()), param.getValue());
@@ -137,7 +147,7 @@ public final class Parameters {
   public Parameters copyNamespaceIfPresent(final String requestedNamespace) {
     // checkArgument ensures namespaces are specified consistently
     checkArgument(!requestedNamespace.isEmpty());
-    checkArgument(!requestedNamespace.endsWith("."));
+    checkArgument(!requestedNamespace.endsWith(DELIM));
     if (isNamespacePresent(requestedNamespace)) {
       return copyNamespace(requestedNamespace);
     } else {
@@ -152,8 +162,8 @@ public final class Parameters {
    */
   public boolean isNamespacePresent(final String requestedNamespace) {
     checkArgument(requestedNamespace.length() > 0);
-    checkArgument(!requestedNamespace.endsWith("."));
-    final String probe = requestedNamespace + ".";
+    checkArgument(!requestedNamespace.endsWith(DELIM));
+    final String probe = requestedNamespace + DELIM;
     return Iterables.any(params.keySet(), StringUtils.startsWith(probe));
   }
 
@@ -191,7 +201,7 @@ public final class Parameters {
       final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       out.format("#%s\n", timeFormat.format(new Date()));
     }
-    List<String> keys = new ArrayList<String>(params.keySet());
+    List<String> keys = new ArrayList<>(params.keySet());
     Collections.sort(keys);
     for (final String rawKey : keys) {
       final String key;
@@ -209,8 +219,7 @@ public final class Parameters {
 
 
   public static Parameters loadSerifStyle(final File f) throws IOException {
-    final SerifStyleParameterFileLoader loader = new SerifStyleParameterFileLoader();
-    return new Parameters(loader.load(f), ImmutableList.<String>of());
+    return new SerifStyleParameterFileLoader.Builder().build().load(f);
   }
 
   public static Parameters fromMap(Map<String, String> map) {
@@ -297,6 +306,8 @@ public final class Parameters {
 
   public Optional<Set<Symbol>> getOptionalSymbolSet(final String param) {
     if (isPresent(param)) {
+      // we know get() will succeed because of isPresent
+      //noinspection OptionalGetWithoutIsPresent
       return Optional.<Set<Symbol>>of(ImmutableSet.copyOf(getOptionalSymbolList(param).get()));
     } else {
       return Optional.absent();
@@ -307,7 +318,7 @@ public final class Parameters {
     if (namespace.isEmpty()) {
       return param;
     } else {
-      return joinNamespace(namespace) + "." + param;
+      return joinNamespace(namespace) + DELIM + param;
     }
   }
 
@@ -437,13 +448,13 @@ public final class Parameters {
   }
 
   public <T extends Enum<T>> T getEnum(final String param, final Class<T> clazz) {
-    return this.<T>get(param, new StringToEnum<T>(clazz), new AlwaysValid<T>(), "enumeration");
+    return this.get(param, new StringToEnum<>(clazz), new AlwaysValid<T>(), "enumeration");
   }
 
   public <T extends Enum<T>> Optional<T> getOptionalEnum(final String param, final Class<T> clazz) {
     if (isPresent(param)) {
       return Optional
-          .of(this.<T>get(param, new StringToEnum<T>(clazz), new AlwaysValid<T>(), "enumeration"));
+          .of(this.get(param, new StringToEnum<>(clazz), new AlwaysValid<T>(), "enumeration"));
     } else {
       return Optional.absent();
     }
@@ -453,7 +464,7 @@ public final class Parameters {
    * Gets a parameter whose value is a (possibly empty) list of enums.
    */
   public <T extends Enum<T>> List<T> getEnumList(final String param, final Class<T> clazz) {
-    return this.<T>getList(param, new StringToEnum<T>(clazz), new AlwaysValid<T>(), "enumeration");
+    return this.getList(param, new StringToEnum<>(clazz), new AlwaysValid<T>(), "enumeration");
   }
 
   public Class<?> getClassObjectForString(final String className) throws ClassNotFoundException {
@@ -519,15 +530,9 @@ public final class Parameters {
       if (!ret.isPresent()) {
         ret = createViaZeroArgConstructor(clazz, param);
       }
-    } catch (IllegalAccessException iae) {
+    } catch (IllegalAccessException | InstantiationException | InvocationTargetException iae) {
       throw new ParameterException("While attempting to load parameter-initialized object from "
           + param + " :", iae);
-    } catch (InstantiationException e) {
-      throw new ParameterException("While attempting to load parameter-initialized object from "
-          + param + " :", e);
-    } catch (InvocationTargetException e) {
-      throw new ParameterException("While attempting to load parameter-initialized object from "
-          + param + " :", e);
     }
 
     if (!ret.isPresent()) {
@@ -735,7 +740,7 @@ public final class Parameters {
    */
   public double getProbability(final String param) {
     return get(param, new StringToDouble(),
-        new IsInRange<Double>(Range.closed(0.0, 1.0)),
+        new IsInRange<>(Range.closed(0.0, 1.0)),
         "probability");
   }
 
@@ -753,7 +758,7 @@ public final class Parameters {
    */
   public File getExistingFile(final String param) {
     return get(param, getFileConverter(),
-        new And<File>(new FileExists(), new IsFile()),
+        new And<>(new FileExists(), new IsFile()),
         "existing file");
   }
 
@@ -806,7 +811,7 @@ public final class Parameters {
    */
   public File getExistingDirectory(final String param) {
     return get(param, new StringToFile(),
-        new And<File>(new FileExists(), new IsDirectory()),
+        new And<>(new FileExists(), new IsDirectory()),
         "existing directory");
   }
 
@@ -893,6 +898,14 @@ public final class Parameters {
     return Optional.absent();
   }
 
+  public Optional<ImmutableSet<String>> getOptionalStringSet(final String param) {
+    if (isPresent(param)) {
+      return Optional.of(ImmutableSet.copyOf(getStringSet(param)));
+    } else {
+      return Optional.absent();
+    }
+  }
+
   /**
    * Gets a ,-separated set of Symbols
    */
@@ -928,7 +941,9 @@ public final class Parameters {
   }
 
   /**
-   * Gets a file, with no requirements about whether it exists or not.
+   * Gets a file, with no requirements about whether it exists or not. if you intend to write to
+   * this file, you may prefer {@link #getCreatableFile(String)}, which will create its parent
+   * directories.
    */
   public File getPossiblyNonexistentFile(final String param) {
     return new File(getString(param));
@@ -961,6 +976,105 @@ public final class Parameters {
               numFilesContained));
     }
     return dir;
+  }
+
+  /**
+   * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
+   * FileUtils#loadSymbolSet(CharSource)} on it.
+   */
+  public ImmutableSet<Symbol> getFileAsSymbolSet(String param) throws IOException {
+    return FileUtils.loadSymbolSet(Files.asCharSource(getExistingFile(param), Charsets.UTF_8));
+  }
+
+  /**
+   * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
+   * FileUtils#loadSymbolSet(CharSource)} on it, if the param is present. If the param is missing,
+   * {@link Optional#absent()} is returned.
+   */
+  public Optional<ImmutableSet<Symbol>> getOptionalFileAsSymbolSet(String param)
+      throws IOException {
+    if (isPresent(param)) {
+      return Optional
+          .of(FileUtils.loadSymbolSet(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
+   * FileUtils#loadSymbolList(CharSource)} on it.
+   */
+  public ImmutableList<Symbol> getFileAsSymbolList(String param) throws IOException {
+    return FileUtils.loadSymbolList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8));
+  }
+
+  /**
+   * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
+   * FileUtils#loadSymbolList(CharSource)} on it, if the param is present. If the param is missing,
+   * {@link Optional#absent()} is returned.
+   */
+  public Optional<ImmutableList<Symbol>> getOptionalFileAsSymbolList(String param)
+      throws IOException {
+    if (isPresent(param)) {
+      return Optional
+          .of(FileUtils.loadSymbolList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
+    } else {
+      return Optional.absent();
+    }
+  }
+
+
+  /**
+   * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
+   * FileUtils#loadStringSet(CharSource)} on it.
+   */
+  public ImmutableSet<String> getFileAsStringSet(String param) throws IOException {
+    return FileUtils.loadStringSet(Files.asCharSource(getExistingFile(param), Charsets.UTF_8));
+  }
+
+  /**
+   * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
+   * FileUtils#loadStringSet(CharSource)} on it, if the param is present. If the param is missing,
+   * {@link Optional#absent()} is returned.
+   */
+  public Optional<ImmutableSet<String>> getOptionalFileAsStringSet(String param)
+      throws IOException {
+    if (isPresent(param)) {
+      return Optional
+          .of(FileUtils.loadStringSet(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
+   * FileUtils#loadStringList(CharSource)} on it.
+   */
+  public ImmutableList<String> getFileAsStringList(String param) throws IOException {
+    return FileUtils.loadStringList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8));
+  }
+
+
+  /**
+   * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
+   * FileUtils#loadStringList(CharSource)} on it, if the param is present. If the param is missing,
+   * {@link Optional#absent()} is returned.
+   */
+  public Optional<ImmutableList<String>> getOptionalFileAsStringList(String param)
+      throws IOException {
+    if (isPresent(param)) {
+      return Optional
+          .of(FileUtils.loadStringList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  public ImmutableMap<Symbol, File> getFileAsSymbolToFileMap(String param) throws IOException {
+    return FileUtils
+        .loadSymbolToFileMap(Files.asCharSource(getExistingFile(param), Charsets.UTF_8));
   }
 
   public Parameters getSubParameters(final String param) throws IOException {
@@ -1040,6 +1154,18 @@ public final class Parameters {
   public Optional<File> getOptionalCreatableFile(final String param) {
     if (isPresent(param)) {
       return Optional.of(getCreatableFile(param));
+    } else {
+      return Optional.absent();
+    }
+  }
+
+  /**
+   * If {@code param} is present, calls {@link #getCreatableDirectory(String)} with it.
+   * Otherwise, returns {@link Optional#absent()}
+   */
+  public Optional<File> getOptionalCreatableDirectory(final String param) {
+    if (isPresent(param)) {
+      return Optional.of(getCreatableDirectory(param));
     } else {
       return Optional.absent();
     }
@@ -1138,7 +1264,7 @@ public final class Parameters {
     // all parameter requests eventually get routed through here,
     // so this is where we observe
     for (final Parameters.Listener listener : listeners) {
-      listener.observeParameterRequest(StringUtils.dotJoiner().join(
+      listener.observeParameterRequest(JOINER.join(
           FluentIterable.from(namespace).append(param)));
     }
   }
@@ -1204,10 +1330,27 @@ public final class Parameters {
 
   /**
    * Returns the specified namespace joined into a string, for example {@code "foo.bar"} for {@code
-   * ["foo", "bar"]}.
+   * ["foo", "bar"]}. The namespace may consist of any number of elements, including none at all.
+   * No element in the namespace may begin or end with a period.
    */
   public static String joinNamespace(final List<String> namespace) {
-    return dotJoiner().join(namespace);
+    for (final String element : namespace) {
+      checkArgument(!element.startsWith(DELIM),
+          "Namespace element may not begin with a period: " + element);
+      checkArgument(!element.endsWith(DELIM),
+          "Namespace element may not end with a period: " + element);
+    }
+    return JOINER.join(namespace);
+  }
+
+  /**
+   * Returns the specified namespace joined into a string, for example {@code "foo.bar"} for
+   * arguments {@code ["foo", "bar"]}. To match the behavior of {@link #joinNamespace(List)},
+   * the namespace may consist of any number of elements, including none at all. No element in the
+   * namespace may begin or end with a period.
+   */
+  public static String joinNamespace(final String... elements) {
+    return JOINER.join(elements);
   }
 
   public static final class Builder {
@@ -1220,6 +1363,14 @@ public final class Parameters {
     }
 
     public Builder set(String key, String value) {
+      checkNotNull(key);
+      checkArgument(!key.isEmpty(), "Key must be non-empty");
+      checkArgument(!WHITESPACE_PATTERN.matcher(key).find(), "Key cannot contain whitespace");
+      checkNotNull(value);
+      // Medial whitespace is allowed, but we remove initial/final whitespace as it will not
+      // preserved in loading.
+      value = value.trim();
+      checkArgument(!value.isEmpty(), "Value cannot be empty or only whitespace");
       params.put(key, value);
       return this;
     }
@@ -1272,7 +1423,7 @@ public final class Parameters {
       if (subNamespace.isNamespacePresent(activeNamespace)) {
         ret.add(nameSpaceToObjectMapper.fromNameSpace(subNamespace.copyNamespace(activeNamespace)));
       } else {
-        throw new ParameterException("Expected namespace " + baseNamespace + "." + activeNamespace
+        throw new ParameterException("Expected namespace " + baseNamespace + DELIM + activeNamespace
             + "to exist because of value of " + activeNamespacesFeature + " but "
             + "it did not");
       }

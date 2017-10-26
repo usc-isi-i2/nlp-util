@@ -1,16 +1,19 @@
 package com.bbn.bue.common.files;
 
 import com.bbn.bue.common.StringUtils;
+import com.bbn.bue.common.TextGroupImmutable;
 import com.bbn.bue.common.collections.KeyValueSink;
 import com.bbn.bue.common.collections.MapUtils;
-import com.bbn.bue.common.collections.MultimapUtils;
 import com.bbn.bue.common.io.GZIPByteSink;
 import com.bbn.bue.common.io.GZIPByteSource;
 import com.bbn.bue.common.symbols.Symbol;
+import com.bbn.bue.common.symbols.SymbolUtils;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -29,28 +32,30 @@ import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSink;
 import com.google.common.io.CharSource;
-import com.google.common.io.Closeables;
 import com.google.common.io.Files;
+import com.google.common.io.LineProcessor;
 import com.google.common.primitives.Ints;
 
+import org.immutables.value.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.Iterator;
@@ -60,17 +65,38 @@ import java.util.zip.GZIPInputStream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.skip;
 import static com.google.common.collect.Iterables.transform;
+import static java.nio.file.Files.walkFileTree;
 
+/**
+ * Utilities for working with files.
+ *
+ * @author Ryan Gabbard, Jay DeYoung, Constantine Lignos, Nicolas Ward
+ */
+@Value.Enclosing
 public final class FileUtils {
+
+  private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+
   private FileUtils() {
     throw new UnsupportedOperationException();
   }
 
   /**
+   * Create the parent directories of the given file, if needed.
+   */
+  public static void ensureParentDirectoryExists(File f) throws IOException {
+    final File parent = f.getParentFile();
+    if (parent != null) {
+      java.nio.file.Files.createDirectories(parent.toPath());
+    }
+  }
+
+  /**
    * Takes a file with filenames listed one per line and returns a list of the corresponding File
-   * objects.  Ignores blank lines and lines with a "#" in the first column position. Treats the
+   * objects.  Ignores blank lines and lines beginning with "#". Treats the
    * file as UTF-8 encoded.
    */
   public static ImmutableList<File> loadFileList(final File fileList) throws IOException {
@@ -79,14 +105,13 @@ public final class FileUtils {
 
   /**
    * Takes a {@link com.google.common.io.CharSource} with filenames listed one per line and returns
-   * a list of the corresponding File objects.  Ignores blank lines and lines with a "#" in the
-   * first column position.
+   * a list of the corresponding File objects. Ignores blank lines and lines beginning with "#".
    */
   public static ImmutableList<File> loadFileList(final CharSource source) throws IOException {
     final ImmutableList.Builder<File> ret = ImmutableList.builder();
 
     for (final String filename : source.readLines()) {
-      if (!filename.isEmpty() && !filename.startsWith("#")) {
+      if (!filename.isEmpty() && !isCommentLine(filename)) {
         ret.add(new File(filename.trim()));
       }
     }
@@ -95,8 +120,8 @@ public final class FileUtils {
   }
 
   /**
-   * takes a List of fileNames and returns a list of files, ignoring any empty entries white space
-   * at the end of a name
+   * Takes a List of filenames and returns a list of files, ignoring any empty strings and any
+   * trailing whitespace.
    */
   public static ImmutableList<File> loadFileList(final Iterable<String> fileNames)
       throws IOException {
@@ -139,8 +164,8 @@ public final class FileUtils {
   /**
    * Takes a file with relative pathnames listed one per line and returns a list of the
    * corresponding {@link java.io.File} objects, resolved against the provided base path using the
-   * {@link java.io.File#File(java.io.File, String)} constructor. Ignores blank lines and lines with
-   * a "#" in the first column position.
+   * {@link java.io.File#File(java.io.File, String)} constructor. Ignores blank lines and lines
+   * beginning with "#".
    */
   public static ImmutableList<File> loadFileListRelativeTo(File fileList, File basePath)
       throws IOException {
@@ -148,7 +173,7 @@ public final class FileUtils {
     final ImmutableList.Builder<File> ret = ImmutableList.builder();
 
     for (final String filename : Files.readLines(fileList, Charsets.UTF_8)) {
-      if (!filename.isEmpty() && !filename.startsWith("#")) {
+      if (!filename.isEmpty() && !isCommentLine(filename)) {
         ret.add(new File(basePath, filename.trim()));
       }
     }
@@ -163,8 +188,8 @@ public final class FileUtils {
    * Note that unless you want double .s, newExtension should not begin with a .
    */
   public static File swapExtension(final File f, final String newExtension) {
-    Preconditions.checkNotNull(f);
-    Preconditions.checkNotNull(newExtension);
+    checkNotNull(f);
+    checkNotNull(newExtension);
     Preconditions.checkArgument(!f.isDirectory());
 
     final String absolutePath = f.getAbsolutePath();
@@ -180,9 +205,13 @@ public final class FileUtils {
     return new File(String.format("%s.%s", basePath, newExtension));
   }
 
+  /**
+   * Derives one {@link File} from another by adding the provided extension.
+   * The extension will be separated from the base file name by a ".".
+   */
   public static File addExtension(final File f, final String extension) {
-    Preconditions.checkNotNull(f);
-    Preconditions.checkNotNull(extension);
+    checkNotNull(f);
+    checkNotNull(extension);
     Preconditions.checkArgument(!extension.isEmpty());
     Preconditions.checkArgument(!f.isDirectory());
 
@@ -190,27 +219,7 @@ public final class FileUtils {
     return new File(absolutePath + "." + extension);
   }
 
-  /**
-   * @deprecated Prefer {@link CharSink#writeLines(Iterable, String)} or {@link
-   * FileUtils#writeUnixLines(Iterable, CharSink)}.
-   */
-  @Deprecated
-  public static void writeLines(final File f, final Iterable<String> data, final Charset charSet)
-      throws IOException {
-    final FileOutputStream fin = new FileOutputStream(f);
-    final BufferedOutputStream bout = new BufferedOutputStream(fin);
-    final PrintStream out = new PrintStream(bout);
 
-    boolean threw = true;
-    try {
-      for (final String s : data) {
-        out.println(s);
-      }
-      threw = false;
-    } finally {
-      Closeables.close(out, threw);
-    }
-  }
 
   public static ImmutableMap<Symbol, File> loadSymbolToFileMap(
       final File f) throws IOException {
@@ -219,14 +228,12 @@ public final class FileUtils {
 
   public static ImmutableMap<Symbol, File> loadSymbolToFileMap(
       final CharSource source) throws IOException {
-    return MapUtils.copyWithKeysTransformedByInjection(
-        loadStringToFileMap(source), Symbol.FromString);
+    return loadMap(source, SymbolUtils.symbolizeFunction(), FileFunction.INSTANCE);
   }
 
   public static ImmutableListMultimap<Symbol, File> loadSymbolToFileListMultimap(
       final CharSource source) throws IOException {
-    return MultimapUtils.copyWithTransformedKeys(
-        loadStringToFileListMultimap(source), Symbol.FromString);
+    return loadMultimap(source, SymbolUtils.symbolizeFunction(), FileFunction.INSTANCE);
   }
 
   /**
@@ -257,72 +264,121 @@ public final class FileUtils {
 
   public static Map<Symbol, CharSource> loadSymbolToFileCharSourceMap(CharSource source)
       throws IOException {
-
     return Maps.transformValues(loadSymbolToFileMap(source),
         FileUtils.asUTF8CharSourceFunction());
   }
 
+  /**
+   * Reads an {@link Map} from a {@link File}, where each line is a key, a tab character
+   * ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   */
   public static Map<String, File> loadStringToFileMap(final File f) throws IOException {
     return loadStringToFileMap(Files.asCharSource(f, Charsets.UTF_8));
   }
 
-
-  public static Map<String, File> loadStringToFileMap(
-      final CharSource source) throws IOException {
-    final ImmutableMap.Builder<String, File> ret = ImmutableMap.builder();
-    loadStringToFileMapToSink(source, MapUtils.asMapSink(ret));
-    return ret.build();
+  /**
+   * Reads a {@link Map} from a {@link CharSource}, where each line is a key, a tab character
+   * ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   */
+  public static Map<String, File> loadStringToFileMap(final CharSource source) throws IOException {
+    return loadMap(source, Functions.<String>identity(), FileFunction.INSTANCE,
+        IsCommentLine.INSTANCE);
   }
 
+  /**
+   * Reads an {@link ImmutableListMultimap} from a {@link CharSource}, where each line is a
+   * key, a tab character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   */
   public static ImmutableListMultimap<String, File> loadStringToFileListMultimap(
       final CharSource source) throws IOException {
-    final ImmutableListMultimap.Builder<String, File> ret = ImmutableListMultimap.builder();
-    loadStringToFileMapToSink(source, MapUtils.asMapSink(ret));
+    return loadMultimap(source, Functions.<String>identity(), FileFunction.INSTANCE,
+        IsCommentLine.INSTANCE);
+  }
+
+  /**
+   * Reads an {@link ImmutableMap} from a {@link CharSource}, where each line is a key, a tab
+   * character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   */
+  public static <K, V> ImmutableMap<K, V> loadMap(final CharSource source,
+      final Function<String, K> keyFunction, final Function<String, V> valueFunction)
+      throws IOException {
+    final ImmutableMap.Builder<K, V> ret = ImmutableMap.builder();
+    loadMapToSink(source, MapUtils.asMapSink(ret), keyFunction, valueFunction,
+        IsCommentLine.INSTANCE);
     return ret.build();
   }
 
-  private static void loadStringToFileMapToSink(final CharSource source,
-      KeyValueSink<String, File> mapSink)
+  /**
+   * Reads an {@link ImmutableMap} from a {@link CharSource}, where each line is a key, a tab
+   * character ("\t"), and a value. Blank lines and lines for which {@code skipLinePredicate} is
+   * true are ignored.
+   */
+  public static <K, V> ImmutableMap<K, V> loadMap(final CharSource source,
+      final Function<String, K> keyFunction, final Function<String, V> valueFunction,
+      final Predicate<String> skipLinePredicate)
       throws IOException {
-    final Splitter onTab = Splitter.on("\t").trimResults();
-    int lineNo = 0;
-    for (final String line : source.readLines()) {
-      if (line.isEmpty()) {
-        continue;
-      }
+    final ImmutableMap.Builder<K, V> ret = ImmutableMap.builder();
+    loadMapToSink(source, MapUtils.asMapSink(ret), keyFunction, valueFunction, skipLinePredicate);
+    return ret.build();
+  }
 
-      final Iterator<String> parts = onTab.split(line).iterator();
+  /**
+   * Reads an {@link ImmutableMap} from a {@link File}, where each line is a key, a tab
+   * character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   */
+  public static <K, V> ImmutableMap<K, V> loadMap(final File file,
+      final Function<String, K> keyFunction, final Function<String, V> valueFunction)
+      throws IOException {
+    return loadMap(Files.asCharSource(file, Charsets.UTF_8), keyFunction, valueFunction);
+  }
 
-      final String key;
-      final File value;
-      boolean good = true;
+  /**
+   * Reads an {@link ImmutableListMultimap} from a {@link CharSource}, where each line is a key, a
+   * tab character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   */
+  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(final CharSource source,
+      final Function<String, K> keyFunction, final Function<String, V> valueFunction)
+      throws IOException {
+    final ImmutableListMultimap.Builder<K, V> ret = ImmutableListMultimap.builder();
+    loadMapToSink(source, MapUtils.asMapSink(ret), keyFunction, valueFunction,
+        IsCommentLine.INSTANCE);
+    return ret.build();
+  }
 
-      if (parts.hasNext()) {
-        key = parts.next();
-      } else {
-        key = null;
-        good = false;
-      }
+  /**
+   * Reads an {@link ImmutableListMultimap} from a {@link File}, where each line is a key, a
+   * tab character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   */
+  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(final File file,
+      final Function<String, K> keyFunction, final Function<String, V> valueFunction)
+      throws IOException {
+    return loadMultimap(Files.asCharSource(file, Charsets.UTF_8), keyFunction, valueFunction,
+        IsCommentLine.INSTANCE);
+  }
 
-      if (parts.hasNext()) {
-        value = new File(parts.next());
-      } else {
-        value = null;
-        good = false;
-      }
+  /**
+   * Reads an {@link ImmutableListMultimap} from a {@link CharSource}, where each line is a key, a
+   * tab character ("\t"), and a value. Lines for which {@code skipLinePredicate} is true are
+   * ignored.
+   */
+  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(final CharSource source,
+      final Function<String, K> keyFunction, final Function<String, V> valueFunction,
+      final Predicate<String> skipLinePredicate) throws IOException {
+    final ImmutableListMultimap.Builder<K, V> ret = ImmutableListMultimap.builder();
+    loadMapToSink(source, MapUtils.asMapSink(ret), keyFunction, valueFunction, skipLinePredicate);
+    return ret.build();
+  }
 
-      if (!good || parts.hasNext()) {
-        throw new RuntimeException(String.format("Corrupt line #%d: %s", lineNo, line));
-      }
-
-      try {
-        mapSink.put(key, value);
-      } catch (IllegalArgumentException iae) {
-        throw new IOException(String.format("Error processing line %d of file map: %s",
-            lineNo, line), iae);
-      }
-      ++lineNo;
-    }
+  private static <K, V> void loadMapToSink(final CharSource source,
+      final KeyValueSink<K, V> mapSink, final Function<String, K> keyFunction,
+      final Function<String, V> valueFunction, final Predicate<String> skipLinePredicate)
+      throws IOException {
+    // Using a LineProcessor saves memory by not loading the whole file into memory. This can matter
+    // for multi-gigabyte Gigaword-scale maps.
+    final MapLineProcessor<K, V> processor =
+        new MapLineProcessor<>(mapSink, keyFunction, valueFunction, skipLinePredicate,
+            Splitter.on("\t").trimResults());
+    source.readLines(processor);
   }
 
   /**
@@ -347,17 +403,14 @@ public final class FileUtils {
         throw e;
       }
     }
-    final DataInputStream dis = new DataInputStream(in);
 
-    try {
+    try (DataInputStream dis = new DataInputStream(in)) {
       final int size = dis.readInt();
       final int[] ret = new int[size];
       for (int i = 0; i < size; ++i) {
         ret[i] = dis.readInt();
       }
       return ret;
-    } finally {
-      dis.close();
     }
   }
 
@@ -373,25 +426,99 @@ public final class FileUtils {
 
   public static void writeBinaryIntArray(final int[] arr,
       final ByteSink outSup) throws IOException {
-    final OutputStream out = outSup.openBufferedStream();
-    final DataOutputStream dos = new DataOutputStream(out);
-
-    try {
-      dos.writeInt(arr.length);
-      for (final int x : arr) {
-        dos.writeInt(x);
+    try (OutputStream out = outSup.openBufferedStream()) {
+      try (DataOutputStream dos = new DataOutputStream(out)) {
+        dos.writeInt(arr.length);
+        for (final int x : arr) {
+          dos.writeInt(x);
+        }
       }
-    } finally {
-      dos.close();
     }
   }
 
   public static void backup(final File f) throws IOException {
-    backup(f, ".bak");
+    new BackupRequest.Builder()
+        .fileToBackup(f)
+        .build().doBackup();
   }
 
   public static void backup(final File f, final String extension) throws IOException {
-    Files.copy(f, addExtension(f, extension));
+    new BackupRequest.Builder()
+        .fileToBackup(f)
+        .extension(extension)
+        .build().doBackup();
+  }
+
+  /**
+   * A request to backup a file. This request is executed by calling {@link #doBackup()}.
+   */
+  @TextGroupImmutable
+  @Value.Immutable
+  public static abstract class BackupRequest {
+
+    public abstract File fileToBackup();
+
+    /**
+     * The name of the type of object being backed up (e.g. "geonames database").  If this is
+     * provided, a message is logged.
+     */
+    public abstract Optional<String> nameOfThingToBackup();
+
+    /**
+     * The logger to write a log message to. If not specified, defaults to the logger of
+     * {@link FileUtils}
+     */
+    @Value.Default
+    public Logger logger() {
+      return FileUtils.log;
+    }
+
+    /**
+     * The extension to append to the backup file.  A "." is automatically inserted.  Defaults to "bak"
+     */
+    @Value.Default
+    public String extension() {
+      return "bak";
+    }
+
+    /**
+     * Whether to delete the file being backed up.
+     */
+    @Value.Default
+    public boolean deleteOriginal() {
+      return false;
+    }
+
+    @Value.Check
+    protected void check() {
+      checkArgument(!extension().isEmpty(), "Backup extension may not be empty");
+    }
+
+    /**
+     * Execute the backup request.
+     */
+    public final void doBackup() throws IOException {
+      if (fileToBackup().isFile()) {
+        final File backupFile = addExtension(fileToBackup(), extension());
+        final String operationMessage;
+        if (deleteOriginal()) {
+          operationMessage = "Moved";
+          java.nio.file.Files.move(fileToBackup().toPath(),
+              backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } else {
+          operationMessage = "Copied";
+          java.nio.file.Files.copy(fileToBackup().toPath(),
+              backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        if (nameOfThingToBackup().isPresent()) {
+          logger().info("{} existing {} from {} to {}", operationMessage, nameOfThingToBackup().get(),
+              fileToBackup().getAbsolutePath(), backupFile.getAbsolutePath());
+        }
+      }
+    }
+
+    public static class Builder extends ImmutableFileUtils.BackupRequest.Builder {}
   }
 
   /**
@@ -426,24 +553,22 @@ public final class FileUtils {
         throw e;
       }
     }
-    return new BufferedReader(new InputStreamReader(stream));
+    return new BufferedReader(new InputStreamReader(stream, Charsets.UTF_8));
   }
 
   public static ImmutableList<Symbol> loadSymbolList(final File symbolListFile) throws IOException {
     return loadSymbolList(Files.asCharSource(symbolListFile, Charsets.UTF_8));
   }
 
+  /**
+   * Loads a list of {@link Symbol}s from a file, one-per-line, skipping lines starting with "#" as
+   * comments.
+   */
   public static ImmutableList<Symbol> loadSymbolList(final CharSource source) throws IOException {
-    return FluentIterable.from(source.readLines())
-        .transform(Symbol.FromString)
-        .toList();
+    return SymbolUtils.listFrom(loadStringList(source));
   }
 
-  /**
-   * @deprecated Prefer {@link #toNameFunction()}
-   */
-  @Deprecated
-  public static final Function<File, String> ToName = ToNameEnum.INSTANCE;
+
 
   public static Function<File, String> toNameFunction() {
     return ToNameEnum.INSTANCE;
@@ -459,7 +584,7 @@ public final class FileUtils {
   }
 
 
-  public static final Function<File, String> toAbsolutePathFunction() {
+  public static Function<File, String> toAbsolutePathFunction() {
     return ToAbsolutePathFunction.INSTANCE;
   }
 
@@ -473,27 +598,22 @@ public final class FileUtils {
   }
 
   public static boolean isEmptyDirectory(final File directory) {
-    if (directory.exists() && directory.isDirectory()) {
-      return directory.listFiles().length == 0;
-    }
-    return false;
+    return directory.exists() && directory.isDirectory()
+        && directory.listFiles().length == 0;
   }
 
+
   /**
-   * Make a predicate to test files for ending with the specified suffix.
+   * Make a predicate to test files for their name ending with the specified suffix.
    *
    * @param suffix May not be null or empty.
    */
-  public static Predicate<File> EndsWith(final String suffix) {
+  public static Predicate<File> endsWithPredicate(final String suffix) {
     checkArgument(!suffix.isEmpty());
 
-    return new Predicate<File>() {
-      @Override
-      public boolean apply(final File f) {
-        return f.getName().endsWith(suffix);
-      }
-    };
+    return new EndsWithPredicate(suffix);
   }
+
 
   /**
    * Loads a file in the format {@code key value1 value2 value3} (tab-separated) into a {@link
@@ -509,7 +629,7 @@ public final class FileUtils {
     int count = 0;
     for (final String line : multimapSource.readLines()) {
       ++count;
-      if (line.startsWith("#")) {
+      if (isCommentLine(line)) {
         continue;
       }
       final List<String> parts = multimapSplitter.splitToList(line);
@@ -522,28 +642,6 @@ public final class FileUtils {
     return ret.build();
   }
 
-  /**
-   * Deprecated in favor of version with {@link com.google.common.io.CharSource} argument.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public static ImmutableMultimap<String, String> loadStringMultimap(File multimapFile)
-      throws IOException {
-    return loadStringMultimap(Files.asCharSource(multimapFile, Charsets.UTF_8));
-  }
-
-  /**
-   * Deprecated in favor of the CharSource version to force the user to define their encoding. If
-   * you call this, it will use UTF_8 encoding.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public static ImmutableMultimap<Symbol, Symbol> loadSymbolMultimap(File multimapFile)
-      throws IOException {
-    return loadSymbolMultimap(Files.asCharSource(multimapFile, Charsets.UTF_8));
-  }
 
   /**
    * Loads a file in the format {@code key value1 value2 value3} (tab-separated) into a {@link
@@ -598,7 +696,7 @@ public final class FileUtils {
     int count = 0;
     for (final String line : source.readLines()) {
       ++count;
-      if (line.startsWith("#")) {
+      if (isCommentLine(line)) {
         continue;
       }
       final List<String> parts = MAP_SPLITTER.splitToList(line);
@@ -672,6 +770,7 @@ public final class FileUtils {
   private enum AsUTF8CharSource implements Function<File, CharSource> {
     INSTANCE;
 
+    @Override
     public CharSource apply(File f) {
       return Files.asCharSource(f, Charsets.UTF_8);
     }
@@ -754,10 +853,29 @@ public final class FileUtils {
   }
 
   /**
-   * Returns a set consisting of the lines of the provided {@link CharSource}.
+   * Loads a list of {@link Symbol}s from a file, one-per-line, skipping lines starting with "#"
+   * as comments.
    */
   public static ImmutableSet<Symbol> loadSymbolSet(final CharSource source) throws IOException {
     return ImmutableSet.copyOf(loadSymbolList(source));
+  }
+
+  /**
+   * Returns a {@link List} consisting of the lines of the provided {@link CharSource} in the
+   * order given.
+   */
+  public static ImmutableList<String> loadStringList(final CharSource source) throws IOException {
+    return FluentIterable.from(source.readLines())
+        .filter(not(IsCommentLine.INSTANCE))
+        .toList();
+  }
+
+  /**
+   * Loads a list of {@link String}s from a file, one-per-line, skipping lines starting with "#"
+   * as comments.
+   */
+  public static ImmutableSet<String> loadStringSet(final CharSource source) throws IOException {
+    return ImmutableSet.copyOf(loadStringList(source));
   }
 
   /**
@@ -768,7 +886,7 @@ public final class FileUtils {
       return;
     }
     checkArgument(directory.isDirectory(), "Cannot recursively delete a non-directory");
-    java.nio.file.Files.walkFileTree(directory.toPath(), new DeletionFileVisitor());
+    walkFileTree(directory.toPath(), new DeletionFileVisitor());
   }
 
   private static class DeletionFileVisitor implements FileVisitor<Path> {
@@ -817,6 +935,198 @@ public final class FileUtils {
   }
 
   /**
+   * Recursively copies a directory.
+   *
+   * @param sourceDir  the source directory
+   * @param destDir    the destination directory, which does not need to already exist
+   * @param copyOption options to be used for copying files
+   */
+  public static void recursivelyCopyDirectory(final File sourceDir, final File destDir,
+      final StandardCopyOption copyOption)
+      throws IOException {
+    checkNotNull(sourceDir);
+    checkNotNull(destDir);
+    checkArgument(sourceDir.isDirectory(), "Source directory does not exist");
+    java.nio.file.Files.createDirectories(destDir.toPath());
+    walkFileTree(sourceDir.toPath(), new CopyFileVisitor(sourceDir.toPath(), destDir.toPath(),
+        copyOption));
+  }
+
+  private static class CopyFileVisitor implements FileVisitor<Path> {
+
+    private final Path sourcePath;
+    private final Path destPath;
+    private final StandardCopyOption copyOption;
+
+    private CopyFileVisitor(Path sourcePath, Path destPath, final StandardCopyOption copyOption) {
+      this.sourcePath = checkNotNull(sourcePath);
+      this.destPath = checkNotNull(destPath);
+      this.copyOption = checkNotNull(copyOption);
+    }
+
+    @Override
+    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs)
+        throws IOException {
+      final Path newPath = destPath.resolve(sourcePath.relativize(dir));
+      if (!java.nio.file.Files.exists(newPath)) {
+        java.nio.file.Files.createDirectory(newPath);
+      }
+      return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
+        throws IOException {
+      final Path newPath = destPath.resolve(sourcePath.relativize(file));
+      java.nio.file.Files.copy(file, newPath, copyOption);
+      return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult visitFileFailed(final Path file, final IOException exc)
+        throws IOException {
+      return FileVisitResult.TERMINATE;
+    }
+
+    @Override
+    public FileVisitResult postVisitDirectory(final Path dir, final IOException exc)
+        throws IOException {
+      return FileVisitResult.CONTINUE;
+    }
+  }
+
+
+  /**
+   * Generally we want to avoid {@link CharSink#writeLines(Iterable)} because it uses the OS default
+   * line separator, but our code always works with Unix line endings regardless of platform. This
+   * is just like {@link CharSink#writeLines(Iterable)}, but always uses Unix endings.
+   */
+  public static void writeUnixLines(Iterable<? extends CharSequence> lines, CharSink sink)
+      throws IOException {
+    sink.writeLines(lines, "\n");
+  }
+
+  /**
+   * Creates a {@link File} from a {@link String} using the {@link File} constructor.
+   */
+  public Function<String, File> asFileFunction() {
+    return FileFunction.INSTANCE;
+  }
+
+  private enum FileFunction implements Function<String, File> {
+    INSTANCE;
+
+    @Override
+    public File apply(final String input) {
+      return new File(checkNotNull(input));
+    }
+  }
+
+  private static class MapLineProcessor<K, V> implements LineProcessor<Void> {
+
+    private int lineNo;
+    private final KeyValueSink<K, V> mapSink;
+    private final Function<String, K> keyFunction;
+    private final Function<String, V> valueFunction;
+    private final Predicate<String> skipLinePredicate;
+    private final Splitter splitter;
+
+    private MapLineProcessor(final KeyValueSink<K, V> mapSink,
+        final Function<String, K> keyFunction, final Function<String, V> valueFunction,
+        final Predicate<String> skipLinePredicate, final Splitter splitter) {
+      this.mapSink = checkNotNull(mapSink);
+      this.keyFunction = checkNotNull(keyFunction);
+      this.valueFunction = checkNotNull(valueFunction);
+      this.skipLinePredicate = checkNotNull(skipLinePredicate);
+      this.splitter = checkNotNull(splitter);
+    }
+
+    @Override
+    public boolean processLine(final String line) throws IOException {
+      ++lineNo;
+      if (line.isEmpty() || skipLinePredicate.apply(line)) {
+        // Skip this line and go to the next one
+        return true;
+      }
+
+      final Iterator<String> parts = splitter.split(line).iterator();
+
+      final String key;
+      final String value;
+      boolean good = true;
+
+      if (parts.hasNext()) {
+        key = parts.next();
+      } else {
+        key = null;
+        good = false;
+      }
+
+      if (parts.hasNext()) {
+        value = parts.next();
+      } else {
+        value = null;
+        good = false;
+      }
+
+      if (!good || parts.hasNext()) {
+        throw new RuntimeException(String.format("Corrupt line #%d: %s", lineNo, line));
+      }
+
+      try {
+        mapSink.put(keyFunction.apply(key), valueFunction.apply(value));
+      } catch (IllegalArgumentException iae) {
+        throw new IOException(String.format("Error processing line %d of file map: %s",
+            lineNo, line), iae);
+      }
+      // all lines should be processed
+      return true;
+    }
+
+    @Override
+    public Void getResult() {
+      // We don't produce a result; we just write to mapSink as a side-effect
+      return null;
+    }
+  }
+
+  private static boolean isCommentLine(final String line) {
+    return IsCommentLine.INSTANCE.apply(line);
+  }
+
+  private enum IsCommentLine implements Predicate<String> {
+    INSTANCE;
+
+    @Override
+    public boolean apply(final String input) {
+      checkNotNull(input);
+      return input.startsWith("#");
+    }
+  }
+
+  private static class EndsWithPredicate implements Predicate<File> {
+
+    private final String suffix;
+
+    public EndsWithPredicate(final String suffix) {
+      this.suffix = suffix;
+    }
+
+    @Override
+    public boolean apply(final File f) {
+      return f.getName().endsWith(suffix);
+    }
+  }
+
+  // Deprecated code
+
+  /**
+   * @deprecated Prefer {@link #toNameFunction()}
+   */
+  @Deprecated
+  public static final Function<File, String> ToName = ToNameEnum.INSTANCE;
+
+  /**
    * @deprecated See {@link #toAbsolutePathFunction()}.
    */
   @Deprecated
@@ -828,12 +1138,38 @@ public final class FileUtils {
   };
 
   /**
-   * Generally we want to avoid {@link CharSink#writeLines(Iterable)} because it uses the OS default
-   * line separator, but our code always works with Unix line endings regardless of platform. This
-   * is just like {@link CharSink#writeLines(Iterable)}, but always uses Unix endings.
+   * Make a predicate to test files for ending with the specified suffix.
+   *
+   * @param suffix May not be null or empty.
+   * @deprecated Prefer {@link #endsWithPredicate(String)}.
    */
-  public static void writeUnixLines(Iterable<? extends CharSequence> lines, CharSink sink)
-      throws IOException {
-    sink.writeLines(lines, "\n");
+  @Deprecated
+  public static Predicate<File> EndsWith(final String suffix) {
+    return endsWithPredicate(suffix);
   }
+
+
+  /**
+   * Deprecated in favor of version with {@link com.google.common.io.CharSource} argument.
+   *
+   * @deprecated
+   */
+  @Deprecated
+  public static ImmutableMultimap<String, String> loadStringMultimap(File multimapFile)
+      throws IOException {
+    return loadStringMultimap(Files.asCharSource(multimapFile, Charsets.UTF_8));
+  }
+
+  /**
+   * Deprecated in favor of the CharSource version to force the user to define their encoding. If
+   * you call this, it will use UTF_8 encoding.
+   *
+   * @deprecated
+   */
+  @Deprecated
+  public static ImmutableMultimap<Symbol, Symbol> loadSymbolMultimap(File multimapFile)
+      throws IOException {
+    return loadSymbolMultimap(Files.asCharSource(multimapFile, Charsets.UTF_8));
+  }
+
 }

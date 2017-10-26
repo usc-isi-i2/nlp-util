@@ -1,11 +1,13 @@
 package com.bbn.bue.common.strings;
 
 import com.bbn.bue.common.StringUtils;
+import com.bbn.bue.common.strings.offsets.OffsetRange;
 
 import com.google.common.collect.ImmutableList;
 
 import org.junit.Test;
 
+import static com.bbn.bue.common.StringUtils.unicodeFriendly;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -55,5 +57,32 @@ public class StringUtilsTest {
         StringUtils.toCodepointStrings(GREEK_FOO));
     assertEquals(ImmutableList.of("\uD83D\uDE02", "\uD83D\uDFB2"),
         StringUtils.toCodepointStrings(NON_BMP));
+  }
+
+  // the two unicode escapes here make up a single codepoint which uses more thsn two bytes
+  final String stringWithNonBMPCharacter = "Hello\uD862\uDF4EWorld";
+  @Test
+  public void codepointSubstringTest() {
+    assertEquals("lo\uD862\uDF4EW",
+        StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 3, 7));
+    assertEquals("lo\uD862\uDF4EW",
+        StringUtils.substringByCodepoints(stringWithNonBMPCharacter,
+            OffsetRange.charOffsetRange(3, 6)));
+    // test having astral character as start and end
+    assertEquals("\uD862\uDF4EWo",
+        StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 5, 8));
+    assertEquals("lo\uD862\uDF4E",
+        StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 3, 6));
+
+    //test safe substring
+    assertEquals("Hello\uD862\uDF4E",
+        StringUtils.laxSubstringByCodepoints(stringWithNonBMPCharacter, -1, 6));
+    assertEquals("lo\uD862\uDF4EWorld",
+        StringUtils.laxSubstringByCodepoints(stringWithNonBMPCharacter, 3, 100000));
+  }
+
+  @Test
+  public void testStripAccents() {
+    assertEquals("foo", StringUtils.stripAccents(unicodeFriendly("föó")).utf16CodeUnits());
   }
 }

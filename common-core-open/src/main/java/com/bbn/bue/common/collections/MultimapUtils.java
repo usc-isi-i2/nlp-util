@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
 
 import java.util.Collection;
 import java.util.Map;
@@ -15,6 +17,11 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Utilities for working with {@link Multimap}s.
+ *
+ * @author Jay DeYoung, Ryan Gabbard
+ */
 public final class MultimapUtils {
 
   private MultimapUtils() {
@@ -53,6 +60,8 @@ public final class MultimapUtils {
     final ImmutableMap.Builder<K, V> ret = ImmutableMap.builder();
 
     for (final Map.Entry<K, Collection<V>> entry : multimap.asMap().entrySet()) {
+      // nulls banned by contract
+      //noinspection ConstantConditions
       ret.put(entry.getKey(), reducerFunction.apply(entry.getValue()));
     }
 
@@ -121,8 +130,67 @@ public final class MultimapUtils {
       final Function<? super K1, ? extends K2> injection) {
     final ImmutableListMultimap.Builder<K2,V> ret = ImmutableListMultimap.builder();
     for (final Map.Entry<K1, V> entry : listMultimap.entries()) {
+      // nulls banned by contract
+      //noinspection ConstantConditions
       ret.put(injection.apply(entry.getKey()), entry.getValue());
     }
+    return ret.build();
+  }
+
+  /**
+   * Creates a copy of the supplied multimap with its keys transformed by the supplied function.
+   *
+   * The {@code  function} must never return null and the input multimap must contain no nulls.
+   */
+  public static <K1, K2, V> ImmutableSetMultimap<K2, V> copyWithTransformedKeys(
+      final SetMultimap<K1,V> setMultimap,
+      final Function<? super K1, ? extends K2> function) {
+    final ImmutableSetMultimap.Builder<K2,V> ret = ImmutableSetMultimap.builder();
+    for (final Map.Entry<K1, V> entry : setMultimap.entries()) {
+      // nulls banned by contract
+      //noinspection ConstantConditions
+      ret.put( function.apply(entry.getKey()), entry.getValue());
+    }
+    return ret.build();
+  }
+
+  /**
+   * Exactly like {@link Multimaps#index(Iterable, Function)}, except the key function can
+   * provide multiple keys for a given value.  The {@code keyFunction} may never return
+   * {@code null} or a collection containing {@code null}.
+   */
+  public static <K, V> ImmutableSetMultimap<K, V> indexToSetMultimapWithMultipleKeys(
+      Iterable<? extends V> values, Function<? super V, ? extends Collection<? extends K>> keyFunction) {
+    final ImmutableSetMultimap.Builder<K,V> ret = ImmutableSetMultimap.builder();
+
+    for (final V value : values) {
+      // nulls banned by contract
+      //noinspection ConstantConditions
+      for (K key : keyFunction.apply(value)) {
+        ret.put(key, value);
+      }
+    }
+
+    return ret.build();
+  }
+
+  /**
+   * Exactly like {@link Multimaps#index(Iterable, Function)}, except the key function can
+   * provide multiple keys for a given value.  The {@code keyFunction} may never return
+   * {@code null} or a collection containing {@code null}.
+   */
+  public static <K, V> ImmutableListMultimap<K, V> indexToListMultimapWithMultipleKeys(
+      Iterable<? extends V> values, Function<? super V, ? extends Collection<? extends K>> keyFunction) {
+    final ImmutableListMultimap.Builder<K,V> ret = ImmutableListMultimap.builder();
+
+    for (final V value : values) {
+      // nulls banned by contract
+      //noinspection ConstantConditions
+      for (K key : keyFunction.apply(value)) {
+        ret.put(key, value);
+      }
+    }
+
     return ret.build();
   }
 }
