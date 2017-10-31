@@ -1,17 +1,13 @@
 package com.bbn.bue.common.collections;
 
 import com.bbn.bue.common.TextGroupImmutable;
-
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
-
-import org.immutables.value.Value;
-
 import java.util.Collection;
 import java.util.Set;
-
 import javax.annotation.Nullable;
+import org.immutables.value.Value;
 
 /**
  * An immutable {@link Multitable}.
@@ -194,6 +190,8 @@ public abstract class ImmutableMultitable<R, C, V> extends AbstractMultitable<R,
     ImmutableMultitable.Builder<R, C, V> put(R rowKey, C columnKey, V value);
     ImmutableMultitable.Builder<R, C, V> putAll(final R rowKey, final C columnKey,
         final Iterable<? extends V> values);
+
+    ImmutableMultitable<R, C, V> build();
   }
 }
 
