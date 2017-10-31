@@ -7,6 +7,7 @@ import com.bbn.bue.common.TextGroupImmutable;
 import com.bbn.bue.common.collections.MapUtils;
 import com.bbn.bue.common.math.PercentileComputer;
 import com.bbn.bue.common.serialization.jackson.JacksonSerializer;
+import com.bbn.bue.common.serialization.jackson.MultimapEntries;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Charsets;
@@ -273,6 +274,10 @@ public abstract class BootstrapWriter {
   public static abstract class SerializedBootstrapResults {
     public abstract ImmutableMap<String, PercentileComputer.Percentiles> percentilesMap();
 
+    // these should not be necessary and are inefficient, but serialization fails
+    // the normal way for reasons I don't understand
+    @JsonSerialize(converter = MultimapEntries.FromMultimap.class)
+    @JsonDeserialize(converter = MultimapEntries.ToImmutableListMultimap.class)
     public abstract ImmutableListMultimap<String, Double> rawSamples();
 
     public static class Builder extends ImmutableSerializedBootstrapResults.Builder {}
