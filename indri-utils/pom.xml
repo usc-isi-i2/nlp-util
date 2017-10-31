@@ -43,9 +43,9 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.bbn.indri</groupId>
-            <artifactId>indri-api</artifactId>
-            <version>5.7</version>
+            <groupId>edu.illinois.lis</groupId>
+            <artifactId>indri</artifactId>
+            <version>5.11</version>
         </dependency>
 
         <dependency>
