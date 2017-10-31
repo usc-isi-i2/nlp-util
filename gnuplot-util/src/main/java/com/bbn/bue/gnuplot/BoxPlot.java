@@ -1,17 +1,16 @@
 package com.bbn.bue.gnuplot;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public final class BoxPlot implements GnuPlottable {
@@ -217,8 +216,9 @@ public final class BoxPlot implements GnuPlottable {
       return this;
     }
 
-    public void setBoxWidth(double boxWidth) {
+    public Builder setBoxWidth(double boxWidth) {
       this.boxWidth = boxWidth;
+      return this;
     }
 
     public Builder setPointSize(double pointSize) {
