@@ -101,6 +101,8 @@ public final class BoxPlot implements GnuPlottable {
     pbBuilder.append(whiskers.extentMode().command()).append(" ");
     if (whiskers.showOutliers()) {
       pbBuilder.append("outliers ");
+    } else {
+      pbBuilder.append("nooutliers ");
     }
     pbBuilder.append("pointtype 7");
     pbBuilder.append("\n");
