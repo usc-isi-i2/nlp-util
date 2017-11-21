@@ -23,7 +23,7 @@
                 <configuration>
                     <programs>
                         <program>
-                            <mainClass>com.bbn.nlp.corpora.ere.BuildRichEREDocIDToFileList
+                            <mainClass>edu.isi.nlp.corpora.ere.BuildRichEREDocIDToFileList
                             </mainClass>
                             <id>BuildRichEREDocIDToFileList</id>
                         </program>

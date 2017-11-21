@@ -23,27 +23,27 @@
           <configuration>
           <programs>
           <program>
-              <mainClass>com.bbn.bue.common.files.DocIDToFileMapContains</mainClass>
+              <mainClass>edu.isi.nlp.files.DocIDToFileMapContains</mainClass>
               <id>DocIDToFileMapContains</id>
           </program>
               <program>
-                  <mainClass>com.bbn.bue.common.parameters.ExpandParameters</mainClass>
+                  <mainClass>ExpandParameters</mainClass>
                   <id>ExpandParameters</id>
               </program>
               <program>
-                  <mainClass>com.bbn.bue.common.MakeCrossValidationBatches</mainClass>
+                  <mainClass>edu.isi.nlp.MakeCrossValidationBatches</mainClass>
                   <id>MakeCrossValidationBatches</id>
               </program>
               <program>
-                  <mainClass>com.bbn.bue.common.PartitionData</mainClass>
+                  <mainClass>edu.isi.nlp.PartitionData</mainClass>
                   <id>PartitionData</id>
               </program>
               <program>
-                  <mainClass>com.bbn.bue.common.files.MergeFileLists</mainClass>
+                  <mainClass>edu.isi.nlp.files.MergeFileLists</mainClass>
                   <id>MergeFileLists</id>
               </program>
               <program>
-                  <mainClass>com.bbn.bue.common.files.MergeDocIDToFileMaps</mainClass>
+                  <mainClass>edu.isi.nlp.files.MergeDocIDToFileMaps</mainClass>
                   <id>MergeDocIDToFileMaps</id>
               </program>
           </programs>

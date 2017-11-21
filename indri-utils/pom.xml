@@ -63,11 +63,11 @@
                 <configuration>
                     <programs>
                         <program>
-                            <mainClass>com.bbn.nlp.indri.bin.IndexBuilder</mainClass>
+                            <mainClass>edu.isi.nlp.indri.bin.IndexBuilder</mainClass>
                             <name>IndexBuilder</name>
                         </program>
                         <program>
-                            <mainClass>com.bbn.nlp.indri.bin.QueryResultCounter</mainClass>
+                            <mainClass>edu.isi.nlp.indri.bin.QueryResultCounter</mainClass>
                             <name>QueryResultCounter</name>
                         </program>
                     </programs>

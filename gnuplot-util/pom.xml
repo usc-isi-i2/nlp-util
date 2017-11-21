@@ -23,7 +23,7 @@
                 <configuration>
                     <programs>
                         <program>
-                            <mainClass>com.bbn.bue.gnuplot.GnuPlotRenderer</mainClass>
+                            <mainClass>edu.isi.nlp.gnuplot.GnuPlotRenderer</mainClass>
                             <name>GnuPlotRenderer</name>
                         </program>
                         <program>
