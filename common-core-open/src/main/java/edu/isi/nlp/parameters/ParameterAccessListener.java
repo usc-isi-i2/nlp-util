@@ -1,22 +1,19 @@
 package edu.isi.nlp.parameters;
 
-import edu.isi.nlp.StringUtils;
+import static com.google.common.base.Predicates.compose;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSetMultimap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.base.Predicates.compose;
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Logs the stack traces of all parameter access and can dump them when requested.
@@ -74,9 +71,9 @@ final class ParameterAccessListener implements Parameters.Listener {
       };
 
   private static final Predicate<StackTraceElement> IS_THIS_CLASS =
-      compose(equalTo("ParameterAccessListener"), CLASS_NAME);
+      compose(equalTo("edu.isi.nlp.parameters.ParameterAccessListener"), CLASS_NAME);
   private static final Predicate<StackTraceElement> IS_PARAMETERS_ITSELF =
-      compose(equalTo("Parameters"), CLASS_NAME);
+      compose(equalTo("edu.isi.nlp.parameters.Parameters"), CLASS_NAME);
   private static final Predicate<StackTraceElement> IS_THREAD_CLASS =
       compose(equalTo("java.lang.Thread"), CLASS_NAME);
 }

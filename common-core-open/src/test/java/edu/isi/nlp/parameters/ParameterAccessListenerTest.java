@@ -1,12 +1,10 @@
 package edu.isi.nlp.parameters;
 
-import com.google.common.collect.ImmutableMap;
-
-import org.junit.Test;
-
-import java.util.regex.Pattern;
-
 import static junit.framework.TestCase.assertTrue;
+
+import com.google.common.collect.ImmutableMap;
+import java.util.regex.Pattern;
+import org.junit.Test;
 
 public class ParameterAccessListenerTest {
 
@@ -27,15 +25,14 @@ public class ParameterAccessListenerTest {
 
     final String msg = listener.constructLogMsg();
 
-    // note the line numbers in the references need to be changed if this class is altered
     final Pattern refB = Pattern.compile("Parameter com.bbn.foo.b accessed at \n"
-            + "com.bbn.bue.common.parameters.ParameterAccessListenerTest.testListener\\(ParameterAccessListenerTest.java:\\d+\\)",
+            + "edu.isi.nlp.parameters.ParameterAccessListenerTest.testListener\\(ParameterAccessListenerTest.java:\\d+\\)",
         Pattern.MULTILINE);
     final Pattern refC = Pattern.compile("Parameter com.bbn.serif.c accessed at \n"
-            + "com.bbn.bue.common.parameters.ParameterAccessListenerTest.testListener\\(ParameterAccessListenerTest.java:\\d+\\)",
+            + "edu.isi.nlp.parameters.ParameterAccessListenerTest.testListener\\(ParameterAccessListenerTest.java:\\d+\\)",
         Pattern.MULTILINE);
     final Pattern refA = Pattern.compile("Parameter com.bbn.foo.a accessed at \n"
-            + "com.bbn.bue.common.parameters.ParameterAccessListenerTest.testListener\\(ParameterAccessListenerTest.java:\\d+\\)",
+            + "edu.isi.nlp.parameters.ParameterAccessListenerTest.testListener\\(ParameterAccessListenerTest.java:\\d+\\)",
         Pattern.MULTILINE);
 
     assertTrue(refA.matcher(msg).find());

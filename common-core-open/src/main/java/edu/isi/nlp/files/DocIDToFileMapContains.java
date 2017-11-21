@@ -1,6 +1,5 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.BBNUtils;
 import edu.isi.nlp.StringUtils;
 
 import com.google.common.base.Charsets;
@@ -35,7 +34,6 @@ public final class DocIDToFileMapContains {
   }
 
   private static void trueMain(String[] argv) throws IOException {
-    BBNUtils.logCopyrightMessage();
     if (argv.length != 2) {
       System.err.println("usage: DocIDToFileMapContains docIDToFileMap fileList");
       System.exit(1);

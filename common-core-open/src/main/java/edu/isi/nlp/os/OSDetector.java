@@ -1,7 +1,5 @@
 package edu.isi.nlp.os;
 
-import edu.isi.nlp.BBNUtils;
-
 public final class OSDetector {
 
   private OSDetector() {
@@ -11,7 +9,6 @@ public final class OSDetector {
   private static String OS = System.getProperty("os.name").toLowerCase();
 
   public static void main(String[] args) {
-    BBNUtils.logCopyrightMessage();
     System.out.println(OS);
 
     if (isWindows()) {
