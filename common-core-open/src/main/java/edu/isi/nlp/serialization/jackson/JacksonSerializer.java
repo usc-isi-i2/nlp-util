@@ -1,6 +1,7 @@
 package edu.isi.nlp.serialization.jackson;
 
-import edu.isi.nlp.annotations.MoveToBUECommon;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,16 +21,12 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Ordering;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.annotations.MoveToNlpUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Convenience object to build Jackson serializers the way we usually use them.
@@ -295,7 +292,7 @@ public final class JacksonSerializer {
   }
 }
 
-@MoveToBUECommon
+@MoveToNlpUtils
 enum ModuleNameFunction implements Function<Module, String> {
   INSTANCE;
 
