@@ -1,7 +1,8 @@
 package edu.isi.nlp.temporal;
 
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
@@ -10,7 +11,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.joda.time.format.ISODateTimeFormat;
@@ -18,15 +24,6 @@ import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Represents a time value according to "TIDES Instruction Manual for the Annotation of Temporal
@@ -152,23 +149,6 @@ public final class Timex2Time {
     return Optional.absent();
   }
 
-  /**
-   * @deprecated Use {@link #builder()} and {@link Builder#withVal(Symbol)} instead
-   */
-  @Deprecated
-  public static Timex2Time from(final String value) {
-    return new Timex2Time(Symbol.from(value), null, false, null, null, null, null, false);
-  }
-
-  /**
-   * @deprecated Use {@link #builder()} and {@link Builder#withGranularity(Symbol)} and {@link
-   * Builder#withPeriodicity(Symbol)}
-   */
-  @Deprecated
-  public static Timex2Time createSet(final String frequency, final String granularity) {
-    return new Timex2Time(null, null, true, Symbol.from(frequency), Symbol.from(granularity), null,
-        null, false);
-  }
 
   public static Timex2Time createEmpty() {
     return new Timex2Time(null, null, false, null, null, null, null, false);
@@ -184,44 +164,6 @@ public final class Timex2Time {
 
   public static Timex2Time future() {
     return new Timex2Time(FUTURE_REF, null, false, null, null, null, null, false);
-  }
-
-  /**
-   * Returns a copy of this Timex which is the same except with the anchor attributes set as
-   * specified.
-   *
-   * @deprecated Use {@link #copyBuilder()} and {@link Builder#withAnchorValue(Symbol)} and {@link
-   * Builder#withAnchorDirection(Symbol)} instead
-   */
-  @Deprecated
-  public Timex2Time anchoredCopy(final Symbol anchorVal, final Symbol anchorDir) {
-    checkNotNull(anchorDir);
-    AnchorDirection anchorDirEnum = AnchorDirection.valueOf(anchorDir.asString());
-    return new Timex2Time(val, mod, set, granularity, periodicity, checkNotNull(anchorVal),
-        anchorDirEnum, nonSpecific);
-  }
-
-  /**
-   * Returns a copy of this Timex which is the same except with the anchor attributes set as
-   * specified.
-   *
-   * @deprecated Use {@link #copyBuilder()} and {@link Builder#withAnchorValue(Symbol)} and {@link
-   * Builder#withAnchorDirection(Symbol)} instead
-   */
-  @Deprecated
-  public Timex2Time anchoredCopy(final String anchorVal, final Symbol anchorDir) {
-    return anchoredCopy(Symbol.from(checkNotNull(anchorVal)), checkNotNull(anchorDir));
-  }
-
-  /**
-   * Returns a copy of this Timex which is the same except with the specified modifier
-   *
-   * @deprecated Use {@link #copyBuilder()} and {@link Builder#withModifier(Modifier)} instead
-   */
-  @Deprecated
-  public Timex2Time modifiedCopy(final Modifier modifier) {
-    return new Timex2Time(val, modifier, set, granularity, periodicity, anchorVal, anchorDir,
-        nonSpecific);
   }
 
   public Builder copyBuilder() {
@@ -542,14 +484,6 @@ public final class Timex2Time {
 
   private Optional<Interval> parseValueAsInterval(String val) {
     return parseValueAsInterval(Symbol.from(val));
-  }
-
-  /**
-   * @deprecated Use {@link #builder()} and {@link Builder#withVal(Symbol)} instead
-   */
-  @Deprecated
-  public static Builder builderWithValue(Symbol val) {
-    return new Builder().withVal(val);
   }
 
   public static Builder builder() {

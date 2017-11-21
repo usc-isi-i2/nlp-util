@@ -1,7 +1,6 @@
 package edu.isi.nlp.serialization.jackson;
 
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.io.ByteArraySink;
+import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -10,15 +9,13 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.io.ByteSource;
-
-import org.immutables.value.Value;
-import org.junit.Test;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.io.ByteArraySink;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
+import org.immutables.value.Value;
+import org.junit.Test;
 
 /**
  * Tests {@link MapEntries} and {@link MultimapEntries}. See those for context.
@@ -91,7 +88,7 @@ interface MapSerializationPolymorphicTestValue {
 
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize(as=ImmutableMapSerializationTestKey.class)
 @JsonDeserialize(as=ImmutableMapSerializationTestKey.class)
@@ -100,7 +97,7 @@ abstract class MapSerializationTestKey implements MapSerializationPolymorphicTes
   abstract String bar();
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize(as=ImmutableMapSerializationTestKey2.class)
 @JsonDeserialize(as=ImmutableMapSerializationTestKey2.class)
@@ -109,7 +106,7 @@ abstract class MapSerializationTestKey2 implements MapSerializationPolymorphicTe
   abstract String rab();
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize(as=ImmutableMapSerializationTestValue.class)
 @JsonDeserialize(as=ImmutableMapSerializationTestValue.class)
@@ -118,7 +115,7 @@ abstract class MapSerializationTestValue implements MapSerializationPolymorphicT
   abstract String world();
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize(as=ImmutableMapSerializationTestValue2.class)
 @JsonDeserialize(as=ImmutableMapSerializationTestValue2.class)
@@ -127,7 +124,7 @@ abstract class MapSerializationTestValue2 implements MapSerializationPolymorphic
   abstract String dlrow();
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize(as=ImmutableMapSerializationTestObject.class)
 @JsonDeserialize(as=ImmutableMapSerializationTestObject.class)
@@ -138,7 +135,7 @@ abstract class MapSerializationTestObject {
   abstract ImmutableMap<MapSerializationTestKey, MapSerializationTestValue> map();
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize(as=ImmutableMapSerializationPolymorphicTestObject.class)
 @JsonDeserialize(as=ImmutableMapSerializationPolymorphicTestObject.class)

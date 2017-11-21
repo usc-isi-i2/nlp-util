@@ -1,22 +1,19 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.math.PercentileComputer;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
-
-import org.immutables.value.Value;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.math.PercentileComputer;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import org.immutables.value.Value;
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 public abstract class BrokenDownLinearScoreAggregator
     implements BootstrapInspector.SummaryAggregator<Map<String, FMeasureCounts>> {

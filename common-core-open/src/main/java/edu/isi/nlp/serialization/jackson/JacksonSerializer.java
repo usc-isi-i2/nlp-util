@@ -46,53 +46,14 @@ public final class JacksonSerializer {
     return builder().build();
   }
 
-  /**
-   * @deprecated  Prefer {@link #builder()}.
-   */
-  @Deprecated
-  public static Builder json() {
-    return new Builder();
-  }
-
-  /**
-   * @deprecated Prefer calling {@link Builder#prettyOutput()}.
-   */
-  @Deprecated
-  public static JacksonSerializer forPrettyJSON() {
-    return json().prettyOutput().build();
-  }
-
-  /**
-   * @deprecated Caching is diabled, so this is no longer necessary
-   */
-  @Deprecated
-  public static JacksonSerializer forNormalJSONUncached() {
-    return forNormalJSON();
-  }
 
   public static JacksonSerializer forSmile() {
     return builder().forSmile().build();
   }
 
-  /**
-   * @deprecated Prefer to call {@link Builder#forSmile()} on a builder.
-   */
-  @Deprecated
-  public static Builder smile() {
-    return new Builder().forSmile();
-  }
 
   public static Builder builder() {
     return new Builder();
-  }
-
-  /**
-   * @deprecated Caching is disabled, so this is no longer necessary
-   * @return
-   */
-  @Deprecated
-  public static JacksonSerializer forSmileUncached() {
-    return forSmile();
   }
 
 

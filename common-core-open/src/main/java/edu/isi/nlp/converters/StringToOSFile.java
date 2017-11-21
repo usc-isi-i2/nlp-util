@@ -1,10 +1,8 @@
 package edu.isi.nlp.converters;
 
-import edu.isi.nlp.os.OSDetector;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StringToOSFile implements StringConverter<File> {
 

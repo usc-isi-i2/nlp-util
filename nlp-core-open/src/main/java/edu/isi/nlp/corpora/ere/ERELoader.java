@@ -1,32 +1,27 @@
 package edu.isi.nlp.corpora.ere;
 
 
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.xml.XMLUtils;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.xml.XMLUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class ERELoader {
 
@@ -37,30 +32,6 @@ public final class ERELoader {
 
   private ERELoader(final boolean derivedIDsHaveDocID) {
     this.derivedIDsHaveDocID = derivedIDsHaveDocID;
-  }
-
-  /**
-   * @deprecated Prefer {@link #builder()}
-   *
-   * This returns an ERELoader preserving the old behavior, which would mangle the ERE ids by
-   * prefixing them with the docID. New behavior does not do this by default.
-   *
-   * The old behavior is preserved here because this class is used to produce sexp output for
-   * CASerif, and rather than trying to fix CASerif or track every reference, it's easier just to
-   * leave this default. It should be removed in the future.
-   */
-  @Deprecated
-  public static ERELoader create() {
-    return new ERELoader(true);
-  }
-
-
-  /**
-   * @deprecated Prefer {@link #builder()}.
-   */
-  @Deprecated
-  public static ERELoader from(final Parameters params) {
-    return create();
   }
 
   public EREDocument loadFrom(final File f) throws IOException {

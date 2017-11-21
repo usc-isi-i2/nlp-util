@@ -1,13 +1,11 @@
 package edu.isi.nlp;
 
 import com.google.common.annotations.Beta;
-
-import org.immutables.value.Value;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.immutables.value.Value;
 
 /**
  * This is the text group's default style for immutable objects generated using
@@ -32,5 +30,5 @@ import java.lang.annotation.Target;
     // the template
     visibility = Value.Style.ImplementationVisibility.PACKAGE,
     overshadowImplementation = true)
-public @interface TextGroupImmutable {
+public @interface IsiNlpImmutable {
 }

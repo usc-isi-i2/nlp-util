@@ -2,11 +2,6 @@ package edu.isi.nlp.evaluation;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import edu.isi.nlp.OptionalUtils;
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.collections.MapUtils;
-import edu.isi.nlp.math.PercentileComputer;
-import edu.isi.nlp.serialization.jackson.JacksonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Charsets;
@@ -21,6 +16,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.primitives.Doubles;
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.OptionalUtils;
+import edu.isi.nlp.collections.MapUtils;
+import edu.isi.nlp.math.PercentileComputer;
+import edu.isi.nlp.serialization.jackson.JacksonSerializer;
 import edu.isi.nlp.serialization.jackson.MultimapEntries.FromMultimap;
 import edu.isi.nlp.serialization.jackson.MultimapEntries.ToImmutableListMultimap;
 import java.io.File;
@@ -32,7 +32,7 @@ import org.immutables.value.Value;
 /**
  * Writes files describing some scoring metric which has been bootstrapped.
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 public abstract class BootstrapWriter {
   /**
@@ -268,7 +268,7 @@ public abstract class BootstrapWriter {
 
   public static class Builder extends ImmutableBootstrapWriter.Builder {}
 
-  @TextGroupImmutable
+  @IsiNlpImmutable
   @Value.Immutable
   @JsonSerialize(as=ImmutableSerializedBootstrapResults.class)
   @JsonDeserialize(as=ImmutableSerializedBootstrapResults.class)

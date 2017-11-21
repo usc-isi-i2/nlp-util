@@ -1,5 +1,24 @@
 package edu.isi.nlp.parameters;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
+
+import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
+import com.google.common.collect.Sets;
+import com.google.common.io.CharSource;
+import com.google.common.io.Files;
 import edu.isi.nlp.StringUtils;
 import edu.isi.nlp.converters.StrictStringToBoolean;
 import edu.isi.nlp.converters.StringConverter;
@@ -31,23 +50,6 @@ import edu.isi.nlp.validators.IsNonNegative;
 import edu.isi.nlp.validators.IsPositive;
 import edu.isi.nlp.validators.ValidationException;
 import edu.isi.nlp.validators.Validator;
-
-import com.google.common.annotations.Beta;
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Range;
-import com.google.common.collect.Sets;
-import com.google.common.io.CharSource;
-import com.google.common.io.Files;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -65,11 +67,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.in;
-import static com.google.common.base.Predicates.not;
-
 
 /**
  * Represents a set of parameters passed into a program.  The parameters are assumed to originate as
@@ -82,7 +79,6 @@ import static com.google.common.base.Predicates.not;
  * @author rgabbard
  * @author clignos
  */
-@Beta
 public final class Parameters {
 
   public static final String DO_OS_CONVERSION_PARAM = "os_filepath_conversion";
@@ -90,17 +86,6 @@ public final class Parameters {
   private static final String DELIM = ".";
   private static final Joiner JOINER = Joiner.on(DELIM);
   private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
-
-  /**
-   * Constructs a Parameters object from a <code>Map</code>.  The Map may contain neither null keys,
-   * empty keys, or null values.
-   *
-   * @deprecated Prefer fromMap()
-   */
-  @Deprecated
-  public Parameters(final Map<String, String> params) {
-    this(params, ImmutableList.<String>of());
-  }
 
   private Parameters(final Map<String, String> params, final List<String> namespace) {
     this.namespace = ImmutableList.copyOf(namespace);
@@ -1386,7 +1371,6 @@ public final class Parameters {
   }
 
 
-  @Beta
   interface Listener {
 
     void observeParameterRequest(String param);
@@ -1431,7 +1415,6 @@ public final class Parameters {
     return ret.build();
   }
 
-  @Beta
   public interface NamespaceToObjectMapper<T> {
 
     T fromNameSpace(Parameters params);

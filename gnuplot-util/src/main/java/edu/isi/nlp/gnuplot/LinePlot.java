@@ -1,19 +1,16 @@
 package edu.isi.nlp.gnuplot;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public final class LinePlot implements GnuPlottable {
@@ -34,12 +31,6 @@ public final class LinePlot implements GnuPlottable {
 
   public static Builder builder() {
     return new Builder();
-  }
-
-  @Deprecated
-  public void renderToEmptySubdirectory(final File baseDirectory, final String subDirectoryName)
-      throws IOException {
-    throw new RuntimeException("update your code to use toPlotBundle()");
   }
 
   private String data()  {
@@ -132,14 +123,14 @@ public final class LinePlot implements GnuPlottable {
     pb.append("\n");
   }
 
-  final String title;
-  final String xLabel;
-  final String yLabel;
-  final Range<Double> xRange;
-  final Range<Double> yRange;
-  final double pointSize;
-  final List<LineData> lineDatas;
-  final List<String> preCommands;
+  private final String title;
+  private final String xLabel;
+  private final String yLabel;
+  private final Range<Double> xRange;
+  private final Range<Double> yRange;
+  private final double pointSize;
+  private final List<LineData> lineDatas;
+  private final List<String> preCommands;
 
   @Override
   public PlotBundle toPlotBundle() {
@@ -200,28 +191,14 @@ public final class LinePlot implements GnuPlottable {
       return this;
     }
 
-    /**
-     * add a command to be written after title, sizing stanzas, but before data, such as set xtics
-     *
-     * this will vanish and we won't tell you
-     * @param command
-     * @return
-     */
-    @Beta
-    @Deprecated
-    public Builder addPreCommand(final String command) {
-      preCommands.add(command);
-      return this;
-    }
-
-    String title = null;
-    String xLabel = null;
-    String yLabel = null;
-    Range<Double> xRange = null;
-    Range<Double> yRange = null;
-    double pointSize;
-    List<LineData> lineDatas = Lists.newArrayList();
-    ArrayList<String> preCommands = Lists.newArrayList();
+    private String title = null;
+    private String xLabel = null;
+    private String yLabel = null;
+    private Range<Double> xRange = null;
+    private Range<Double> yRange = null;
+    private double pointSize;
+    private List<LineData> lineDatas = Lists.newArrayList();
+    private ArrayList<String> preCommands = Lists.newArrayList();
   }
 
 }

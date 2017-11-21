@@ -2,18 +2,15 @@ package edu.isi.nlp;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Ordering;
-
-import org.immutables.value.Value;
-
 import java.util.List;
-
 import javax.annotation.Nullable;
+import org.immutables.value.Value;
 
 /**
  * For documentation, see {@link OrderingUtils#explicitOrderingUnrankedLast(List)}
  * and friends.
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 abstract class ExplicitOrderingNonExclusive<T> extends Ordering<T> {
 

@@ -1,31 +1,31 @@
 package edu.isi.nlp;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ibm.icu.util.ULocale;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * This is a wrapper for ICU Locale which handles serialization
  *
  * @author Ryan Gabbard
  */
-public final class SerifLocale {
+public final class NlpLocale {
 
   private final ULocale icuLocale;
 
-  private SerifLocale(final ULocale icuLocale) {
+  private NlpLocale(final ULocale icuLocale) {
     this.icuLocale = checkNotNull(icuLocale);
   }
 
   @JsonCreator
-  public static SerifLocale forLocaleString(@JsonProperty("localeString") String localeString) {
-    return new SerifLocale(new ULocale(localeString));
+  public static NlpLocale forLocaleString(@JsonProperty("localeString") String localeString) {
+    return new NlpLocale(new ULocale(localeString));
   }
 
-  public static SerifLocale forIcuLocale(ULocale icuLocale) {
-    return new SerifLocale(icuLocale);
+  public static NlpLocale forIcuLocale(ULocale icuLocale) {
+    return new NlpLocale(icuLocale);
   }
 
   @JsonProperty("localeString")
@@ -46,7 +46,7 @@ public final class SerifLocale {
       return false;
     }
 
-    final SerifLocale that = (SerifLocale) o;
+    final NlpLocale that = (NlpLocale) o;
 
     return icuLocale != null ? icuLocale.equals(that.icuLocale) : that.icuLocale == null;
 

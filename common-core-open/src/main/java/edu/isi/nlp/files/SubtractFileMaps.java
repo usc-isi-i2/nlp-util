@@ -1,22 +1,19 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
-
-import org.immutables.value.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import org.immutables.value.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Given two key-to-file maps, produces a new map which includes all key-value mappsing from the
@@ -109,7 +106,7 @@ public final class SubtractFileMaps {
   }
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 abstract class StuffToSubtract {
 

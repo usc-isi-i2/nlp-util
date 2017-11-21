@@ -1,30 +1,27 @@
 package edu.isi.nlp.strings;
 
-import edu.isi.nlp.StringUtils;
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.UnicodeFriendlyString;
-import edu.isi.nlp.UnicodeUnsafe;
-import edu.isi.nlp.strings.offsets.ByteOffset;
-import edu.isi.nlp.strings.offsets.CharOffset;
-import edu.isi.nlp.strings.offsets.EDTOffset;
-import edu.isi.nlp.strings.offsets.OffsetGroup;
-import edu.isi.nlp.strings.offsets.OffsetGroupRange;
-import edu.isi.nlp.strings.offsets.OffsetRange;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.getLast;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.StringUtils;
+import edu.isi.nlp.UnicodeFriendlyString;
+import edu.isi.nlp.UnicodeUnsafe;
 import edu.isi.nlp.strings.offsets.ASRTime;
-import org.immutables.value.Value;
-
+import edu.isi.nlp.strings.offsets.ByteOffset;
+import edu.isi.nlp.strings.offsets.CharOffset;
+import edu.isi.nlp.strings.offsets.EDTOffset;
+import edu.isi.nlp.strings.offsets.OffsetGroup;
+import edu.isi.nlp.strings.offsets.OffsetGroupRange;
+import edu.isi.nlp.strings.offsets.OffsetRange;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.getLast;
+import org.immutables.value.Value;
 
 /**
  * Stores and manipulates strings in a way that tracks the relationship between each Unicode
@@ -170,7 +167,7 @@ import static com.google.common.collect.Iterables.getLast;
  */
 @JsonSerialize(as = ImmutableLocatedString.class)
 @JsonDeserialize(as = ImmutableLocatedString.class)
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable(prehash = true)
 @Value.Enclosing
 public abstract class LocatedString {
@@ -452,7 +449,7 @@ public abstract class LocatedString {
    * This is an aspect of the internal representation of {@link LocatedString} which is exposed
    * only for I/O by SerifXMLLoader. Users should never access {@link CharacterRegion}s directly.
    */
-  @TextGroupImmutable
+  @IsiNlpImmutable
   @Value.Immutable(prehash = true)
   public static abstract class CharacterRegion {
 
@@ -1048,7 +1045,7 @@ public abstract class LocatedString {
  * byte offsets, although this would be possible. Currently the produced EDT offsets are undefined:
  * users should make no assumptions whatsoever about what the resulting EDT offsets are.
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 abstract class OffsetCalculator {
 

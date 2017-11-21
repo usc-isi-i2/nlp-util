@@ -1,6 +1,6 @@
 package edu.isi.nlp.symbols;
 
-import edu.isi.nlp.converters.StringConverter;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -9,11 +9,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
-
-import java.util.Comparator;
+import edu.isi.nlp.converters.StringConverter;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utility methods for {link Symbol}s
@@ -38,41 +35,6 @@ public class SymbolUtils {
   public static Ordering<Symbol> byStringOrdering() {
     return symbolStringOrdering;
   }
-
-  /**
-   * Compares {@link Symbol}s by the {@link String}s used to create them. Use {@link
-   * #byStringOrdering()} instead.
-   *
-   * @author rgabbard
-   * @see #byStringOrdering()
-   */
-  @Deprecated
-  public static class ByString implements Comparator<Symbol> {
-
-    @Override
-    public int compare(final Symbol s1, final Symbol s2) {
-      if (s1 == null) {
-        if (s2 == null) {
-          return 0;
-        } else {
-          return -1;
-        }
-      } else if (s2 == null) {
-        return 1;
-      }
-      return s1.toString().compareTo(s2.toString());
-    }
-  }
-
-  /**
-   * For every input <code>String s</code>, returns <code>Symbol.from(s)</code>.
-   */
-  public static final Function<String, Symbol> Symbolize = new Function<String, Symbol>() {
-    @Override
-    public Symbol apply(final String s) {
-      return Symbol.from(s);
-    }
-  };
 
   public static StringConverter<Symbol> StringToSymbol() {
     return StringToSymbolConverter.INSTANCE;

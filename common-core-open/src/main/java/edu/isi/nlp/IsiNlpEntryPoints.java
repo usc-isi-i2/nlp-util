@@ -1,8 +1,5 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.parameters.ParametersModule;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
@@ -13,37 +10,36 @@ import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.grapher.graphviz.GraphvizGrapher;
 import com.google.inject.grapher.graphviz.GraphvizModule;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.parameters.ParametersModule;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Methods for running {@link TextGroupEntryPoint}. See {@link #runEntryPoint(Class, Class,
+ * Methods for running {@link IsiNlpEntryPoint}. See {@link #runEntryPoint(Class, Class,
  * String[])} for primary documentation.
  *
  * @author Ryan Gabbard
  */
-public final class TextGroupEntryPoints {
+public final class IsiNlpEntryPoints {
 
-  private static final Logger log = LoggerFactory.getLogger(TextGroupEntryPoints.class);
+  private static final Logger log = LoggerFactory.getLogger(IsiNlpEntryPoints.class);
 
-  private TextGroupEntryPoints() {
+  private IsiNlpEntryPoints() {
     throw new UnsupportedOperationException();
   }
 
   /**
-   * Runs a {@link TextGroupEntryPoint}.  The entry point class will be injected using a {@link
+   * Runs a {@link IsiNlpEntryPoint}.  The entry point class will be injected using a {@link
    * Injector} configured by two modules: a {@link ParametersModule}
    * initialized by loading the first (and required-to-be-only) argument in {@code args} and an
    * instance of {@code configModuleClass} instantiated according to the rules of {@link
    * ModuleUtils#instantiateModule(Class, Parameters)}.  This method will then call {@link
-   * TextGroupEntryPoint#run()} on the injected entry point object.
+   * IsiNlpEntryPoint#run()} on the injected entry point object.
    *
    * This method also provides some convenient features for debugging, controlled by parameters:
    *
@@ -62,7 +58,7 @@ public final class TextGroupEntryPoints {
    *
    * </ul>
    */
-  public static void runEntryPoint(Class<? extends TextGroupEntryPoint> entryPointClass,
+  public static void runEntryPoint(Class<? extends IsiNlpEntryPoint> entryPointClass,
       Class<? extends Module> configModuleClass, String[] args) throws Exception {
     runEntryPointInternal(entryPointClass, args, configModuleClass);
   }
@@ -73,7 +69,7 @@ public final class TextGroupEntryPoints {
    * {@code FromParametersModule} (or any name supported by
    * {@link ModuleUtils#classNameToModule(Parameters, Class)}
    */
-  public static void runEntryPoint(Class<? extends TextGroupEntryPoint> entryPointClass,
+  public static void runEntryPoint(Class<? extends IsiNlpEntryPoint> entryPointClass,
       String[] args) throws Exception {
     runEntryPointInternal(entryPointClass, args, null);
   }
@@ -81,7 +77,7 @@ public final class TextGroupEntryPoints {
   private static final String EXCEPTION_PASSTHROUGH_PARAM =
       "com.bbn.bue.common.debug.allowExceptionsToPassUncaught";
 
-  private static void runEntryPointInternal(Class<? extends TextGroupEntryPoint> entryPointClass,
+  private static void runEntryPointInternal(Class<? extends IsiNlpEntryPoint> entryPointClass,
       String[] args, @Nullable Class<? extends Module> configModuleClass) throws Exception {
     if (args.length != 1) {
       System.err.println(entryPointClass.getName() + " takes a single argument, a parameter file.");
@@ -127,7 +123,7 @@ public final class TextGroupEntryPoints {
 
   private static final String SKIP_EXECUTION_PARAM = "com.bbn.bue.common.debug.skipExecution";
 
-  private static void internalExecute(final Class<? extends TextGroupEntryPoint> entryPointClass,
+  private static void internalExecute(final Class<? extends IsiNlpEntryPoint> entryPointClass,
       @Nullable final Class<? extends Module> configModuleClass, final Parameters params)
       throws Exception {
     // the configuration module class can be specified or auto-detected, depending on which
@@ -165,7 +161,7 @@ public final class TextGroupEntryPoints {
       "com.bbn.bue.common.debug.graphGuiceDependenciesTo";
 
   private static void maybeGraphGuiceDependencies(final Injector injector,
-      final Class<? extends TextGroupEntryPoint> entryPointClass, final Parameters params)
+      final Class<? extends IsiNlpEntryPoint> entryPointClass, final Parameters params)
       throws IOException {
 
     final Optional<File> dotFile = params.getOptionalCreatableFile(GRAPH_DEPENDENCIES_PARAM);

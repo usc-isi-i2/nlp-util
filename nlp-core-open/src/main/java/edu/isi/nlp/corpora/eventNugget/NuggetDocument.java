@@ -1,9 +1,7 @@
 package edu.isi.nlp.corpora.eventNugget;
 
-import edu.isi.nlp.TextGroupImmutable;
-
 import com.google.common.collect.ImmutableList;
-
+import edu.isi.nlp.IsiNlpImmutable;
 import org.immutables.func.Functional;
 import org.immutables.value.Value;
 
@@ -12,7 +10,7 @@ import org.immutables.value.Value;
  */
 @Value.Immutable(prehash = true)
 @Functional
-@TextGroupImmutable
+@IsiNlpImmutable
 public abstract class NuggetDocument {
 
   @Value.Parameter

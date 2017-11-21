@@ -1,21 +1,18 @@
 package edu.isi.nlp.gnuplot;
 
-import edu.isi.nlp.AbstractParameterizedModule;
-import edu.isi.nlp.ModuleFromParameter;
-import edu.isi.nlp.files.FileUtils;
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.gnuplot.outputformats.Png;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.inject.Provides;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.AbstractParameterizedModule;
+import edu.isi.nlp.ModuleFromParameter;
+import edu.isi.nlp.files.FileUtils;
+import edu.isi.nlp.gnuplot.outputformats.Png;
+import edu.isi.nlp.parameters.Parameters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -28,14 +25,11 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import javax.inject.Inject;
 import javax.inject.Qualifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-@Beta
 public final class GnuPlotRenderer {
   private static final Logger log = LoggerFactory.getLogger(GnuPlotRenderer.class);
   private final File executable;
@@ -83,12 +77,6 @@ public final class GnuPlotRenderer {
         renderer.render(f, FileUtils.swapExtension(f, "png"));
       }
     }
-  }
-
-  @Deprecated
-  public void render(File gnuPlotCommandFile, File pngOutputFile)
-      throws IOException, InterruptedException {
-    throw new UnsupportedOperationException("Revise you code to use PlotBundles");
   }
 
   public void renderTo(GnuPlottable plot, File pngOutputFile) throws IOException {

@@ -1,16 +1,13 @@
 package edu.isi.nlp.clusters;
 
-import edu.isi.nlp.StringNormalizer;
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.symbols.Symbol;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Optional;
-
-import org.immutables.value.Value;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.StringNormalizer;
+import edu.isi.nlp.symbols.Symbol;
 import java.util.Collection;
+import org.immutables.value.Value;
 
 /**
  * Utilities for working with {@link HierarchicalWordClusterings}
@@ -34,7 +31,7 @@ public final class HierarchicalWordClusterings {
 }
 
 @Value.Immutable
-@TextGroupImmutable
+@IsiNlpImmutable
 @JsonSerialize(as = ImmutableNormalizedWordClustering.class)
 @JsonDeserialize(as = ImmutableNormalizedWordClustering.class)
 abstract class NormalizedWordClustering implements HierarchicalWordClustering {

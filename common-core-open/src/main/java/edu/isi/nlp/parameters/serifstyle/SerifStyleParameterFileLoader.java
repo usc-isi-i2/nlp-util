@@ -1,20 +1,14 @@
 package edu.isi.nlp.parameters.serifstyle;
 
-import edu.isi.nlp.StringUtils;
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.parameters.ParameterFileLoader;
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.parameters.exceptions.ParseFailureException;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
-
-import org.immutables.value.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.StringUtils;
+import edu.isi.nlp.parameters.ParameterFileLoader;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.parameters.exceptions.ParseFailureException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +18,9 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.immutables.value.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for parsing Serif-style parameter files to <code>Map<String, String></code>.
@@ -53,7 +50,7 @@ import java.util.regex.Pattern;
  *
  * @author rgabbard
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @Value.Enclosing
 public abstract class SerifStyleParameterFileLoader implements ParameterFileLoader {
@@ -84,7 +81,7 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
   }
 
   @Value.Immutable
-  @TextGroupImmutable
+  @IsiNlpImmutable
   abstract static class ParseIssue {
     abstract ImmutableList<File> includeStack();
     abstract int line();

@@ -1,8 +1,9 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.files.FileUtils;
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Functions.compose;
+import static com.google.common.base.Preconditions.checkState;
+import static edu.isi.nlp.CodepointMatcher.basicMultilingualPlane;
+import static edu.isi.nlp.CodepointMatcher.not;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
@@ -11,20 +12,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.inject.AbstractModule;
-
+import edu.isi.nlp.files.FileUtils;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
 import edu.isi.nlp.symbols.SymbolUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.Map;
-
 import javax.inject.Inject;
-
-import static edu.isi.nlp.CodepointMatcher.basicMultilingualPlane;
-import static edu.isi.nlp.CodepointMatcher.not;
-import static com.google.common.base.Functions.compose;
-import static com.google.common.base.Preconditions.checkState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Replaces all characters in input documents which contain code points outside the basic
@@ -40,7 +36,7 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * @author Ryan Gabbard
  */
-public final class ReplaceAstralUnicodeCodepoints implements TextGroupEntryPoint {
+public final class ReplaceAstralUnicodeCodepoints implements IsiNlpEntryPoint {
 
   private static final Logger log = LoggerFactory.getLogger(ReplaceAstralUnicodeCodepoints.class);
 
@@ -182,10 +178,10 @@ public final class ReplaceAstralUnicodeCodepoints implements TextGroupEntryPoint
   }
 
   public static void main(String[] args) throws Exception {
-    TextGroupEntryPoints.runEntryPoint(ReplaceAstralUnicodeCodepoints.class, args);
+    IsiNlpEntryPoints.runEntryPoint(ReplaceAstralUnicodeCodepoints.class, args);
   }
 
-  // does nothing, just here to make TextGroupEntryPoints.runEntryPoint happy
+  // does nothing, just here to make IsiNlpEntryPoints.runEntryPoint happy
   static class Module extends AbstractModule {
 
     @Override

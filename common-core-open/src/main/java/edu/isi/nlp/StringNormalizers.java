@@ -7,12 +7,10 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.text.Normalizer2;
-
-import org.immutables.value.Value;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.immutables.value.Value;
 
 /**
  * Provides various normalizers for strings
@@ -83,7 +81,7 @@ public final class StringNormalizers {
    * Converts the input to lower-case in a locale-sensitive way. Locales matter - for example the
    * lower case verison of I in Turkish is not i but dot-less i!
    */
-  public static StringNormalizer toLowercase(SerifLocale locale) {
+  public static StringNormalizer toLowercase(NlpLocale locale) {
     return ToLowerCase.forLocale(locale);
   }
 
@@ -91,7 +89,7 @@ public final class StringNormalizers {
    * Converts the input to upper-case in a locale-sensitive way. Locales matter - for example the
    * upper case verison of i in Turkish is not I but İ!
    */
-  public static StringNormalizer toUppercase(SerifLocale locale) {
+  public static StringNormalizer toUppercase(NlpLocale locale) {
     return ToUpperCase.forLocale(locale);
   }
 
@@ -136,7 +134,7 @@ enum IdentityNormalizer implements StringNormalizer {
 /**
  * See {@link StringNormalizers#translate(CodepointMatcher, char)}
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
 @JsonDeserialize
@@ -162,7 +160,7 @@ abstract class CodepointTranslatorStringNormalizer implements StringNormalizer {
 /**
  * See {@link StringNormalizers#collapseConsecutive(CodepointMatcher)}
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
 @JsonDeserialize
@@ -193,7 +191,7 @@ abstract class CollapseConsecutiveCharacters implements StringNormalizer {
   }
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
 @JsonDeserialize
@@ -217,7 +215,7 @@ abstract class StripFromEnd implements StringNormalizer {
 /**
  * See {@link StringNormalizers#compose(Iterable)}
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
 @JsonDeserialize
@@ -245,40 +243,40 @@ abstract class CompositeStringNormalizer implements StringNormalizer {
   }
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
 @JsonDeserialize
 abstract class ToLowerCase implements StringNormalizer {
 
   @Value.Parameter
-  public abstract SerifLocale locale();
+  public abstract NlpLocale locale();
 
   @Override
   public String normalize(final String input) {
     return UCharacter.toLowerCase(locale().asIcuLocale(), input);
   }
 
-  public static ToLowerCase forLocale(SerifLocale locale) {
+  public static ToLowerCase forLocale(NlpLocale locale) {
     return ImmutableToLowerCase.of(locale);
   }
 }
 
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
 @JsonDeserialize
 abstract class ToUpperCase implements StringNormalizer {
 
   @Value.Parameter
-  public abstract SerifLocale locale();
+  public abstract NlpLocale locale();
 
   @Override
   public String normalize(final String input) {
     return UCharacter.toUpperCase(locale().asIcuLocale(), input);
   }
 
-  public static ToUpperCase forLocale(SerifLocale locale) {
+  public static ToUpperCase forLocale(NlpLocale locale) {
     return ImmutableToUpperCase.of(locale);
   }
 }
@@ -326,7 +324,7 @@ enum NfcNormalizer implements StringNormalizer {
 /**
  * See {@link StringNormalizers#asFunction(StringNormalizer)}.
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
 @JsonDeserialize

@@ -1,22 +1,19 @@
 package edu.isi.nlp.edl;
 
-import edu.isi.nlp.TextGroupImmutable;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharSink;
-
-import org.immutables.value.Value;
-
+import edu.isi.nlp.IsiNlpImmutable;
 import java.io.IOException;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import org.immutables.value.Value;
 
 /**
  * Writes files in the submission format for the TAC KBP Entity Detection and Linking eval.
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 public abstract class EDLWriter {
 
@@ -24,15 +21,6 @@ public abstract class EDLWriter {
    * A default KB ID to assign to {@link EDLMention}s with absent KB IDs.
    */
   public abstract Optional<String> defaultKbId();
-
-  /**
-   * @deprecated Prefer {@link Builder}. To preserve legacy behavior, the constructed object
-   * uses a default KB ID of {@code NIL}.
-   */
-  @Deprecated
-  public static EDLWriter create() {
-    return new EDLWriter.Builder().defaultKbId("NIL").build();
-  }
 
   /**
    * Writes out the specified {@link EDLMention}s. If a {@link #defaultKbId} was not specified,

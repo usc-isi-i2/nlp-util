@@ -1,7 +1,6 @@
 package edu.isi.nlp.scoring;
 
 import com.google.common.base.Objects;
-
 import java.util.Map;
 
 
@@ -14,13 +13,7 @@ import java.util.Map;
  */
 public final class Scored<T> {
 
-  /**
-   * Deprecated only as public constructor. Use {@link #from(Object, double)}.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public Scored(final T item, final double score) {
+  private Scored(final T item, final double score) {
     this.item = item;
     this.score = score;
   }

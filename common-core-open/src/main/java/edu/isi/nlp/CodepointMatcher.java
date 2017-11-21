@@ -1,21 +1,19 @@
 package edu.isi.nlp;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.primitives.Ints;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
 import javax.annotation.Nullable;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Like Guava's {@link com.google.common.base.CharMatcher}, but handles codepoints outside the BMP.
@@ -199,14 +197,6 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
         return matcher.matches(input.charValue());
       }
     });
-  }
-
-  /**
-   * @deprecated Prefer the typo-less {@link #basicMultilingualPlane()}
-   */
-  @Deprecated
-  public static CodepointMatcher basicMultilingualPlace() {
-    return basicMultilingualPlane();
   }
 
   /**

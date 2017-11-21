@@ -1,17 +1,14 @@
 package edu.isi.nlp.strings.offsets;
 
-import edu.isi.nlp.TextGroupImmutable;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import java.util.ArrayList;
+import java.util.List;
 import org.immutables.func.Functional;
 import org.immutables.value.Value;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @Functional
 public abstract class OffsetGroup {

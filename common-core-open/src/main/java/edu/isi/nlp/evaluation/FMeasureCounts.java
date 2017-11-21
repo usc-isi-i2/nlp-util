@@ -1,6 +1,6 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.TextGroupImmutable;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -11,20 +11,17 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Doubles;
-
-import org.immutables.func.Functional;
-import org.immutables.value.Value;
-
+import edu.isi.nlp.IsiNlpImmutable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.immutables.func.Functional;
+import org.immutables.value.Value;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @Functional
 @JsonSerialize(as=ImmutableFMeasureCounts.class)
@@ -66,24 +63,6 @@ public abstract class FMeasureCounts extends FMeasureInfo {
       .falseNegatives(falseNegatives)
       .numItemsInKey(keyCount)
       .numPredicted(sysCount).build();
-  }
-
-  /**
-   * @deprecated Prefer {@link #fromTPFPFN(double, double, double)}.
-   */
-  @Deprecated
-  public static FMeasureCounts from(final double truePositives,
-      final double falsePositives, final double falseNegatives) {
-    return fromTPFPFN(truePositives, falsePositives, falseNegatives);
-  }
-
-  /**
-   * @deprecated Prefer {@link #fromTPFPFN(double, double, double)}.
-   */
-  @Deprecated
-  public static FMeasureCounts from(final int truePositives,
-      final int falsePositives, final int falseNegatives) {
-    return fromTPFPFN(truePositives, falsePositives, falseNegatives);
   }
 
   // derived accessors
@@ -177,7 +156,7 @@ public abstract class FMeasureCounts extends FMeasureInfo {
     final int falsePositives = predictedPositiveItems.size() - truePositives;
     final int falseNegatives = allPositiveItems.size() - truePositives;
 
-    return from(truePositives, falsePositives, falseNegatives);
+    return fromTPFPFN(truePositives, falsePositives, falseNegatives);
   }
 
   public void writeTo(final DataOutputStream out) throws IOException {

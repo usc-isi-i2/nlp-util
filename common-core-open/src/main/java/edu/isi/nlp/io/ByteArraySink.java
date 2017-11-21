@@ -1,7 +1,6 @@
 package edu.isi.nlp.io;
 
 import com.google.common.io.ByteSink;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,15 +15,9 @@ public class ByteArraySink extends ByteSink {
 
   private final ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-  /**
-   * @deprecated Prefer {@link #create()}
-   */
-  @Deprecated
-  public ByteArraySink() {
-
+  private ByteArraySink() {
   }
 
-  @SuppressWarnings("Deprecated")
   public static ByteArraySink create() {
     return new ByteArraySink();
   }
@@ -39,3 +32,4 @@ public class ByteArraySink extends ByteSink {
     return stream.toByteArray();
   }
 }
+

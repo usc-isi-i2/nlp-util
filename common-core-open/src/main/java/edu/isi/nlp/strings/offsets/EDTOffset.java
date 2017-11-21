@@ -2,11 +2,7 @@ package edu.isi.nlp.strings.offsets;
 
 public final class EDTOffset extends AbstractOffset<EDTOffset> {
 
-  /**
-   * Deprecated as public constructor, use asEDTOffset
-   */
-  @Deprecated
-  public EDTOffset(int val) {
+  private EDTOffset(int val) {
     super(val);
   }
 

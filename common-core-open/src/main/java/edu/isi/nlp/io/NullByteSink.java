@@ -2,7 +2,6 @@ package edu.isi.nlp.io;
 
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteStreams;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -11,15 +10,10 @@ import java.io.OutputStream;
  */
 public final class NullByteSink extends ByteSink {
 
-  /**
-   * Prefer {@link #create()}
-   */
-  @Deprecated
-  public NullByteSink() {
+  private NullByteSink() {
 
   }
 
-  @SuppressWarnings("deprecation")
   public static ByteSink create() {
     return new NullByteSink();
   }

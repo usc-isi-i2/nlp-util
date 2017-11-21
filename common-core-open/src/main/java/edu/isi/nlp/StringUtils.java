@@ -1,14 +1,13 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.strings.offsets.CharOffset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -17,7 +16,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
-
+import edu.isi.nlp.strings.offsets.CharOffset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
 import java.io.File;
 import java.io.IOException;
 import java.text.Normalizer;
@@ -26,11 +26,7 @@ import java.util.Set;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.Nullable;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public final class StringUtils {
@@ -188,14 +184,12 @@ public final class StringUtils {
     };
   }
 
-  @SuppressWarnings("deprecation")
   public static Joiner spaceJoiner() {
-    return SpaceJoiner;
+    return Joiner.on(" ");
   }
 
-  @SuppressWarnings("deprecation")
   public static Joiner commaSpaceJoiner() {
-    return CommaSpaceJoiner;
+    return Joiner.on(", ");
   }
 
   private static final Joiner OR_JOINER = Joiner.on("|");
@@ -207,55 +201,18 @@ public final class StringUtils {
     return OR_JOINER;
   }
 
-  /**
-   * @deprecated Prefer {@link #spaceJoiner()}
-   */
-  @Deprecated
-  public static final Joiner SpaceJoiner = Joiner.on(" ");
-
-  @SuppressWarnings("deprecation")
   public static Joiner unixNewlineJoiner() {
-    return NewlineJoiner;
+    return Joiner.on("\n");
   }
 
-  /**
-   * @deprecated Prefer {@link #unixNewlineJoiner()}
-   */
-  @Deprecated
-  public static final Joiner NewlineJoiner = Joiner.on("\n");
 
-  @SuppressWarnings("deprecation")
   public static Joiner commaJoiner() {
-    return CommaJoiner;
+    return Joiner.on(",");
   }
 
-  @SuppressWarnings("deprecation")
   public static Joiner dotJoiner() {
-    return DotJoiner;
+    return Joiner.on(".");
   }
-
-  /**
-   * @deprecated Prefer {@link #commaJoiner()}.
-   */
-  @Deprecated
-  public static final Joiner CommaJoiner = Joiner.on(",");
-  public static final Function<Iterable<?>, String> CommaJoin =
-      JoinFunction(CommaJoiner);
-  public static final Joiner CommaSpaceJoiner = Joiner.on(", ");
-  public static final Function<Iterable<?>, String> CommaSpaceJoin =
-      JoinFunction(CommaSpaceJoiner);
-  public static final Joiner SemicolonJoiner = Joiner.on(";");
-  public static final Function<Iterable<?>, String> SemicolonJoin =
-      JoinFunction(SemicolonJoiner);
-  public static final Joiner SemicolonSpaceJoiner = Joiner.on("; ");
-  public static final Function<Iterable<?>, String> SemicolonSpaceJoin =
-      JoinFunction(SemicolonSpaceJoiner);
-  @Deprecated
-  /**
-   * Prefer {@link #dotJoiner()}
-   */
-  public static final Joiner DotJoiner = Joiner.on(".");
-
 
   /************* Splitters ********************/
 
@@ -264,7 +221,7 @@ public final class StringUtils {
    * Splits on tab, omitting empty strings and trimming results.
    */
   public static Splitter onTabs() {
-    return OnTabs;
+    return Splitter.on("\t").trimResults().omitEmptyStrings();
   }
 
 
@@ -272,7 +229,7 @@ public final class StringUtils {
    * Splits on spaces, omitting empty strings and trimming results.
    */
   public static Splitter onSpaces() {
-    return OnSpaces;
+    return Splitter.on(" ").trimResults().omitEmptyStrings();
   }
 
 
@@ -280,7 +237,7 @@ public final class StringUtils {
    * Splits on Unix newlines, omitting empty strings and trimming results.
    */
   public static Splitter onUnixNewlines() {
-    return OnUnixNewlines;
+    return Splitter.on("\n").trimResults().omitEmptyStrings();
   }
 
 
@@ -288,7 +245,7 @@ public final class StringUtils {
    * Splits on commas, omitting empty strings and trimming results.
    */
   public static Splitter onCommas() {
-    return OnCommas;
+    return Splitter.on(",").trimResults().omitEmptyStrings();
   }
 
   private static final Splitter onDots = Splitter.on(".").trimResults().omitEmptyStrings();
@@ -308,31 +265,6 @@ public final class StringUtils {
   public static Splitter onDashes() {
     return onDashes;
   }
-
-  /********************** Wrapping functions ********************/
-
-  /**
-   * Returns a Function which will wrap a string in the specified wrappers string (e.g. if the
-   * wrappers are "[", "]", it will transform "foo" to "[foo]"
-   */
-  public static Function<String, String> WrapFunction(final String leftWrapper,
-      final String rightWrapper) {
-    Preconditions.checkNotNull(leftWrapper);
-    Preconditions.checkNotNull(rightWrapper);
-
-    return new Function<String, String>() {
-      @Override
-      public String apply(final String s) {
-        return leftWrapper + s + rightWrapper;
-      }
-    };
-  }
-
-  public static final Function<String, String> WrapInDoubleQuotes = WrapFunction("\"", "\"");
-  public static final Function<String, String> WrapInSingleQuotes = WrapFunction("'", "'");
-  public static final Function<String, String> WrapInSquareBrackets = WrapFunction("[", "]");
-  public static final Function<String, String> WrapInAngleBrackets = WrapFunction("<", ">");
-  public static final Function<String, String> WrapInParens = WrapFunction("(", ")");
 
   /**
    * A Guava function for converting strings to lowercase.
@@ -367,23 +299,13 @@ public final class StringUtils {
     };
   }
 
-  public static final Predicate<String> ContainsLetterOrDigit = new Predicate<String>() {
-    @Override
-    public boolean apply(final String s) {
-      for (int i = 0; i < s.length(); ++i) {
-        if (Character.isLetterOrDigit(s.charAt(i))) {
-          return true;
-        }
+  public static final Predicate<String> ContainsLetterOrDigit = s -> {
+    for (int i = 0; i < s.length(); ++i) {
+      if (Character.isLetterOrDigit(s.charAt(i))) {
+        return true;
       }
-      return false;
     }
-  };
-
-  public static final Function<String, String> Trim = new Function<String, String>() {
-    @Override
-    public String apply(final String s) {
-      return s.trim();
-    }
+    return false;
   };
 
   public static final Function<String, String> prefixWithFunction(final String prefix) {
@@ -426,7 +348,7 @@ public final class StringUtils {
    */
   @SuppressWarnings("unchecked")
   public static final Predicate<String> containsPredicate(final String probe) {
-    return Contains(probe);
+    return x -> x.contains(probe);
   }
 
   /**
@@ -622,7 +544,7 @@ public final class StringUtils {
 
   @SuppressWarnings("deprecation")
   public static Function<String, Integer> lengthFunction() {
-    return ToLength;
+    return x -> x.length();
   }
 
   /**
@@ -664,142 +586,4 @@ public final class StringUtils {
         .replaceAll(""));
   }
 
-  /******************************** Deprecated code ************************************/
-
-  /**
-   * @deprecated Just use Guava's {@link Joiner} as normal.
-   */
-  @Deprecated
-  public static String join(final Iterable<?> list, final String separator) {
-    return Joiner.on(separator).join(list);
-  }
-
-  /**
-   * @deprecated Just use Guava's {@link Joiner} as normal.
-   */
-  @Deprecated
-  public static String joinSkipNulls(final Iterable<?> list, final String separator) {
-    return Joiner.on(separator).skipNulls().join(list);
-  }
-
-  /**
-   * @deprecated Prefer {@link #joinFunction(Joiner)}'s more consistent capitalization.
-   */
-  @Deprecated
-  public static final Function<Iterable<?>, String> JoinFunction(final Joiner joiner) {
-    return joinFunction(joiner);
-  }
-
-  /**
-   * @deprecated Prefer {@link #joinFunction(Joiner)} applies to {@link #spaceJoiner()}.
-   */
-  @Deprecated
-  public static final Function<Iterable<?>, String> SpaceJoin =
-      JoinFunction(SpaceJoiner);
-
-  /**
-   * @deprecated Prefer {@link #joinFunction(Joiner)} applied to {@link #unixNewlineJoiner()}
-   */
-  @Deprecated
-  public static final Function<Iterable<?>, String> NewlineJoin =
-      JoinFunction(NewlineJoiner);
-
-  /**
-   * @deprecated Use {@link #onSpaces()}
-   */
-  @Deprecated
-  public static final Splitter OnSpaces = Splitter.on(" ").trimResults().omitEmptyStrings();
-
-  /**
-   * @deprecated Use {@link #onTabs()}
-   */
-  @Deprecated
-  public static final Splitter OnTabs = Splitter.on("\t").trimResults().omitEmptyStrings();
-
-  /**
-   * @deprecated Use {@link #onUnixNewlines()}
-   */
-  @Deprecated
-  public static final Splitter OnUnixNewlines = Splitter.on("\n").trimResults().omitEmptyStrings();
-
-  /**
-   * @deprecated Use {@link #onCommas()}
-   */
-  @Deprecated
-  public static final Splitter OnCommas = Splitter.on(",").trimResults().omitEmptyStrings();
-
-  @Deprecated
-  /**
-   * @deprecated Prefer {@link #joinFunction(Joiner)} on {@link #dotJoiner()}
-   */
-  public static final Function<Iterable<?>, String> DotJoin =
-      JoinFunction(DotJoiner);
-
-  /**
-   * @deprecated Prefer {@link #containsPredicate(String)}
-   */
-  @Deprecated
-  public static final Predicate<String> Contains(final String probe) {
-    checkNotNull(probe);
-    return new Predicate<String>() {
-      @Override
-      public boolean apply(String input) {
-        return input.contains(probe);
-      }
-    };
-  }
-
-  /**
-   * Computes the length of a string in the naive, non-Unicode safe fashion. Use with extreme
-   * caution, and prefer {@link #codepointCountFunction()}  ()} for almost every use case.
-   *
-   * @deprecated Prefer {@link #codepointCountFunction()}, which is Unicode-safe.
-   */
-  @Deprecated
-  public static final Function<String, Integer> ToLength = new Function<String, Integer>() {
-    @Override
-    public Integer apply(String input) {
-      checkNotNull(input);
-      return input.length();
-    }
-  };
-
-
-  /**
-   * Prefer {@link #toLowerCaseFunction(Locale)}, which requires specifying a {@link Locale}.
-   */
-  @Deprecated
-  public static final Function<String, String> ToLowerCase = new Function<String, String>() {
-    @Override
-    public String apply(final String s) {
-      return s.toLowerCase();
-    }
-  };
-
-  /**
-   * @deprecated Prefer {@link #prefixWithFunction(String)}
-   */
-  @Deprecated
-  public static final Function<String, String> PrefixWith(final String prefix) {
-    return prefixWithFunction(prefix);
-  }
-
-  /**
-   * @deprecated Prefer {@link #substringByCodepoints(String, OffsetRange)} for most NLP uses.
-   */
-  @Deprecated
-  public static String substring(String s, OffsetRange<CharOffset> substringBounds) {
-    return s.substring(substringBounds.startInclusive().asInt(),
-        substringBounds.endInclusive().asInt() + 1);
-  }
-
-  /**
-   * @deprecated Prefer {@link #laxSubstringByCodepoints(String, int, int)}
-   */
-  @Deprecated
-  public static String safeSubstring(String s, int startIndexInclusive, int endIndexExclusive) {
-    final int trueStartIndex = Math.max(0, startIndexInclusive);
-    final int trueEndIndex = Math.min(endIndexExclusive, s.length());
-    return s.substring(trueStartIndex, trueEndIndex);
-  }
 }

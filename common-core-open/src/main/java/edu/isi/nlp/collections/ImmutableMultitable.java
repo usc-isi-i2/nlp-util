@@ -1,9 +1,9 @@
 package edu.isi.nlp.collections;
 
-import edu.isi.nlp.TextGroupImmutable;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
+import edu.isi.nlp.IsiNlpImmutable;
 import java.util.Collection;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -173,7 +173,7 @@ public abstract class ImmutableMultitable<R, C, V> extends AbstractMultitable<R,
   /**
    * For use in {@code ImmutableMultitable} builders only.
    */
-  @TextGroupImmutable
+  @IsiNlpImmutable
   @Value.Immutable
   static abstract class RowKeyColumnKeyPair<R, C> {
 

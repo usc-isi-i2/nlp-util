@@ -2,7 +2,6 @@ package edu.isi.nlp.gnuplot;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -215,17 +214,6 @@ public final class PlotGrid implements GnuPlottable {
      */
     public Builder setDownwards(boolean downwards) {
       this.downwards = downwards;
-      return this;
-    }
-
-    /**
-     * Add commands to be executed after setting all other options available here
-     */
-    @Deprecated
-    public Builder addStartingCommands(String... commands) {
-      for (String c : commands) {
-        startingCommands.add(c);
-      }
       return this;
     }
 

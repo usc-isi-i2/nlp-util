@@ -1,9 +1,8 @@
 package edu.isi.nlp.corpora.eventNugget;
 
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.IsiNlpImmutable;
 import edu.isi.nlp.corpora.ere.ERESpan;
-
+import edu.isi.nlp.symbols.Symbol;
 import org.immutables.func.Functional;
 import org.immutables.value.Value;
 
@@ -12,7 +11,7 @@ import org.immutables.value.Value;
  */
 @Value.Immutable(prehash = true)
 @Functional
-@TextGroupImmutable
+@IsiNlpImmutable
 public abstract class NuggetEventMention {
 
   @Value.Parameter

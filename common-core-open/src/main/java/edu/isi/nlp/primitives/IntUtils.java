@@ -1,15 +1,11 @@
 package edu.isi.nlp.primitives;
 
-import com.google.common.base.Function;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import edu.isi.nlp.math.Permutation;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utility methods for working with primitive integers.
@@ -79,72 +75,5 @@ public final class IntUtils {
     return ret;
   }
 
-  // deprecated methods below
-
-  @Deprecated
-  public static final Function<Integer, Integer> IncrementInteger =
-      new Function<Integer, Integer>() {
-        @Override
-        public Integer apply(final Integer i) {
-          return i + 1;
-        }
-      };
-
-  @Deprecated
-  public static Function<Integer, Integer> SubtractInteger(final int amount) {
-    return new Function<Integer, Integer>() {
-      @Override
-      public Integer apply(final Integer x) {
-        return x - amount;
-      }
-    };
-  }
-
-  @Deprecated
-  public static final Function<Integer, String> IntToString = new Function<Integer, String>() {
-    @Override
-    public String apply(final Integer x) {
-      return Integer.toString(x);
-    }
-  };
-
-  @Deprecated
-  public static final Function<String, Integer> StringToInt = new Function<String, Integer>() {
-    @Override
-    public Integer apply(final String x) {
-      return Integer.parseInt(x);
-    }
-  };
-
-  /**
-   * Produces a permutation of the integers from 0 (inclusive) to numElements (exclusive) which can
-   * then be used to permute other things.
-   *
-   * @deprecated Use {@link Permutation#createForNElements(int, Random)}
-   * instead, which prevents bugs due to being inconsistent about how to interpret the permutation
-   * array.
-   */
-  @Deprecated
-  public static int[] permutation(final int numElements, final Random rng) {
-    final int[] permutation = arange(numElements);
-    shuffle(permutation, checkNotNull(rng));
-    return permutation;
-  }
-
-  /**
-   * Permutes an array according to the specified permutation. Use Permutation.permute(int[])
-   * instead.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public static void permute(final int[] arr, final int[] permutation) {
-    checkArgument(arr.length == permutation.length);
-    final int[] tmp = new int[arr.length];
-    for (int i = 0; i < tmp.length; ++i) {
-      tmp[i] = arr[permutation[i]];
-    }
-    System.arraycopy(tmp, 0, arr, 0, arr.length);
-  }
 
 }

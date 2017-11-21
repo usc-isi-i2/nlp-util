@@ -1,6 +1,6 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.parameters.Parameters;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -12,16 +12,13 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Types;
-
-import org.immutables.value.Value;
-
+import edu.isi.nlp.parameters.Parameters;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import org.immutables.value.Value;
 
 /**
  * A module which takes bindings from another module and exposes them with a given annotation.
@@ -82,7 +79,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 // we lose type safety doing this.  We're okay with it.
 @SuppressWarnings("unchecked")
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 public abstract class AnnotationWrapperModule extends PrivateModule {
 

@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import javax.inject.Qualifier;
 
 
@@ -14,11 +13,11 @@ import javax.inject.Qualifier;
  * locale for each language explicitly.  This will typically be bound by installing {@code
  * SerifLocaleM} (which is done automatically by the standard {@code SerifEnvironment} module).
  *
- * This should be used to annotate things of type {@link SerifLocale}
+ * This should be used to annotate things of type {@link NlpLocale}
  */
 @Qualifier
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SerifLocaleP {
+public @interface NlpLocaleP {
 
 }

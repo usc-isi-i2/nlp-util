@@ -1,10 +1,8 @@
 package edu.isi.nlp.primitives;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.primitives.Doubles;
-
 import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.common.primitives.Doubles;
 
 /**
  * Utilities for working with primitive {@code doubles}.
@@ -306,31 +304,5 @@ public final class DoubleUtils {
       return val;
     }
   }
-
-  // deprecated methods
-  @Deprecated
-  public static final Predicate<Double> IsFinite = new Predicate<Double>() {
-    @Override
-    public boolean apply(final Double x) {
-      return Doubles.isFinite(x);
-    }
-  };
-
-  @Deprecated
-  public static final Predicate<Double> IsNonNegative = new Predicate<Double>() {
-    @Override
-    public boolean apply(final Double x) {
-      return x >= 0.0;
-    }
-  };
-
-
-  @Deprecated
-  public static final Function<String, Double> ParseDouble = new Function<String, Double>() {
-    @Override
-    public Double apply(final String x) {
-      return Double.parseDouble(x);
-    }
-  };
 
 }

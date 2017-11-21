@@ -46,12 +46,6 @@ public final class BoxPlot implements GnuPlottable {
     return new Builder();
   }
 
-  @Deprecated
-  public File renderToEmptyDirectory(final File outputDirectory)
-      throws IOException {
-    throw new RuntimeException("Update your program to use toPlotBundle");
-  }
-
   @Override
   public PlotBundle toPlotBundle() {
     final PlotBundle.Builder ret = PlotBundle.builder();

@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
-import com.google.common.primitives.Ints;
 
 /**
  * General mathematical utilities.
@@ -73,13 +72,4 @@ public final class MathUtils {
     }
   }
 
-  // deprecated methods
-
-  /**
-   * @deprecated This is now in Guava as {@link com.google.common.primitives.Ints#max()}
-   */
-  @Deprecated
-  public static int max(int[] arr) {
-    return Ints.max(arr);
-  }
 }

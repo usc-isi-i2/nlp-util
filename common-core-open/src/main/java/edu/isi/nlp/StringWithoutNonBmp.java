@@ -1,11 +1,9 @@
 package edu.isi.nlp;
 
+import com.google.common.base.Optional;
 import edu.isi.nlp.strings.offsets.CharOffset;
 import edu.isi.nlp.strings.offsets.OffsetRange;
 import edu.isi.nlp.strings.offsets.UTF16Offset;
-
-import com.google.common.base.Optional;
-
 import org.immutables.value.Value;
 
 /**
@@ -13,7 +11,7 @@ import org.immutables.value.Value;
  * should never be referenced directly. Always create {@link UnicodeFriendlyString}s
  * via {@link StringUtils#unicodeFriendly(String)}. See the interface Javadoc for details.
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 abstract class StringWithoutNonBmp extends AbstractUnicodeFriendlyString
     implements UnicodeFriendlyString {

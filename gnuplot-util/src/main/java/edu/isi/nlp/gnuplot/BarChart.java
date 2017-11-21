@@ -1,14 +1,11 @@
 package edu.isi.nlp.gnuplot;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
-import java.io.File;
-import java.io.IOException;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public final class BarChart implements GnuPlottable {
@@ -32,12 +29,6 @@ public final class BarChart implements GnuPlottable {
     checkArgument(boxWidth > 0.0);
     this.showKey = showKey;
     this.grid = checkNotNull(grid);
-  }
-
-  @Deprecated
-  public File renderToEmptyDirectory(final File outputDirectory)
-      throws IOException {
-    throw new RuntimeException("Update your program to use toPlotBundle");
   }
 
   public static Builder builder() {

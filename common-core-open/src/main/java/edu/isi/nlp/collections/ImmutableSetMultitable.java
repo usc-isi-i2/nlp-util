@@ -1,6 +1,6 @@
 package edu.isi.nlp.collections;
 
-import edu.isi.nlp.TextGroupImmutable;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
@@ -10,15 +10,11 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
-
-import org.immutables.value.Value;
-
+import edu.isi.nlp.IsiNlpImmutable;
 import java.util.Collection;
 import java.util.Set;
-
 import javax.annotation.Nullable;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.immutables.value.Value;
 
 /**
  * A Multitable that cannot hold duplicate key-key-value triples. Adding a key-key-value triple
@@ -227,7 +223,7 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
     }
   }
 
-  @TextGroupImmutable
+  @IsiNlpImmutable
   @Value.Immutable
   static abstract class SetMulticell<R, C, V>
       implements SetMultitable.SetMulticell<R, C, V> {

@@ -1,13 +1,11 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.StringUtils;
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.collections.KeyValueSink;
-import edu.isi.nlp.collections.MapUtils;
-import edu.isi.nlp.io.GZIPByteSink;
-import edu.isi.nlp.io.GZIPByteSource;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Iterables.skip;
+import static com.google.common.collect.Iterables.transform;
+import static java.nio.file.Files.walkFileTree;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -35,11 +33,14 @@ import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 import com.google.common.primitives.Ints;
-
-import org.immutables.value.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.StringUtils;
+import edu.isi.nlp.collections.KeyValueSink;
+import edu.isi.nlp.collections.MapUtils;
+import edu.isi.nlp.io.GZIPByteSink;
+import edu.isi.nlp.io.GZIPByteSource;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -62,13 +63,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.skip;
-import static com.google.common.collect.Iterables.transform;
-import static java.nio.file.Files.walkFileTree;
+import org.immutables.value.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utilities for working with files.
@@ -452,7 +449,7 @@ public final class FileUtils {
   /**
    * A request to backup a file. This request is executed by calling {@link #doBackup()}.
    */
-  @TextGroupImmutable
+  @IsiNlpImmutable
   @Value.Immutable
   public static abstract class BackupRequest {
 
@@ -1116,60 +1113,6 @@ public final class FileUtils {
     public boolean apply(final File f) {
       return f.getName().endsWith(suffix);
     }
-  }
-
-  // Deprecated code
-
-  /**
-   * @deprecated Prefer {@link #toNameFunction()}
-   */
-  @Deprecated
-  public static final Function<File, String> ToName = ToNameEnum.INSTANCE;
-
-  /**
-   * @deprecated See {@link #toAbsolutePathFunction()}.
-   */
-  @Deprecated
-  public static final Function<File, String> ToAbsolutePath = new Function<File, String>() {
-    @Override
-    public String apply(final File f) {
-      return f.getAbsolutePath();
-    }
-  };
-
-  /**
-   * Make a predicate to test files for ending with the specified suffix.
-   *
-   * @param suffix May not be null or empty.
-   * @deprecated Prefer {@link #endsWithPredicate(String)}.
-   */
-  @Deprecated
-  public static Predicate<File> EndsWith(final String suffix) {
-    return endsWithPredicate(suffix);
-  }
-
-
-  /**
-   * Deprecated in favor of version with {@link com.google.common.io.CharSource} argument.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public static ImmutableMultimap<String, String> loadStringMultimap(File multimapFile)
-      throws IOException {
-    return loadStringMultimap(Files.asCharSource(multimapFile, Charsets.UTF_8));
-  }
-
-  /**
-   * Deprecated in favor of the CharSource version to force the user to define their encoding. If
-   * you call this, it will use UTF_8 encoding.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public static ImmutableMultimap<Symbol, Symbol> loadSymbolMultimap(File multimapFile)
-      throws IOException {
-    return loadSymbolMultimap(Files.asCharSource(multimapFile, Charsets.UTF_8));
   }
 
 }

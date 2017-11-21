@@ -1,13 +1,11 @@
 package edu.isi.nlp;
 
+import com.google.common.base.Optional;
+import edu.isi.nlp.strings.LocatedString;
+import edu.isi.nlp.strings.LocatedString.CharacterRegion;
 import edu.isi.nlp.strings.offsets.CharOffset;
 import edu.isi.nlp.strings.offsets.OffsetRange;
 import edu.isi.nlp.strings.offsets.UTF16Offset;
-
-import com.google.common.base.Optional;
-
-import edu.isi.nlp.strings.LocatedString;
-import edu.isi.nlp.strings.LocatedString.CharacterRegion;
 import org.immutables.func.Functional;
 import org.immutables.value.Value;
 
@@ -22,7 +20,7 @@ import org.immutables.value.Value;
  * by using a structure similar to {@link LocatedString}'s
  * {@link CharacterRegion}.
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @Functional
 abstract class StringWithNonBmp extends AbstractUnicodeFriendlyString

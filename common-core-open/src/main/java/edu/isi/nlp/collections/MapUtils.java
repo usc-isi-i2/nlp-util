@@ -1,7 +1,6 @@
 package edu.isi.nlp.collections;
 
-import edu.isi.nlp.StringUtils;
-import edu.isi.nlp.collections.IterableUtils.ZipPair;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -10,19 +9,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
-
+import edu.isi.nlp.StringUtils;
+import edu.isi.nlp.collections.IterableUtils.ZipPair;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utilities for working with {@link Map}s
@@ -153,13 +150,6 @@ public final class MapUtils {
     return builder.build();
   }
 
-  /**
-   * Prefer the better-named {@link #entryValueFunction()}.
-   */
-  @Deprecated
-  public static <K, V> Function<Map.Entry<K, V>, V> getEntryValue() {
-    return entryValueFunction();
-  }
 
   public static <K, V> Function<Map.Entry<K, V>, V> entryValueFunction() {
     return new Function<Map.Entry<K, V>, V>() {
@@ -170,13 +160,6 @@ public final class MapUtils {
     };
   }
 
-  /**
-   * Prefer the better-named {@link #entryKeyFunction()}.
-   */
-  @Deprecated
-  public static <K, V> Function<Map.Entry<K, V>, K> getEntryKey() {
-    return entryKeyFunction();
-  }
 
   public static <K, V> Function<Map.Entry<K, V>, K> entryKeyFunction() {
     return new Function<Map.Entry<K, V>, K>() {
@@ -187,13 +170,6 @@ public final class MapUtils {
     };
   }
 
-  /**
-   * Prefer the better-named {@link #mapValuesFunction()}
-   */
-  @Deprecated
-  public static <K, V> Function<Map<K, V>, Iterable<V>> getValues() {
-    return mapValuesFunction();
-  }
 
   public static <K, V> Function<Map<K, V>, Iterable<V>> mapValuesFunction() {
     return new Function<Map<K, V>, Iterable<V>>() {
@@ -209,58 +185,23 @@ public final class MapUtils {
    * order.
    */
   public static <K, V extends Comparable<V>> Ordering<Map.Entry<K, V>> byValueOrderingAscending() {
-    return Ordering.<V>natural().onResultOf(MapUtils.<K, V>getEntryValue());
+    return Ordering.<V>natural().onResultOf(Entry::getValue);
   }
 
   /**
    * A partial ordering over {@link Map.Entry} according to their values, in descending natural order.
    */
   public static <K, V extends Comparable<V>> Ordering<Map.Entry<K, V>> byValueOrderingDescending() {
-    return Ordering.<V>natural().onResultOf(MapUtils.<K, V>getEntryValue()).reverse();
+    return MapUtils.<K, V>byValueOrderingAscending().reverse();
   }
 
   /**
    * A partial ordering over {@link Map.Entry} according to {@code valueOrdering} applied to their values.
    */
   public static <K, V> Ordering<Map.Entry<K, V>> byValueOrdering(final Ordering<V> valueOrdering) {
-    return valueOrdering.onResultOf(MapUtils.<K, V>getEntryValue());
+    return valueOrdering.onResultOf(Entry::getValue);
   }
 
-  /**
-   * A list of the entries of {@code map}, ordered by {@code ordering}
-   *
-   * @deprecated Because this doesn't seem any clearer than doing {@code ordering.sortedCopy(map.entrySet())}
-   * directly.
-   */
-  @Deprecated
-  public static <K, V> List<Entry<K, V>> sortedCopyOfEntries(final Map<K, V> map,
-      final Ordering<Map.Entry<K, V>> ordering) {
-    return ordering.sortedCopy(map.entrySet());
-  }
-
-  /**
-   * Returns an immutable copy of the given map whose iteration order has keys sorted by the key
-   * type's natural ordering. No map keys or values may be {@code null}.
-   *
-   * @deprecated Prefer {@link com.google.common.collect.ImmutableSortedMap#copyOf(Map)}.
-   */
-  @Deprecated
-  public static <K extends Comparable<K>, V> ImmutableMap<K, V> copyWithSortedKeys(
-      final Map<K, V> map) {
-    return ImmutableSortedMap.copyOf(map);
-  }
-
-  /**
-   * Returns an immutable copy of the given map whose iteration order has keys sorted by the given
-   * {@link Ordering}. No map keys or values may be {@code null}.
-   *
-   * @deprecated Prefer {@link com.google.common.collect.ImmutableSortedMap#copyOf(Map, Comparator)}
-   */
-  @Deprecated
-  public static <K, V> ImmutableMap<K, V> copyWithKeysSortedBy(final Map<K, V> map,
-      final Ordering<? super K> ordering) {
-    return ImmutableSortedMap.copyOf(map, ordering);
-  }
 
   /**
    * A partial ordering of {@link Map.Entry} by the reverse of the natural ordering of the keys.
@@ -274,48 +215,9 @@ public final class MapUtils {
    * A partial ordering of {@link Map.Entry} by the natural ordering of the keys.
    */
   public static <K, V> Ordering<Entry<K, V>> byKeyOrdering(Ordering<K> keyOrdering) {
-    return keyOrdering.onResultOf(MapUtils.<K, V>getEntryKey());
+    return keyOrdering.onResultOf(Entry::getKey);
   }
 
-  /**
-   * Returns a new map which is contains all the mappings in both provided maps. This method will
-   * throw an exception if there is any key {@code K} such that {@code K} is a key in both maps and
-   * {@code !first.get(K).equals(second.get(K))}.    The iteration order of the resulting map will
-   * contain first all entries in the first map in the order provided by {@code first.entrySet()}
-   * followed by all non-duplicate entries in the second map in the order provided by {@code
-   * second.entrySet()}.  This method is null-intolerant: if either input map contains {@code null},
-   * an exception will be thrown.
-   *
-   * @deprecated There is no reason to use this instead of {@code
-   * ImmutableMap.builder().putAll(first).putAll(second).build()}
-   */
-  @Deprecated
-  public static <K, V> ImmutableMap<K, V> disjointUnion(Map<K, V> first, Map<K, V> second) {
-    checkNotNull(first);
-    checkNotNull(second);
-    final ImmutableMap.Builder<K, V> ret = ImmutableMap.builder();
-
-    // will throw an exception if there is any null mapping
-    ret.putAll(first);
-    for (final Entry<K, V> secondEntry : second.entrySet()) {
-      final V firstForKey = first.get(secondEntry.getKey());
-      if (firstForKey == null) {
-        // non-duplicate
-        // we know the first map doesn't actually map this key to null
-        // or ret.putAll(first) above would fail
-        ret.put(secondEntry.getKey(), secondEntry.getValue());
-      } else //noinspection StatementWithEmptyBody
-        if (firstForKey.equals(secondEntry.getValue())) {
-          // duplicate. This is okay. Do nothing.
-        } else {
-          throw new RuntimeException("When attempting a disjoint map union, " +
-              String.format("for key %s, first map had %s but second had %s", secondEntry.getKey(),
-                  firstForKey, secondEntry.getValue()));
-        }
-    }
-
-    return ret.build();
-  }
 
   /**
    * Creates a copy of the supplied map with its keys transformed by the supplied function, which

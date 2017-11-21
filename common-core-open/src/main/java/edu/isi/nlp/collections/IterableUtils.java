@@ -1,9 +1,11 @@
 package edu.isi.nlp.collections;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
@@ -11,12 +13,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
-
 import java.util.Iterator;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utilities for working with {@link Iterable}s.
@@ -52,21 +50,6 @@ public final class IterableUtils {
         return com.google.common.collect.Iterables.all(iter, pred);
       }
     };
-  }
-
-  /**
-   * Applys a one-to-many transform to each element of an {@code Iterable} and concatenates all the
-   * results into one {@code Iterable}. This is done lazily.
-   *
-   * @deprecated Prefer {@link FluentIterable#transformAndConcat(Function)} now that it
-   * exists.
-   */
-  @Deprecated
-  public static <InType, OutType> Iterable<OutType> applyOneToManyTransform(
-      final Iterable<InType> input,
-      final Function<? super InType, ? extends Iterable<OutType>> function) {
-    return FluentIterable.from(input)
-        .transformAndConcat(function);
   }
 
   /**
@@ -212,7 +195,7 @@ public final class IterableUtils {
       return new UnmodifiableIterator<List<T>>() {
         @Override
         public boolean hasNext() {
-          if (!allTheSame(Lists.transform(iterators, HasNext))) {
+          if (!allEqual(Lists.transform(iterators, HasNext))) {
             throw new RuntimeException("Iterable length mismatch in zip: %s is longer.");
           }
 
@@ -351,27 +334,6 @@ public final class IterableUtils {
           return x.hasNext();
         }
       };
-
-  /**
-   * Prefer allEqual, whose name is less ambiguous between equality and identity
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public static <T> boolean allTheSame(final Iterable<T> iterable) {
-    if (Iterables.isEmpty(iterable)) {
-      return true;
-    }
-
-    final T reference = Iterables.getFirst(iterable, null);
-
-    for (final T x : iterable) {
-      if (!x.equals(reference)) {
-        return false;
-      }
-    }
-    return true;
-  }
 
   /**
    * Returns whether all the items in the iterable are equal to one another by {@code .equals()}.

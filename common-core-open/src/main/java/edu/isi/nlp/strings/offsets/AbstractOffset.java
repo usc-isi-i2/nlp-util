@@ -1,11 +1,11 @@
 package edu.isi.nlp.strings.offsets;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 import com.google.common.primitives.Ints;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class AbstractOffset<SelfType extends Offset<SelfType>>
     implements Offset<SelfType> {
@@ -15,15 +15,6 @@ public abstract class AbstractOffset<SelfType extends Offset<SelfType>>
   protected AbstractOffset(final int value) {
     checkArgument(value >= 0);
     this.value = value;
-  }
-
-  /**
-   * @deprecated Prefer {@link #asInt()}
-   */
-  @Deprecated
-  @Override
-  public final int value() {
-    return value;
   }
 
   @JsonProperty("value")

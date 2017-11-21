@@ -1,16 +1,13 @@
 package edu.isi.nlp.gnuplot;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public final class ClusteredBarChart implements GnuPlottable {
@@ -49,11 +46,6 @@ public final class ClusteredBarChart implements GnuPlottable {
     return new Builder();
   }
 
-  @Deprecated
-  public File renderToEmptyDirectory(final File outputDirectory)
-      throws IOException {
-    throw new RuntimeException("Update your program to use toPlotBundle");
-  }
 
   private void assertBarsAndClustersCompatible() {
     for (final ClusteredBar bar : clusteredBars) {

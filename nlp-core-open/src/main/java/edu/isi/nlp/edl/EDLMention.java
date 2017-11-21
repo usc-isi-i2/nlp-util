@@ -1,26 +1,24 @@
 package edu.isi.nlp.edl;
 
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.evaluation.ScoringTypedOffsetRange;
-import edu.isi.nlp.strings.offsets.CharOffset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.evaluation.ScoringTypedOffsetRange;
+import edu.isi.nlp.strings.offsets.CharOffset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import edu.isi.nlp.symbols.Symbol;
 import org.immutables.func.Functional;
 import org.immutables.value.Value;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Represents a mention for the Entity Detection and Linking scorer to the degree
  * necessary for the Lorelei NER evaluations.  Does not yet address KB linking.
  */
-@TextGroupImmutable
+@IsiNlpImmutable
 @Value.Immutable
 @Functional
 @JsonSerialize
@@ -35,19 +33,6 @@ public abstract class EDLMention {
   public abstract Symbol mentionType();
   public abstract Symbol entityType();
   public abstract double confidence();
-
-  /**
-   * @deprecated Prefer {@link Builder}.
-   */
-  @Deprecated
-  public static EDLMention create(final Symbol runId, final String mentionId,
-      final Symbol documentId, final String headString,
-      final OffsetRange<CharOffset> headOffsets,
-      final Symbol mentionType, final Symbol entityType, final double confidence) {
-    return new Builder().runId(runId).mentionId(mentionId).documentID(documentId)
-        .headString(headString).headOffsets(headOffsets)
-        .mentionType(mentionType).entityType(entityType).confidence(confidence).build();
-  }
 
   @Value.Check
   void check() {
@@ -72,14 +57,6 @@ public abstract class EDLMention {
   }
 
   /**
-   * @deprecated Prefer {@link EDLMentionFunctions#entityType()}
-   */
-  @Deprecated
-  public static Function<EDLMention, Symbol> entityTypeFunction() {
-    return EntityTypeFunction.INSTANCE;
-  }
-
-  /**
    * @deprecated Prefer {@link EDLMentionFunctions#mentionType()}
    */
   public static Function<EDLMention, Symbol> mentionTypeFunction() {
@@ -93,32 +70,6 @@ public abstract class EDLMention {
    */
   public static Function<EDLMention, ScoringTypedOffsetRange<CharOffset>> asTypedOffsetRangeFunction() {
     return AsTypedOffsetRangeFunction.INSTANCE;
-  }
-
-  /**
-   * @deprecated Prefer {@link EDLMentionFunctions#entityType()}
-   */
-  @Deprecated
-  private enum EntityTypeFunction implements Function<EDLMention, Symbol> {
-    INSTANCE {
-      @Override
-      public Symbol apply(final EDLMention input) {
-        return input.entityType();
-      }
-    }
-  }
-
-  /**
-   * @deprecated Prefer {@link EDLMentionFunctions#mentionType()}
-   */
-  @Deprecated
-  private enum MentionTypeFunction implements Function<EDLMention, Symbol> {
-    INSTANCE {
-      @Override
-      public Symbol apply(final EDLMention input) {
-        return input.mentionType();
-      }
-    }
   }
 
   private enum AsTypedOffsetRangeFunction

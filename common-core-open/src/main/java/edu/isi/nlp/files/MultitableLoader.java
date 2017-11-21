@@ -1,22 +1,20 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.TextGroupImmutable;
-import edu.isi.nlp.collections.ImmutableListMultitable;
-import edu.isi.nlp.collections.ImmutableMultitable;
-import edu.isi.nlp.collections.ImmutableSetMultitable;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
-
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.io.CharSource;
 import com.google.common.io.LineProcessor;
-
+import edu.isi.nlp.IsiNlpImmutable;
+import edu.isi.nlp.collections.ImmutableListMultitable;
+import edu.isi.nlp.collections.ImmutableMultitable;
+import edu.isi.nlp.collections.ImmutableSetMultitable;
 import edu.isi.nlp.collections.ListMultitable;
 import edu.isi.nlp.collections.Multitable;
 import edu.isi.nlp.collections.SetMultitable;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.IOException;
 import java.util.List;
 
@@ -33,7 +31,7 @@ import java.util.List;
  * @author Ryan Gabbard
  */
 @org.immutables.value.Value.Immutable
-@TextGroupImmutable
+@IsiNlpImmutable
 public abstract class MultitableLoader<R, C, V> {
   public abstract Optional<Splitter> valueListSplitter();
   @org.immutables.value.Value.Default
