@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>common-all-open</artifactId>
-        <groupId>com.bbn.bue</groupId>
+        <groupId>edu.isi.vista</groupId>
         <version>7.6.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -11,11 +11,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>indri-utils</artifactId>
-    <groupId>com.bbn.nlp</groupId>
+    <groupId>edu.isi.vista</groupId>
     <packaging>jar</packaging>
 
     <name>Utilities for Indri</name>
-    <url>http://www.bbn.com/</url>
+    <url>http://www.isi.edu/</url>
 
     <properties>
     </properties>
@@ -30,12 +30,12 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.bbn.bue</groupId>
+            <groupId>edu.isi.vista</groupId>
             <artifactId>common-core-open</artifactId>
             <version>7.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.bbn.bue</groupId>
+            <groupId>edu.isi.vista</groupId>
             <artifactId>common-core-open</artifactId>
         </dependency>
         <dependency>

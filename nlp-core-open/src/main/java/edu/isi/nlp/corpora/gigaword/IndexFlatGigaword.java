@@ -140,8 +140,6 @@ public final class IndexFlatGigaword {
     // we wrap the main method in this way to
     // ensure a non-zero return value on failure
     try {
-      System.err.println("Copyright 2015 Raytheon BBN Technologies Corp.");
-      System.err.println("All Rights Reserved");
       trueMain(argv);
     } catch (Exception e) {
       e.printStackTrace();

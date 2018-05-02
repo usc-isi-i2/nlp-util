@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
       <artifactId>common-all-open</artifactId>
-      <groupId>com.bbn.bue</groupId>
+      <groupId>edu.isi.vista</groupId>
       <version>7.6.3-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
   </parent>
@@ -13,7 +13,7 @@
   <packaging>jar</packaging>
 
   <name>Utilities for writing scorers</name>
-  <url>http://www.bbn.com/</url>
+  <url>http://www.isi.edu/</url>
 
   <build>
       <plugins>
@@ -41,7 +41,7 @@
 
   <dependencies>
       <dependency>
-          <groupId>com.bbn.bue</groupId>
+          <groupId>edu.isi.vista</groupId>
           <artifactId>common-core-open</artifactId>
           <version>7.6.3-SNAPSHOT</version>
         </dependency>

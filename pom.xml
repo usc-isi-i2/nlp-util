@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.bbn.bue</groupId>
+  <groupId>edu.isi.vista</groupId>
   <artifactId>common-all-open</artifactId>
   <version>7.6.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>com.bbn.bue:common-all-open</name>
-  <description>Open-source code shared by several BBN Speech and Language projects</description>
-  <url>https://github.com/rgabbard-bbn/bue-common-open</url>
+  <name>edu.isi.vista:common-all-open</name>
+  <description>JVM NLP utilities</description>
+  <url>https://github.com/isi-vista/nlp-util</url>
 
   <licenses>
       <license>
@@ -29,9 +29,9 @@
   <developers>
    <developer>
       <name>Ryan Gabbard</name>
-      <email>rgabbard@bbn.com</email>
-      <organization>BBN Technologies</organization>
-      <organizationUrl>http://www.bbn.com</organizationUrl>
+      <email>gabbard@isi.edu</email>
+      <organization>USC Information Sciences Institute</organization>
+      <organizationUrl>http://www.isi.edu</organizationUrl>
    </developer>
     <developer>
       <name>Jay DeYoung</name>
@@ -61,16 +61,13 @@
 
     <skipITs>true</skipITs>
 
-        <!-- Sonar server properties. These only work BBN-internally -->
-      <sonar.host.url>http://e-apache-2.bbn.com:9000</sonar.host.url>
-      <sonar.jdbc.url>jdbc:mysql://mysql.d4m.bbn.com:3306/sonar?useUnicode=true&amp;characterEncoding=utf8</sonar.jdbc.url>
   </properties>
 
   <dependencyManagement>
       <dependencies>
           <!-- intra-project dependnecies -->
           <dependency>
-              <groupId>com.bbn.bue</groupId>
+              <groupId>edu.isi.vista</groupId>
               <artifactId>common-core-open</artifactId>
               <version>7.6.3-SNAPSHOT</version>
           </dependency>
@@ -282,14 +279,6 @@
                         <goal>deploy</goal>
                     </goals>
                 </execution>
-        <execution>
-            <id>internal-deploy</id>
-            <phase>deploy</phase>
-            <goals><goal>deploy</goal></goals>
-            <configuration>
-                <altDeploymentRepository>nexus::default::http://e-nexus-01.bbn.com:8081/nexus/content/repositories/releases/</altDeploymentRepository>
-            </configuration>
-        </execution>
             </executions>
     </plugin>
      <plugin>
@@ -324,30 +313,8 @@
     </plugins>
   </reporting>
 
-  <!--<scm>
-      <developerConnection>scm:git:ssh://d225/d4m/ears/git/bue-common-open.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>-->
-<scm>
-    <connection>scm:git:http://e-gitlab.bbn.com/text-group/bue-common-open.git</connection>
-  <developerConnection>scm:git:http://e-gitlab.bbn.com/text-group/bue-common-open.git</developerConnection>
-  <!--<url>git@github.com:rgabbard-bbn/bue-common-open.git</url>-->
-  <tag>HEAD</tag>
-  </scm>
 
 <distributionManagement>
-    <snapshotRepository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>nexus</id>
-      <name>BBN internal repository (snapshots)</name>
-      <url>http://e-nexus-01.bbn.com:8081/nexus/content/repositories/snapshots/</url>
-    </snapshotRepository>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>nexus</id>
-      <name>BBN internal repository (releases)</name>
-      <url>http://e-nexus-01.bbn.com:8081/nexus/content/repositories/releases/</url>
-    </repository>
   </distributionManagement>
 
   <profiles>

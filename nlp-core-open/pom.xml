@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>common-all-open</artifactId>
-        <groupId>com.bbn.bue</groupId>
+        <groupId>edu.isi.vista</groupId>
         <version>7.6.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -9,11 +9,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nlp-core-open</artifactId>
-    <groupId>com.bbn.nlp</groupId>
+    <groupId>edu.isi.vista</groupId>
     <packaging>jar</packaging>
 
-    <name>BBN BUE NLP Utilities (open source)</name>
-    <url>http://www.bbn.com/</url>
+    <name>Vista NLP Utilities </name>
+    <url>http://www.isi.edu/</url>
 
     <build>
         <plugins>
@@ -45,12 +45,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.bbn.bue</groupId>
+            <groupId>edu.isi.vista</groupId>
             <artifactId>common-core-open</artifactId>
             <version>7.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.bbn.bue</groupId>
+            <groupId>edu.isi.vista</groupId>
             <artifactId>scoring-open</artifactId>
             <version>7.6.3-SNAPSHOT</version>
         </dependency>
