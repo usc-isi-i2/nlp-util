@@ -514,6 +514,11 @@ public final class Timex2Time {
       return this;
     }
 
+    public Builder withVal(String val) {
+      this.val = Symbol.from(checkNotNull(val));
+      return this;
+    }
+
     public Builder withModifier(Modifier mod) {
       this.mod = checkNotNull(mod);
       return this;
@@ -538,8 +543,19 @@ public final class Timex2Time {
       return this;
     }
 
+    public Builder withGranularity(String granularity) {
+      this.granularity = Symbol.from(checkNotNull(granularity));
+      return this;
+    }
+
+
     public Builder withPeriodicity(Symbol periodicity) {
       this.periodicity = checkNotNull(periodicity);
+      return this;
+    }
+
+    public Builder withPeriodicity(String periodicity) {
+      this.periodicity = Symbol.from(checkNotNull(periodicity));
       return this;
     }
 
@@ -548,9 +564,21 @@ public final class Timex2Time {
       return this;
     }
 
+    public Builder withAnchorValue(String anchorValue) {
+      this.anchorVal = Symbol.from(checkNotNull(anchorValue));
+      return this;
+    }
+
+
     public Builder withAnchorDirection(Symbol anchorDir) {
       checkNotNull(anchorDir);
       this.anchorDir = AnchorDirection.valueOf(anchorDir.asString());
+      return this;
+    }
+
+    public Builder withAnchorDirection(String anchorDir) {
+      checkNotNull(anchorDir);
+      this.anchorDir = AnchorDirection.valueOf(anchorDir);
       return this;
     }
 

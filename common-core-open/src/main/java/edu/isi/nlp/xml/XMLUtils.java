@@ -307,7 +307,7 @@ public final class XMLUtils {
     final String val = e.getAttribute(attribute);
 
     return FluentIterable.from(splitter.split(val))
-        .transform(SymbolUtils.Symbolize)
+        .transform(SymbolUtils.symbolizeFunction())
         .toList();
   }
 
@@ -334,7 +334,7 @@ public final class XMLUtils {
     final String val = requiredAttribute(e, attribute);
 
     return FluentIterable.from(splitter.split(val))
-        .transform(SymbolUtils.Symbolize)
+        .transform(SymbolUtils.symbolizeFunction())
         .toList();
   }
 

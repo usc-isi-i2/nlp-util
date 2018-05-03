@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static edu.isi.nlp.primitives.DoubleUtils.IsNonNegative;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.all;
@@ -112,8 +111,7 @@ public final class SummaryConfusionMatrices {
       falseNegatives += m.columnSum(goodSymbol);
     }
 
-    return FMeasureCounts.from((float) truePositives, (float) falsePositives,
-        (float) falseNegatives);
+    return FMeasureCounts.fromTPFPFN( truePositives,  falsePositives, falseNegatives);
   }
 
 
@@ -256,7 +254,7 @@ class TableBasedSummaryConfusionMatrix implements SummaryConfusionMatrix {
 
   TableBasedSummaryConfusionMatrix(final Table<Symbol, Symbol, Double> table) {
     this.table = ImmutableTable.copyOf(table);
-    checkArgument(all(table.values(), IsNonNegative));
+    checkArgument(all(table.values(), x -> x>=0));
   }
 
   @Override

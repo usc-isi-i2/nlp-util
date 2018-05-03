@@ -16,11 +16,7 @@ public class StringToOSFile implements StringConverter<File> {
   @Override
   public File decode(final String s) {
     String path = s;
-    if (OSDetector.isWindows()) {
-      path = path.replace("/nfs/", "\\\\").replace("/", "\\");
-    } else {
       path = path.replace("\\\\", "/nfs/").replace("\\", "/");
-    }
     return new File(checkNotNull(path));
   }
 }

@@ -60,7 +60,7 @@ public final class XMLStyleTextAnnotations {
   public static String toStartTag(final AnnotatedOffsetRange<CharOffset> offsetSpan) {
     final StringBuilder ret = new StringBuilder();
     final Map<String, String> wrappedAttributes =
-        Maps.transformValues(offsetSpan.attributes(), StringUtils.WrapInDoubleQuotes);
+        Maps.transformValues(offsetSpan.attributes(), x -> "\"" + x + "\"");
 
     ret.append("<").append(offsetSpan.type().toString());
     if (!offsetSpan.attributes().isEmpty()) {

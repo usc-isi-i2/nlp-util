@@ -93,7 +93,7 @@ public class SymbolUtils {
     checkNotNull(strings);
 
     return FluentIterable.from(strings)
-        .transform(Symbolize)
+        .transform(symbolizeFunction())
         .toSet();
   }
 
@@ -106,7 +106,7 @@ public class SymbolUtils {
   public static ImmutableList<Symbol> listFrom(final Iterable<String> strings) {
     checkNotNull(strings);
     return FluentIterable.from(strings)
-        .transform(Symbolize)
+        .transform(symbolizeFunction())
         .toList();
   }
 

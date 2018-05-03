@@ -331,33 +331,4 @@ public final class BoxPlot implements GnuPlottable {
     }
   }
 
-  /**
-   * Little test program
-   */
-  public static void main(String[] argv) throws IOException {
-    final File outputDir = new File(argv[0]);
-
-    final Random rand = new Random();
-    final double mean1 = 5.0;
-    final double mean2 = 7.0;
-    final double dev1 = 2.0;
-    final double dev2 = 4.0;
-
-    final double[] data1 = new double[100];
-    final double[] data2 = new double[100];
-
-    for (int i = 0; i < 100; ++i) {
-      data1[i] = rand.nextGaussian() * dev1 + mean1;
-      data2[i] = rand.nextGaussian() * dev2 + mean2;
-    }
-
-    BoxPlot.builder()
-        .addDataset(Dataset.createAdoptingData("A", data1))
-        .addDataset(Dataset.createAdoptingData("B", data2))
-        .setTitle("A vs B")
-        .setXAxis(Axis.xAxis().setLabel("FooCategory").build())
-        .setYAxis(Axis.yAxis().setLabel("FooValue").setRange(Range.closed(0.0, 15.0)).build())
-        .hideKey()
-        .build().renderToEmptyDirectory(outputDir);
-  }
 }

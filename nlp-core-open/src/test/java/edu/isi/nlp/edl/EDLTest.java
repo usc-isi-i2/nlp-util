@@ -41,7 +41,7 @@ public class EDLTest {
   @Test
   public void edlRoundtripTest() throws IOException {
     final EDLLoader edlLoader = EDLLoader.create();
-    final EDLWriter edlWriter = EDLWriter.create();
+    final EDLWriter edlWriter = new EDLWriter.Builder().build();
 
     final ImmutableList<EDLMention> edlMentions =
         edlLoader.loadEDLMentionsFrom(Resources.asCharSource(

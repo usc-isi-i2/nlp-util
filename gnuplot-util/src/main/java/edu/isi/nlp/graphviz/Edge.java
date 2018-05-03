@@ -58,7 +58,7 @@ public final class Edge {
     final String attributesString;
 
     if (!attributes.isEmpty()) {
-      attributesString = "[" + StringUtils.CommaSpaceJoiner.join(attributes) + "]";
+      attributesString = "[" + StringUtils.commaSpaceJoiner().join(attributes) + "]";
     } else {
       attributesString = "";
     }

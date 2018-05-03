@@ -59,7 +59,7 @@ public final class EDLFilterer {
         .toSet();
     log.info("Filtered {} edl mentions down to {}; writing to {}",
         inputEDL.size(), edlMentionsToKeep.size(), outputEDLFile);
-    EDLWriter.create().writeEDLMentions(edlMentionsToKeep,
+    new EDLWriter.Builder().build().writeEDLMentions(edlMentionsToKeep,
         Files.asCharSink(outputEDLFile, Charsets.UTF_8));
   }
 }

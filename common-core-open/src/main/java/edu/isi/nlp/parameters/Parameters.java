@@ -1092,7 +1092,7 @@ public final class Parameters {
       paramsForError.addAll(Arrays.asList(moreParams));
       throw new ParameterException(
           String.format("At least one of %s must be defined.",
-              StringUtils.CommaSpaceJoiner.join(paramsForError)));
+              StringUtils.commaSpaceJoiner().join(paramsForError)));
     }
   }
 
@@ -1124,7 +1124,7 @@ public final class Parameters {
     if (definedCount != 1) {
       throw new ParameterException(
           String.format("Exactly one of %s must be defined.",
-              StringUtils.CommaSpaceJoiner.join(params)));
+              StringUtils.commaSpaceJoiner().join(params)));
     }
   }
 

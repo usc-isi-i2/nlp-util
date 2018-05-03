@@ -36,7 +36,7 @@ public final class XMLStyleAnnotationFormatter {
       final Iterable<AnnotatedOffsetRange<CharOffset>> annotations) {
     final ImmutableList<AnnotatedOffsetRange<CharOffset>> clippedToSnippet =
         clipToSnippet(snippetBounds, annotations);
-    final String snippet = StringUtils.substring(s, snippetBounds);
+    final String snippet = StringUtils.substringByCodepoints(s, snippetBounds);
     final int snippetStartChar = snippetBounds.startInclusive().asInt();
 
     final StringBuilder result = new StringBuilder();

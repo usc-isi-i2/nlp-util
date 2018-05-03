@@ -83,18 +83,4 @@ public final class CollectionUtilsTest {
   private final ImmutableList<String> reference = ImmutableList.of("hello", "world", "!",
       "this", "is", "a", "list");
 
-  @Test
-  public void testConcat() {
-    final Collection<String> concatted = CollectionUtils.concat(left, right);
-    assertEquals(7, concatted.size());
-    for (int i = 0; i < reference.size(); ++i) {
-      assertEquals(reference.get(i), Iterables.get(concatted, i));
-    }
-  }
-
-  @Test(expected = IndexOutOfBoundsException.class)
-  public void testConcatOutOfBounds() {
-    final Collection<String> concatted = CollectionUtils.concat(left, right);
-    Iterables.get(concatted, reference.size());
-  }
 }

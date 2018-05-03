@@ -70,7 +70,7 @@ public final class AggregateBinaryFScoresInspector<KeyT, TestT>
     // Output the summaries and add a final newline
     final FMeasureCounts fMeasure =
         SummaryConfusionMatrices.FMeasureVsAllOthers(summaryConfusionMatrix, PRESENT);
-    textSink.write(StringUtils.NewlineJoiner.join(
+    textSink.write(StringUtils.unixNewlineJoiner().join(
         SummaryConfusionMatrices.prettyPrint(summaryConfusionMatrix),
         fMeasure.compactPrettyString(),
         ""));  // Empty string creates a bare newline at the end

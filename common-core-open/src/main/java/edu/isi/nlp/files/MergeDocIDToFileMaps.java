@@ -8,6 +8,7 @@ import edu.isi.nlp.symbols.SymbolUtils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.io.Files;
 
 import org.slf4j.Logger;
@@ -76,9 +77,7 @@ public class MergeDocIDToFileMaps {
     }
     outputMap.getParentFile().mkdirs();
 
-    final ImmutableMap<Symbol, File> sortedMergedMap = MapUtils.copyWithKeysSortedBy(mergedMap,
-        SymbolUtils.byStringOrdering());
-    ;
+    final ImmutableMap<Symbol, File> sortedMergedMap = ImmutableSortedMap.copyOf(mergedMap, SymbolUtils.byStringOrdering());
     log.info("Wrote map of {} files to {}", sortedMergedMap.size(), outputMap);
     FileUtils.writeSymbolToFileMap(sortedMergedMap, Files.asCharSink(outputMap, Charsets.UTF_8));
   }

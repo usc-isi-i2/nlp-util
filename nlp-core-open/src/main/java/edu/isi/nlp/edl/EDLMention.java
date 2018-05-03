@@ -57,13 +57,6 @@ public abstract class EDLMention {
   }
 
   /**
-   * @deprecated Prefer {@link EDLMentionFunctions#mentionType()}
-   */
-  public static Function<EDLMention, Symbol> mentionTypeFunction() {
-    return MentionTypeFunction.INSTANCE;
-  }
-
-  /**
    * Guava {@link Function} to transform an {@code EDLMention}s to
    * a {@link ScoringTypedOffsetRange} with offsets corresponding to
    * {@link #headOffsets()} and type corresponding to {@link #entityType()}.

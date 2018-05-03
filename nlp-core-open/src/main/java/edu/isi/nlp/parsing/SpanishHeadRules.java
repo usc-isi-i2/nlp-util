@@ -77,7 +77,7 @@ import java.util.Map;
     final ImmutableMap.Builder<Symbol, HeadRule<NodeT>> ret = ImmutableMap.builder();
     for (final Map.Entry<Symbol, HeadRule<NodeT>> e : FluentIterable
         .from(charSource.readLines())
-        .transform(StringUtils.Trim)
+        .transform(StringUtils.trimFunction())
         .filter(Predicates.not(StringUtils.startsWith("#")))
         .filter(Predicates.not(StringUtils.isEmpty()))
         .transform(PatternMatchHeadRule.<NodeT>fromHeadRuleFileLine())) {

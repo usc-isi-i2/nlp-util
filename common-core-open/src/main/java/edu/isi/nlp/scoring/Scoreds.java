@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import com.google.common.primitives.Doubles;
 
-import edu.isi.nlp.primitives.DoubleUtils;
 
 import java.util.Map;
 
@@ -81,7 +81,7 @@ public final class Scoreds {
   }
 
   public static final <X> Predicate<Scored<X>> ScoreIsFinite() {
-    return Scoreds.<X>scoreIs(DoubleUtils.IsFinite);
+    return Scoreds.<X>scoreIs(Doubles::isFinite);
   }
 
   public static <T> Function<Map.Entry<T, Integer>, Scored<T>> mapEntryToIntegerToScored() {

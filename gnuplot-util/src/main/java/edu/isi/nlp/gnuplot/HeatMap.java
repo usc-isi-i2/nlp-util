@@ -135,21 +135,6 @@ public final class HeatMap implements GnuPlottable {
     sb.append("' matrix with image");
   }
 
-  // test code
-  public static void main(String[] argv) throws IOException, InterruptedException {
-    final File gnuPlotBin = new File(argv[0]);
-    final List<ImmutableList<Double>> data = ImmutableList.of(
-        ImmutableList.of(0.0, 5.0, 2.0, 0.0, 1.0),
-        ImmutableList.of(1.0, 4.0, 3.0, 0.0, 2.0),
-        ImmutableList.of(5.0, 2.0, 0.0, 1.0, 1.0),
-        ImmutableList.of(9.0, 4.0, 1.0, 3.0, 0.0),
-        ImmutableList.of(14.0, 6.0, 2.0, 0.0, 3.0));
-    final GnuPlotRenderer renderer = GnuPlotRenderer.createForGnuPlotExecutable(gnuPlotBin);
-    final HeatMap heatMap = HeatMap.builder(data).setTitle("This is a heat map").build();
-    final File tmpDir = Files.createTempDir();
-    renderer.render(heatMap.renderToEmptyDirectory(tmpDir), new File(tmpDir, "heatmap.png"));
-  }
-
   private enum Palette {
     GREY {
       @Override

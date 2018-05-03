@@ -93,7 +93,7 @@ final class EnglishAndChineseHeadRules {
       final CharSource p)
       throws IOException {
     return ImmutableMap.copyOf(FluentIterable.from(p.readLines())
-        .transform(StringUtils.Trim)
+        .transform(StringUtils.trimFunction())
         .filter(not(StringUtils.startsWith("#")))
         .filter(not(StringUtils.isEmpty()))
         .transform(CollinsStyleHeadRule.<NodeT>fromHeadRuleFileLine(headInitial)).toList());

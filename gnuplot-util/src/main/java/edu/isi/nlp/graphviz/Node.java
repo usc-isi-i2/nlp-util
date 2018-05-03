@@ -98,7 +98,7 @@ public final class Node {
 
     final String attributeString;
     if (!attributes.isEmpty()) {
-      attributeString = "[" + StringUtils.CommaSpaceJoiner.join(attributes) + "]";
+      attributeString = "[" + StringUtils.commaSpaceJoiner().join(attributes) + "]";
     } else {
       attributeString = "";
     }

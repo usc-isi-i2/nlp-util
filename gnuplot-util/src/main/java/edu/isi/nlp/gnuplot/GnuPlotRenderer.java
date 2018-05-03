@@ -47,7 +47,7 @@ public final class GnuPlotRenderer {
     return new GnuPlotRenderer(gnuPlotExecutable, Png.builder().build());
   }
 
-  public static void main(String[] argv) {
+  /*public static void main(String[] argv) {
     // we wrap the main method in this way to
     // ensure a non-zero return value on failure
     try {
@@ -56,28 +56,28 @@ public final class GnuPlotRenderer {
       e.printStackTrace();
       System.exit(1);
     }
-  }
+  }*/
 
-  private static void trueMain(String[] argv) throws IOException, InterruptedException {
-    final File gnuPlotExecutable = new File(argv[0]);
-    final File dirRoot = new File(argv[1]);
-    walk(GnuPlotRenderer.createForGnuPlotExecutable(gnuPlotExecutable), dirRoot);
-  }
+  //private static void trueMain(String[] argv) throws IOException, InterruptedException {
+   // final File gnuPlotExecutable = new File(argv[0]);
+   // final File dirRoot = new File(argv[1]);
+   // walk(GnuPlotRenderer.createForGnuPlotExecutable(gnuPlotExecutable), dirRoot);
+ // }
 
   private static final ImmutableSet<String> GNUPLOT_EXTENSIONS =
       ImmutableSet.of("gnuplot", "gnuPlot");
 
-  private static void walk(GnuPlotRenderer renderer, File curDir)
-      throws IOException, InterruptedException {
-    checkArgument(curDir.isDirectory());
-    for (final File f : curDir.listFiles()) {
-      if (f.isDirectory()) {
-        walk(renderer, f);
-      } else if (f.isFile() && GNUPLOT_EXTENSIONS.contains(Files.getFileExtension(f.getName()))) {
-        renderer.render(f, FileUtils.swapExtension(f, "png"));
-      }
-    }
-  }
+  //private static void walk(GnuPlotRenderer renderer, File curDir)
+  //    throws IOException, InterruptedException {
+  //  checkArgument(curDir.isDirectory());
+  //  for (final File f : curDir.listFiles()) {
+  //    if (f.isDirectory()) {
+  //      walk(renderer, f);
+  //    } else if (f.isFile() && GNUPLOT_EXTENSIONS.contains(Files.getFileExtension(f.getName()))) {
+  //      renderer.render(f, FileUtils.swapExtension(f, "png"));
+  //    }
+  //  }
+  //}
 
   public void renderTo(GnuPlottable plot, File pngOutputFile) throws IOException {
     renderTo(plot.toPlotBundle(), pngOutputFile);
