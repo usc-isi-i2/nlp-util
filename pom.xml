@@ -316,8 +316,8 @@
 
 
   <scm>
-  <connection>https://github.com/isi-vista/nlp-util.git</connection>
-  <developerConnection>https://github.com/isi-vista/nlp-util.git</developerConnection>
+  <connection>scm:git:https://github.com/isi-vista/nlp-util.git</connection>
+  <developerConnection>scm:git:https://github.com/isi-vista/nlp-util.git</developerConnection>
   <url>https://github.com/isi-vista/nlp-util</url>
 </scm>
 
