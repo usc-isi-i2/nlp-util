@@ -317,6 +317,12 @@
 <distributionManagement>
   </distributionManagement>
 
+  <scm>
+  <connection>https://github.com/isi-vista/nlp-util.git</connection>
+  <developerConnection>https://github.com/isi-vista/nlp-util.git</developerConnection>
+  <url>https://github.com/isi-vista/nlp-util</url>
+</scm>
+
   <profiles>
 <profile>
         <id>disable-java8-doclint</id>
@@ -327,7 +333,8 @@
             <additionalparam>-Xdoclint:none</additionalparam>
         </properties>
     </profile>
-    <!--<profile>
+
+    <profile>
               <id>release</id>
 <build>
   <plugins>
@@ -373,7 +380,7 @@
 <plugin>
       <groupId>org.sonatype.plugins</groupId>
       <artifactId>nexus-staging-maven-plugin</artifactId>
-      <version>1.6.3</version>
+      <version>1.6.7</version>
       <extensions>true</extensions>
       <configuration>
         <serverId>ossrh</serverId>
@@ -388,8 +395,12 @@
     <id>ossrh</id>
     <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
+      <repository>
+   <id>ossrh</id>
+   <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+  </repository>
   </distributionManagement>
-      </profile>-->
+      </profile>
 
 
   </profiles>
