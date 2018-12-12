@@ -1,9 +1,7 @@
 package edu.isi.nlp.serialization.jackson;
 
 import com.google.common.io.ByteSource;
-
 import edu.isi.nlp.io.ByteArraySink;
-
 import java.io.IOException;
 
 public final class JacksonTestUtils {

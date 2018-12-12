@@ -1,8 +1,8 @@
 package edu.isi.nlp;
 
 /**
- * An integer counter which can be incremented and decremented.  This is handy to use when
- * you would need an integer passed by reference in other languages.
+ * An integer counter which can be incremented and decremented. This is handy to use when you would
+ * need an integer passed by reference in other languages.
  *
  * @author Ryan Gabbard
  */

@@ -1,16 +1,13 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.parameters.Parameters;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-
+import edu.isi.nlp.parameters.Parameters;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import javax.annotation.Nonnull;
 
 /**
@@ -37,17 +34,19 @@ public final class ModuleUtils {
    * Attempts to convert a module class name to an instantiate module by applying heuristics to
    * construct it.
    *
-   * It first tries to instantiate the provided class itself as a module, if possible. If it is not
-   * a module, it looks for an inner class called "Module",
-   * "FromParametersModule", or "FromParamsModule" which is a {@link Module}.
+   * <p>It first tries to instantiate the provided class itself as a module, if possible. If it is
+   * not a module, it looks for an inner class called "Module", "FromParametersModule", or
+   * "FromParamsModule" which is a {@link Module}.
    *
-   * When instantiating a module, it tries to find a constructor taking parameters and an annotation
-   * (if annotation is present), just an annotation, just parameters, or zero arguments.
+   * <p>When instantiating a module, it tries to find a constructor taking parameters and an
+   * annotation (if annotation is present), just an annotation, just parameters, or zero arguments.
    */
   @Nonnull
   // it's reflection, can't avoid unchecked cast
   @SuppressWarnings("unchecked")
-  public static Module classNameToModule(final Parameters parameters, final Class<?> clazz,
+  public static Module classNameToModule(
+      final Parameters parameters,
+      final Class<?> clazz,
       Optional<? extends Class<? extends Annotation>> annotation)
       throws IllegalAccessException, InvocationTargetException, InstantiationException {
     if (Module.class.isAssignableFrom(clazz)) {
@@ -68,82 +67,94 @@ public final class ModuleUtils {
         if (Module.class.isAssignableFrom(innerModuleClazz)) {
           return instantiateModule(innerModuleClazz, parameters, annotation);
         } else {
-          throw new RuntimeException(clazz.getName() + " is not a module; "
-              + fullyQualifiedName + " exists but is not a module");
+          throw new RuntimeException(
+              clazz.getName()
+                  + " is not a module; "
+                  + fullyQualifiedName
+                  + " exists but is not a module");
         }
       }
 
       // if we got here, we didn't find any module
-      throw new RuntimeException("Could not find inner class of " + clazz.getName()
-          + " matching any of " + FALLBACK_INNER_CLASS_NAMES);
+      throw new RuntimeException(
+          "Could not find inner class of "
+              + clazz.getName()
+              + " matching any of "
+              + FALLBACK_INNER_CLASS_NAMES);
     }
   }
 
   /**
-   * Instantiates the given module class {@code clazz}.  First this looks for a constructor taking
+   * Instantiates the given module class {@code clazz}. First this looks for a constructor taking
    * {@link Parameters} as its only argument and uses it with the supplied {@code params} if
-   * possible. Otherwise attempts to find and use a zero-arg constructor. Otherwise throws
-   * a {@link RuntimeException}.
+   * possible. Otherwise attempts to find and use a zero-arg constructor. Otherwise throws a {@link
+   * RuntimeException}.
    */
-  public static Module instantiateModule(final Class<? extends Module> clazz,
-      final Parameters params)
+  public static Module instantiateModule(
+      final Class<? extends Module> clazz, final Parameters params)
       throws IllegalAccessException, InvocationTargetException, InstantiationException {
     return instantiateModule(clazz, params, Optional.<Class<? extends Annotation>>absent());
   }
 
-  private static Module instantiateModule(final Class<? extends Module> clazz,
+  private static Module instantiateModule(
+      final Class<? extends Module> clazz,
       final Parameters parameters,
       Optional<? extends Class<? extends Annotation>> annotation)
-      throws InstantiationException, IllegalAccessException,
-             InvocationTargetException {
+      throws InstantiationException, IllegalAccessException, InvocationTargetException {
     if (annotation.isPresent()) {
       // first we try a constructor which takes both
       final Optional<Module> withParamsAndAnnotationsConstructor =
-          instantiateWithPrivateConstructor(clazz, new Class<?>[]{Parameters.class, Class.class},
-              parameters, annotation.get());
+          instantiateWithPrivateConstructor(
+              clazz, new Class<?>[] {Parameters.class, Class.class}, parameters, annotation.get());
       if (withParamsAndAnnotationsConstructor.isPresent()) {
         return withParamsAndAnnotationsConstructor.get();
       }
 
       // then annotations only
       final Optional<Module> withAnnotationsConstructor =
-          instantiateWithPrivateConstructor(clazz, new Class<?>[]{Class.class}, annotation.get());
+          instantiateWithPrivateConstructor(clazz, new Class<?>[] {Class.class}, annotation.get());
       if (withAnnotationsConstructor.isPresent()) {
         return withAnnotationsConstructor.get();
       }
 
-      throw new RuntimeException("Tried to create module " + clazz + " when annotation " +
-          annotation.get() + " was specified but it has neither"
-          + " a (Parameters, Class<? extends Annotation>) constructor nor a "
-          + "(Class<? extends Annotation>) constructor.");
+      throw new RuntimeException(
+          "Tried to create module "
+              + clazz
+              + " when annotation "
+              + annotation.get()
+              + " was specified but it has neither"
+              + " a (Parameters, Class<? extends Annotation>) constructor nor a "
+              + "(Class<? extends Annotation>) constructor.");
     } else {
       final Optional<Module> withParamsConstructor =
-          instantiateWithPrivateConstructor(clazz, new Class<?>[]{Parameters.class}, parameters);
+          instantiateWithPrivateConstructor(clazz, new Class<?>[] {Parameters.class}, parameters);
       if (withParamsConstructor.isPresent()) {
         return withParamsConstructor.get();
       } else {
         final Optional<Module> withNoArgConstructor =
-            instantiateWithPrivateConstructor(clazz, new Class<?>[]{});
+            instantiateWithPrivateConstructor(clazz, new Class<?>[] {});
         if (withNoArgConstructor.isPresent()) {
           return withNoArgConstructor.get();
         } else {
-          throw new RuntimeException("Tried to create module " + clazz + " but it has neither"
-              + " a zero-argument constructor or one taking only a parameters object");
+          throw new RuntimeException(
+              "Tried to create module "
+                  + clazz
+                  + " but it has neither"
+                  + " a zero-argument constructor or one taking only a parameters object");
         }
       }
     }
   }
 
   /**
-   * Instantiates a module which may have a private constructor.  You can't call private
-   * constructors in Java unless you first make the constructor un-private.  After doing so,
-   * however, we should clean up after ourselves and restore the previous state.
+   * Instantiates a module which may have a private constructor. You can't call private constructors
+   * in Java unless you first make the constructor un-private. After doing so, however, we should
+   * clean up after ourselves and restore the previous state.
    *
-   * If we fail to instantiate the class, we return absent.
+   * <p>If we fail to instantiate the class, we return absent.
    */
-  private static Optional<Module> instantiateWithPrivateConstructor(Class<?> clazz,
-      Class<?>[] parameters,
-      Object... paramVals)
+  private static Optional<Module> instantiateWithPrivateConstructor(
+      Class<?> clazz, Class<?>[] parameters, Object... paramVals)
       throws InvocationTargetException, IllegalAccessException, InstantiationException {
     final Constructor<?> constructor;
     try {
@@ -163,9 +174,7 @@ public final class ModuleUtils {
     }
   }
 
-  /**
-   * A module which installs others modules.
-   */
+  /** A module which installs others modules. */
   static class MultiModule extends AbstractModule {
 
     private final ImmutableList<Module> modules;

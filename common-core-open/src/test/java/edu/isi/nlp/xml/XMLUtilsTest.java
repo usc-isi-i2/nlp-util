@@ -1,27 +1,22 @@
 package edu.isi.nlp.xml;
 
-import com.google.common.base.Optional;
-
-import org.junit.Test;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.StringReader;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import static edu.isi.nlp.xml.XMLUtils.nextSibling;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Tests XMLUtils.
- */
+import com.google.common.base.Optional;
+import java.io.IOException;
+import java.io.StringReader;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.junit.Test;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+/** Tests XMLUtils. */
 public class XMLUtilsTest {
 
   private static Element documentFromString(String source)
@@ -31,9 +26,7 @@ public class XMLUtilsTest {
     return documentBuilder.parse(inputSource).getDocumentElement();
   }
 
-  /**
-   * Tests nextSibling.
-   */
+  /** Tests nextSibling. */
   @Test
   public void testNextSibling() throws ParserConfigurationException, SAXException, IOException {
     // Set up

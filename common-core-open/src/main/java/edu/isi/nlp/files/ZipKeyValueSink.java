@@ -1,20 +1,17 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import javax.annotation.Nonnull;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A {@link KeyValueSink} based on the contents of a zip file.
@@ -27,7 +24,9 @@ final class ZipKeyValueSink implements KeyValueSink<Symbol, byte[]> {
   private final ZipOutputStream zip;
   private final Function<Symbol, String> keyEntryFunction;
 
-  private ZipKeyValueSink(final OutputStream outputStream, final ZipOutputStream zipOutputStream,
+  private ZipKeyValueSink(
+      final OutputStream outputStream,
+      final ZipOutputStream zipOutputStream,
       final Function<Symbol, String> keyEntryFunction) {
     this.output = checkNotNull(outputStream);
     this.zip = checkNotNull(zipOutputStream);
@@ -35,8 +34,8 @@ final class ZipKeyValueSink implements KeyValueSink<Symbol, byte[]> {
   }
 
   @Nonnull
-  static ZipKeyValueSink forFile(final File zipfile,
-      final Function<Symbol, String> keyEntryFunction) throws IOException {
+  static ZipKeyValueSink forFile(
+      final File zipfile, final Function<Symbol, String> keyEntryFunction) throws IOException {
     final OutputStream outputStream = Files.asByteSink(zipfile).openBufferedStream();
     final ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream, Charsets.UTF_8);
     return new ZipKeyValueSink(outputStream, zipOutputStream, keyEntryFunction);

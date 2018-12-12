@@ -18,8 +18,14 @@ public final class BarChart implements GnuPlottable {
   private final boolean showKey;
   private final Grid grid;
 
-  private BarChart(Iterable<Bar> bars, Axis xAxis, Axis yAxis, String title,
-      double boxWidth, boolean showKey, Grid grid) {
+  private BarChart(
+      Iterable<Bar> bars,
+      Axis xAxis,
+      Axis yAxis,
+      String title,
+      double boxWidth,
+      boolean showKey,
+      Grid grid) {
     this.bars = ImmutableList.copyOf(bars);
     this.xAxis = checkNotNull(xAxis);
     this.yAxis = checkNotNull(yAxis);
@@ -45,7 +51,6 @@ public final class BarChart implements GnuPlottable {
     plotCommands(ret);
     return ret.build();
   }
-
 
   public static final class Bar {
 
@@ -101,8 +106,7 @@ public final class BarChart implements GnuPlottable {
     private boolean showKey = true;
     private Grid grid = NormalGrid.builder().build();
 
-    private Builder() {
-    }
+    private Builder() {}
 
     public Builder addBar(Bar bar) {
       this.bars.add(bar);

@@ -3,12 +3,9 @@ package edu.isi.nlp.corpora.lightERE;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class EREEventMention {
 
   private final String id;
@@ -20,8 +17,13 @@ public final class EREEventMention {
   private final List<EREPlace> places;
   private final Optional<EREDate> date;
 
-  private EREEventMention(final String id, final TYPE type, final SUBTYPE subtype,
-      final ERETrigger trigger, final List<EREArg> args, final List<EREPlace> places,
+  private EREEventMention(
+      final String id,
+      final TYPE type,
+      final SUBTYPE subtype,
+      final ERETrigger trigger,
+      final List<EREArg> args,
+      final List<EREPlace> places,
       final Optional<EREDate> date) {
     this.id = id;
     this.type = type;
@@ -110,15 +112,23 @@ public final class EREEventMention {
 
   @Override
   public String toString() {
-    return "EREEventMention{" +
-        "id='" + id + '\'' +
-        ", type=" + type +
-        ", subtype=" + subtype +
-        ", trigger=" + trigger +
-        ", \nargs=" + args +
-        ", \nplaces=" + places +
-        ", \ndate=" + date +
-        '}';
+    return "EREEventMention{"
+        + "id='"
+        + id
+        + '\''
+        + ", type="
+        + type
+        + ", subtype="
+        + subtype
+        + ", trigger="
+        + trigger
+        + ", \nargs="
+        + args
+        + ", \nplaces="
+        + places
+        + ", \ndate="
+        + date
+        + '}';
   }
 
   public static Builder builder(final String id, final TYPE type, final SUBTYPE subtype) {
@@ -139,8 +149,7 @@ public final class EREEventMention {
     private List<EREPlace> places = Lists.newArrayList();
     private Optional<EREDate> date = Optional.absent();
 
-    public Builder(final String id, final TYPE type,
-        final SUBTYPE subtype) {
+    public Builder(final String id, final TYPE type, final SUBTYPE subtype) {
       this.id = id;
       this.type = type;
       this.subtype = subtype;
@@ -192,8 +201,8 @@ public final class EREEventMention {
     }
 
     public EREEventMention build() {
-      return new EREEventMention(this.id, this.type, this.subtype, this.trigger, this.args,
-          this.places, this.date);
+      return new EREEventMention(
+          this.id, this.type, this.subtype, this.trigger, this.args, this.places, this.date);
     }
   }
 
@@ -216,4 +225,3 @@ public final class EREEventMention {
     };
   }
 }
-

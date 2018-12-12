@@ -7,7 +7,8 @@ enum AxisType {
     String letter() {
       return "x";
     }
-  }, Y {
+  },
+  Y {
     @Override
     String letter() {
       return "y";

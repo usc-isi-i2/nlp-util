@@ -23,8 +23,7 @@ import java.util.List;
  */
 public final class IterableUtils {
 
-  private IterableUtils() {
-  }
+  private IterableUtils() {}
 
   /**
    * Promotes a predicate over T to a predicate over Iterable<T> that returns true if an only if any
@@ -52,11 +51,9 @@ public final class IterableUtils {
     };
   }
 
-  /**
-   * An implementation of Python's zip.
-   */
-  public static <X, Y> Iterable<ZipPair<X, Y>> zip(final Iterable<X> iter1,
-      final Iterable<Y> iter2) {
+  /** An implementation of Python's zip. */
+  public static <X, Y> Iterable<ZipPair<X, Y>> zip(
+      final Iterable<X> iter1, final Iterable<Y> iter2) {
     return new ZipIterable<X, Y>(iter1, iter2);
   }
 
@@ -156,8 +153,7 @@ public final class IterableUtils {
         return false;
       }
       final ZipPair<?, ?> other = (ZipPair<?, ?>) obj;
-      return Objects.equal(first, other.first)
-          && Objects.equal(second, other.second);
+      return Objects.equal(first, other.first) && Objects.equal(second, other.second);
     }
 
     public static <X, Y> ZipPair<X, Y> from(final X x, final Y y) {
@@ -216,7 +212,6 @@ public final class IterableUtils {
     }
   }
 
-
   /**
    * Two argument function to be used for reduction
    *
@@ -231,8 +226,8 @@ public final class IterableUtils {
    * reduces an iterable to a single value starting from an initial value and applying down the
    * iterable.
    */
-  public static <A, B> B reduce(final Iterable<A> iterable,
-      final B initial, final Function2<A, B> func) {
+  public static <A, B> B reduce(
+      final Iterable<A> iterable, final B initial, final Function2<A, B> func) {
     B b = initial;
     for (final A item : iterable) {
       b = func.apply(b, item);
@@ -240,12 +235,13 @@ public final class IterableUtils {
     return b;
   }
 
-  public static final Function2<Number, Number> SumReducer = new Function2<Number, Number>() {
-    @Override
-    public Number apply(final Number a, final Number b) {
-      return a.doubleValue() + b.doubleValue();
-    }
-  };
+  public static final Function2<Number, Number> SumReducer =
+      new Function2<Number, Number>() {
+        @Override
+        public Number apply(final Number a, final Number b) {
+          return a.doubleValue() + b.doubleValue();
+        }
+      };
 
   public static final Function2<Integer, Integer> SumReducerInt =
       new Function2<Integer, Integer>() {
@@ -273,8 +269,8 @@ public final class IterableUtils {
 
   /**
    * Transforms an Iterable<T> to a Map<T, Integer> where each item is mapped to its zero-indexed
-   * position in the Iterable's sequence.  If an item occurs twice, an {@link IllegalArgumentException} will
-   * be thrown.
+   * position in the Iterable's sequence. If an item occurs twice, an {@link
+   * IllegalArgumentException} will be thrown.
    */
   public static <T> ImmutableMap<T, Integer> itemToIndexMap(final Iterable<T> sequence) {
     return itemToIndexMapStartingFrom(sequence, 0);
@@ -285,8 +281,8 @@ public final class IterableUtils {
    * Iterable's sequence, where the first position is given index {@code startFrom}. If an item
    * occurs twice, an IllegalArgumentException will be thrown.
    */
-  public static <T> ImmutableMap<T, Integer> itemToIndexMapStartingFrom(final Iterable<T> sequence,
-      int startFrom) {
+  public static <T> ImmutableMap<T, Integer> itemToIndexMapStartingFrom(
+      final Iterable<T> sequence, int startFrom) {
     final ImmutableMap.Builder<T, Integer> ret = ImmutableMap.builder();
 
     int idx = startFrom;
@@ -298,13 +294,11 @@ public final class IterableUtils {
     return ret.build();
   }
 
-
   /**
    * Transforms an Iterable<T> to a Map<T, Integer> where each item is mapped to its zero-indexed
    * position(s) in the Iterable's sequence.
    */
-  public static <T> ImmutableMultimap<T, Integer> itemToIndexMultimap(
-      Iterable<T> iterable) {
+  public static <T> ImmutableMultimap<T, Integer> itemToIndexMultimap(Iterable<T> iterable) {
     final ImmutableMultimap.Builder<T, Integer> ret = ImmutableMultimap.builder();
     int idx = 0;
     for (final T x : iterable) {
@@ -356,10 +350,10 @@ public final class IterableUtils {
 
   /**
    * Returns true if and only if no two elements of the provided {@link Iterable} are equal to one
-   * another.  Equality is determined by {@code .equals()}. Elements must have a {@code hashCode}
+   * another. Equality is determined by {@code .equals()}. Elements must have a {@code hashCode}
    * consistent with their {@code equals} or the result is undefined.
    *
-   * No element may be {@code null} or an exception will be thrown.
+   * <p>No element may be {@code null} or an exception will be thrown.
    */
   public static <T> boolean noneEqualForHashable(final Iterable<T> iterable) {
     return Iterables.size(iterable) == ImmutableSet.copyOf(iterable).size();
@@ -367,7 +361,7 @@ public final class IterableUtils {
 
   /**
    * Returns a new {@link Iterable} which behaves like the provided {@code Iterable} except with a
-   * single extra element at the end.  {@code item} may not be null.
+   * single extra element at the end. {@code item} may not be null.
    */
   public static <T, V extends T> Iterable<T> append(Iterable<T> iterable, V item) {
     return Iterables.concat(iterable, ImmutableList.<T>of(item));

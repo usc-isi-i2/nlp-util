@@ -1,8 +1,6 @@
 package edu.isi.nlp.corpora.lightERE;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class EREDate {
 
   private final EREDateExtent dateExtent;
@@ -23,10 +21,7 @@ public final class EREDate {
 
   @Override
   public String toString() {
-    return "EREDate{" +
-        "dateExtent=" + dateExtent +
-        ", normalizedDate=" + normalizedDate +
-        '}';
+    return "EREDate{" + "dateExtent=" + dateExtent + ", normalizedDate=" + normalizedDate + '}';
   }
 
   public static Builder builder() {
@@ -53,4 +48,3 @@ public final class EREDate {
     }
   }
 }
-

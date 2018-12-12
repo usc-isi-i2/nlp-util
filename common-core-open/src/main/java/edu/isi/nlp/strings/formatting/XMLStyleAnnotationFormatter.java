@@ -1,22 +1,19 @@
 package edu.isi.nlp.strings.formatting;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 import edu.isi.nlp.StringUtils;
 import edu.isi.nlp.strings.offsets.AnnotatedOffsetRange;
 import edu.isi.nlp.strings.offsets.CharOffset;
 import edu.isi.nlp.strings.offsets.OffsetRange;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Ordering;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public final class XMLStyleAnnotationFormatter {
 
-  private XMLStyleAnnotationFormatter() {
-  }
+  private XMLStyleAnnotationFormatter() {}
 
   public static XMLStyleAnnotationFormatter create() {
     return new XMLStyleAnnotationFormatter();
@@ -32,7 +29,9 @@ public final class XMLStyleAnnotationFormatter {
     }
   }
 
-  public String format(String s, final OffsetRange<CharOffset> snippetBounds,
+  public String format(
+      String s,
+      final OffsetRange<CharOffset> snippetBounds,
       final Iterable<AnnotatedOffsetRange<CharOffset>> annotations) {
     final ImmutableList<AnnotatedOffsetRange<CharOffset>> clippedToSnippet =
         clipToSnippet(snippetBounds, annotations);
@@ -65,8 +64,7 @@ public final class XMLStyleAnnotationFormatter {
   }
 
   private ImmutableList<AnnotatedOffsetRange<CharOffset>> clipToSnippet(
-      OffsetRange<CharOffset> snippet,
-      Iterable<AnnotatedOffsetRange<CharOffset>> annotations) {
+      OffsetRange<CharOffset> snippet, Iterable<AnnotatedOffsetRange<CharOffset>> annotations) {
     final ImmutableList.Builder<AnnotatedOffsetRange<CharOffset>> ret = ImmutableList.builder();
 
     for (final AnnotatedOffsetRange<CharOffset> annotation : annotations) {
@@ -76,8 +74,9 @@ public final class XMLStyleAnnotationFormatter {
         if (clippedBounds.get().equals(annotation.range())) {
           ret.add(annotation);
         } else {
-          ret.add(AnnotatedOffsetRange.create(annotation.type(),
-              clippedBounds.get(), annotation.attributes()));
+          ret.add(
+              AnnotatedOffsetRange.create(
+                  annotation.type(), clippedBounds.get(), annotation.attributes()));
         }
       } else {
         // if an annotation doesn't intersect the snippet, we don't care about it
@@ -93,7 +92,10 @@ public final class XMLStyleAnnotationFormatter {
     private AnnotatedOffsetRange<CharOffset> offsetSpan;
     private Type tagType;
 
-    public enum Type {Start, End}
+    public enum Type {
+      Start,
+      End
+    }
 
     public TagCursor(Iterable<AnnotatedOffsetRange<CharOffset>> annotations) {
       tagsInStartingOrder = startTagOrder.sortedCopy(annotations);
@@ -148,8 +150,8 @@ public final class XMLStyleAnnotationFormatter {
         @Override
         public TagCursor next() {
           if (nextTagToStart != null && nextTagToEnd != null) {
-            if (nextTagToStart.range().startInclusive().asInt() < nextTagToEnd.range()
-                .endInclusive().asInt()
+            if (nextTagToStart.range().startInclusive().asInt()
+                    < nextTagToEnd.range().endInclusive().asInt()
                 // the or handles the case of a tag covering a single character
                 || (nextTagToStart == nextTagToEnd)) {
               // we prefer to end things before we start them, at the same positions

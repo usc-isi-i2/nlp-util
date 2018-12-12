@@ -1,8 +1,8 @@
 package edu.isi.nlp.corenlp;
 
-import edu.isi.nlp.parsing.HeadFinder;
-import edu.isi.nlp.strings.offsets.OffsetRange;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.isi.nlp.xml.XMLUtils.directChild;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
@@ -10,29 +10,25 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.parsing.HeadFinder;
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import edu.isi.nlp.symbols.Symbol;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import static edu.isi.nlp.xml.XMLUtils.directChild;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * This class and its consumers assume that you ran the Stanford pipeline with: {@code -annotators
- * tokenize,cleanxml,ssplit,parse -tokenize.options invertible  -outputFormat xml}
+ * tokenize,cleanxml,ssplit,parse -tokenize.options invertible -outputFormat xml}
  *
- * It might accidentally work with other options; the important ones are tokenize, cleanxml,
+ * <p>It might accidentally work with other options; the important ones are tokenize, cleanxml,
  * invertible, and xml
  */
 @Beta
@@ -41,8 +37,8 @@ public final class CoreNLPXMLLoader {
   private final HeadFinder<CoreNLPParseNode> headFinder;
   private final boolean stripFunctionTags;
 
-  private CoreNLPXMLLoader(final HeadFinder<CoreNLPParseNode> headFinder,
-      final boolean stripFunctionTags) {
+  private CoreNLPXMLLoader(
+      final HeadFinder<CoreNLPParseNode> headFinder, final boolean stripFunctionTags) {
     this.headFinder = checkNotNull(headFinder);
     this.stripFunctionTags = stripFunctionTags;
   }
@@ -95,7 +91,6 @@ public final class CoreNLPXMLLoader {
     } else {
       throw new RuntimeException("StanfordXML should have a root of root or document");
     }
-
   }
 
   private CoreNLPDocument loadFrom(final Element element) {
@@ -104,8 +99,7 @@ public final class CoreNLPXMLLoader {
 
   private CoreNLPDocument toDocument(final Element e) {
     checkArgument(e.getTagName().equalsIgnoreCase("Document"));
-    final CoreNLPDocument.CoreNLPDocumentBuilder documentBuilder =
-        CoreNLPDocument.builder();
+    final CoreNLPDocument.CoreNLPDocumentBuilder documentBuilder = CoreNLPDocument.builder();
     for (Node child = e.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (child instanceof Element) {
         final Element childElement = (Element) child;
@@ -148,8 +142,8 @@ public final class CoreNLPXMLLoader {
           }
           if (childElement.getTagName().equals("parse")) {
             final CoreNLPConstituencyParse parse =
-                CoreNLPConstituencyParse
-                    .create(headFinder, tokens, childElement.getTextContent(), stripFunctionTags);
+                CoreNLPConstituencyParse.create(
+                    headFinder, tokens, childElement.getTextContent(), stripFunctionTags);
             ret.withParse(Optional.of(parse));
           }
         }
@@ -199,12 +193,11 @@ public final class CoreNLPXMLLoader {
         if (childElement.getTagName().equalsIgnoreCase("POS")) {
           POS = child.getTextContent();
         }
-
       }
     }
 
-    return CoreNLPToken
-        .create(Symbol.from(POS), word, OffsetRange.charOffsetRange(startOffset, endOffset));
+    return CoreNLPToken.create(
+        Symbol.from(POS), word, OffsetRange.charOffsetRange(startOffset, endOffset));
   }
 
   public static CoreNLPXMLLoaderBuilder builder(final HeadFinder<CoreNLPParseNode> headfinder) {
@@ -224,7 +217,6 @@ public final class CoreNLPXMLLoader {
       // revisit in the future if we need to
       throw new UnsupportedOperationException("I can't let you do that Dave.");
     }
-
 
     public CoreNLPXMLLoader build() {
       CoreNLPXMLLoader coreNLPXMLLoader = new CoreNLPXMLLoader(headFinder, stripFunctionTags);

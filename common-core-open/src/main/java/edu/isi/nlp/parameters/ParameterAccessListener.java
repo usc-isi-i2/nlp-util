@@ -15,9 +15,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Logs the stack traces of all parameter access and can dump them when requested.
- */
+/** Logs the stack traces of all parameter access and can dump them when requested. */
 final class ParameterAccessListener implements Parameters.Listener {
 
   private static final Logger log = LoggerFactory.getLogger(ParameterAccessListener.class);
@@ -25,9 +23,7 @@ final class ParameterAccessListener implements Parameters.Listener {
   private final ImmutableSetMultimap.Builder<String, List<StackTraceElement>> paramToStackTrace =
       ImmutableSetMultimap.builder();
 
-  private ParameterAccessListener() {
-
-  }
+  private ParameterAccessListener() {}
 
   public static ParameterAccessListener create() {
     return new ParameterAccessListener();
@@ -49,17 +45,17 @@ final class ParameterAccessListener implements Parameters.Listener {
 
     for (final Map.Entry<String, List<StackTraceElement>> e : paramToStackTrace.build().entries()) {
       msg.append("Parameter ").append(e.getKey()).append(" accessed at \n");
-      msg.append(FluentIterable.from(e.getValue())
-          // but exclude code in Parameters itself
-          .filter(not(IS_THIS_CLASS))
-          .filter(not(IS_PARAMETERS_ITSELF))
-          .filter(not(IS_THREAD_CLASS))
-          .join(StringUtils.unixNewlineJoiner()));
+      msg.append(
+          FluentIterable.from(e.getValue())
+              // but exclude code in Parameters itself
+              .filter(not(IS_THIS_CLASS))
+              .filter(not(IS_PARAMETERS_ITSELF))
+              .filter(not(IS_THREAD_CLASS))
+              .join(StringUtils.unixNewlineJoiner()));
       msg.append("\n\n");
     }
     return msg.toString();
   }
-
 
   // move this to a StackTraceUtils at some point
   private static final Function<StackTraceElement, String> CLASS_NAME =

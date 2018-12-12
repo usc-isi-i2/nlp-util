@@ -10,7 +10,6 @@ import com.google.common.io.Files;
 import com.google.inject.Provides;
 import edu.isi.nlp.AbstractParameterizedModule;
 import edu.isi.nlp.ModuleFromParameter;
-import edu.isi.nlp.files.FileUtils;
 import edu.isi.nlp.gnuplot.outputformats.Png;
 import edu.isi.nlp.parameters.Parameters;
 import java.io.BufferedReader;
@@ -36,8 +35,8 @@ public final class GnuPlotRenderer {
   private final OutputFormat outputFormat;
 
   @Inject
-  private GnuPlotRenderer(@GnuPlotBinaryP final File pathToGnuPlot,
-      final OutputFormat outputFormat) {
+  private GnuPlotRenderer(
+      @GnuPlotBinaryP final File pathToGnuPlot, final OutputFormat outputFormat) {
     checkArgument(pathToGnuPlot.isFile());
     this.executable = checkNotNull(pathToGnuPlot);
     this.outputFormat = checkNotNull(outputFormat);
@@ -58,16 +57,16 @@ public final class GnuPlotRenderer {
     }
   }*/
 
-  //private static void trueMain(String[] argv) throws IOException, InterruptedException {
-   // final File gnuPlotExecutable = new File(argv[0]);
-   // final File dirRoot = new File(argv[1]);
-   // walk(GnuPlotRenderer.createForGnuPlotExecutable(gnuPlotExecutable), dirRoot);
- // }
+  // private static void trueMain(String[] argv) throws IOException, InterruptedException {
+  // final File gnuPlotExecutable = new File(argv[0]);
+  // final File dirRoot = new File(argv[1]);
+  // walk(GnuPlotRenderer.createForGnuPlotExecutable(gnuPlotExecutable), dirRoot);
+  // }
 
   private static final ImmutableSet<String> GNUPLOT_EXTENSIONS =
       ImmutableSet.of("gnuplot", "gnuPlot");
 
-  //private static void walk(GnuPlotRenderer renderer, File curDir)
+  // private static void walk(GnuPlotRenderer renderer, File curDir)
   //    throws IOException, InterruptedException {
   //  checkArgument(curDir.isDirectory());
   //  for (final File f : curDir.listFiles()) {
@@ -77,7 +76,7 @@ public final class GnuPlotRenderer {
   //      renderer.render(f, FileUtils.swapExtension(f, "png"));
   //    }
   //  }
-  //}
+  // }
 
   public void renderTo(GnuPlottable plot, File pngOutputFile) throws IOException {
     renderTo(plot.toPlotBundle(), pngOutputFile);
@@ -124,9 +123,13 @@ public final class GnuPlotRenderer {
     }
 
     if (exitCode != 0) {
-      throw new RuntimeException("GnuPlot rendering failed with exit code " + exitCode
-          + ". Commands were " + commands + "\nOutput was: \n"
-          + output);
+      throw new RuntimeException(
+          "GnuPlot rendering failed with exit code "
+              + exitCode
+              + ". Commands were "
+              + commands
+              + "\nOutput was: \n"
+              + output);
     }
   }
 
@@ -146,8 +149,10 @@ public final class GnuPlotRenderer {
 
     @Override
     public void configure() {
-      install(ModuleFromParameter.forParameter("gnuplot.outputFormatModule").withDefault(Png.class)
-          .extractFrom(params()));
+      install(
+          ModuleFromParameter.forParameter("gnuplot.outputFormatModule")
+              .withDefault(Png.class)
+              .extractFrom(params()));
     }
 
     @Provides
@@ -155,6 +160,5 @@ public final class GnuPlotRenderer {
     File gnuplotBinaryPath() {
       return params().getExistingFile(GnuPlotBinaryP.param);
     }
-
   }
 }

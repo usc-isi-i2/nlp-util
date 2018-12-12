@@ -32,14 +32,11 @@ public final class MapUtils {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * Pairs up the values of a map by their common keys.
-   */
+  /** Pairs up the values of a map by their common keys. */
   public static <K, V> PairedMapValues<V> zipValues(final Map<K, V> left, final Map<K, V> right) {
     checkNotNull(left);
     checkNotNull(right);
-    final ImmutableList.Builder<ZipPair<V, V>> pairedValues =
-        ImmutableList.builder();
+    final ImmutableList.Builder<ZipPair<V, V>> pairedValues = ImmutableList.builder();
     final ImmutableList.Builder<V> leftOnly = ImmutableList.builder();
     final ImmutableList.Builder<V> rightOnly = ImmutableList.builder();
 
@@ -58,8 +55,7 @@ public final class MapUtils {
       }
     }
 
-    return new PairedMapValues<V>(pairedValues.build(), leftOnly.build(),
-        rightOnly.build());
+    return new PairedMapValues<V>(pairedValues.build(), leftOnly.build(), rightOnly.build());
   }
 
   /**
@@ -68,11 +64,13 @@ public final class MapUtils {
    * all the keys of the input map. If two original keys are mapped to the same value, an {@link
    * java.lang.IllegalArgumentException} will be thrown.
    *
-   * Neither {@code keyInjection} nor {@code valueFunction} may return null. If one does, an
+   * <p>Neither {@code keyInjection} nor {@code valueFunction} may return null. If one does, an
    * exception will be thrown.
    */
-  public static <K1, V1, K2, V2> ImmutableMap<K2, V2> copyWithTransformedEntries(Map<K1, V1> input,
-      Function<? super K1, K2> keyInjection, Function<? super V1, V2> valueFunction) {
+  public static <K1, V1, K2, V2> ImmutableMap<K2, V2> copyWithTransformedEntries(
+      Map<K1, V1> input,
+      Function<? super K1, K2> keyInjection,
+      Function<? super V1, V2> valueFunction) {
     final ImmutableMap.Builder<K2, V2> ret = ImmutableMap.builder();
 
     for (final Map.Entry<K1, V1> entry : input.entrySet()) {
@@ -81,11 +79,10 @@ public final class MapUtils {
     return ret.build();
   }
 
-
   public static class PairedMapValues<V> {
 
-    public PairedMapValues(final List<ZipPair<V, V>> pairedValues, final List<V> leftOnly,
-        final List<V> rightOnly) {
+    public PairedMapValues(
+        final List<ZipPair<V, V>> pairedValues, final List<V> leftOnly, final List<V> rightOnly) {
       this.pairedValues = ImmutableList.copyOf(pairedValues);
       this.leftOnly = ImmutableList.copyOf(leftOnly);
       this.rightOnly = ImmutableList.copyOf(rightOnly);
@@ -112,9 +109,7 @@ public final class MapUtils {
     private final List<V> rightOnly;
   }
 
-  /**
-   * Builds a map from sequence items to their zero-indexed positions in the sequence.
-   */
+  /** Builds a map from sequence items to their zero-indexed positions in the sequence. */
   public static <T> ImmutableMap<T, Integer> indexMap(Iterable<? extends T> items) {
     final ImmutableMap.Builder<T, Integer> ret = ImmutableMap.builder();
     int idx = 0;
@@ -124,9 +119,7 @@ public final class MapUtils {
     return ret.build();
   }
 
-  /**
-   * Gets the union of the {@code keySet()}s of all provided {@link Maps}s.
-   */
+  /** Gets the union of the {@code keySet()}s of all provided {@link Maps}s. */
   public static <K, V> ImmutableSet<K> allKeys(final Iterable<? extends Map<K, V>> maps) {
     final ImmutableSet.Builder<K> builder = ImmutableSet.builder();
 
@@ -137,10 +130,9 @@ public final class MapUtils {
     return builder.build();
   }
 
-  /**
-   * Gets the union of the {@code keySet()}s of all provided {@link Multimap}s.
-   */
-  public static <K> ImmutableSet<K> allMultimapKeys(final Iterable<? extends Multimap<K, ?>> multimaps) {
+  /** Gets the union of the {@code keySet()}s of all provided {@link Multimap}s. */
+  public static <K> ImmutableSet<K> allMultimapKeys(
+      final Iterable<? extends Multimap<K, ?>> multimaps) {
     final ImmutableSet.Builder<K> builder = ImmutableSet.builder();
 
     for (final Multimap<K, ?> multimap : multimaps) {
@@ -149,7 +141,6 @@ public final class MapUtils {
 
     return builder.build();
   }
-
 
   public static <K, V> Function<Map.Entry<K, V>, V> entryValueFunction() {
     return new Function<Map.Entry<K, V>, V>() {
@@ -160,7 +151,6 @@ public final class MapUtils {
     };
   }
 
-
   public static <K, V> Function<Map.Entry<K, V>, K> entryKeyFunction() {
     return new Function<Map.Entry<K, V>, K>() {
       @Override
@@ -169,7 +159,6 @@ public final class MapUtils {
       }
     };
   }
-
 
   public static <K, V> Function<Map<K, V>, Iterable<V>> mapValuesFunction() {
     return new Function<Map<K, V>, Iterable<V>>() {
@@ -189,35 +178,30 @@ public final class MapUtils {
   }
 
   /**
-   * A partial ordering over {@link Map.Entry} according to their values, in descending natural order.
+   * A partial ordering over {@link Map.Entry} according to their values, in descending natural
+   * order.
    */
   public static <K, V extends Comparable<V>> Ordering<Map.Entry<K, V>> byValueOrderingDescending() {
     return MapUtils.<K, V>byValueOrderingAscending().reverse();
   }
 
   /**
-   * A partial ordering over {@link Map.Entry} according to {@code valueOrdering} applied to their values.
+   * A partial ordering over {@link Map.Entry} according to {@code valueOrdering} applied to their
+   * values.
    */
   public static <K, V> Ordering<Map.Entry<K, V>> byValueOrdering(final Ordering<V> valueOrdering) {
     return valueOrdering.onResultOf(Entry::getValue);
   }
 
-
-  /**
-   * A partial ordering of {@link Map.Entry} by the reverse of the natural ordering of the keys.
-   */
+  /** A partial ordering of {@link Map.Entry} by the reverse of the natural ordering of the keys. */
   public static <K extends Comparable<K>, V> Ordering<Entry<K, V>> byKeyDescendingOrdering() {
     return Ordering.<K>natural().onResultOf(MapUtils.<K, V>entryKeyFunction());
   }
 
-
-  /**
-   * A partial ordering of {@link Map.Entry} by the natural ordering of the keys.
-   */
+  /** A partial ordering of {@link Map.Entry} by the natural ordering of the keys. */
   public static <K, V> Ordering<Entry<K, V>> byKeyOrdering(Ordering<K> keyOrdering) {
     return keyOrdering.onResultOf(Entry::getKey);
   }
-
 
   /**
    * Creates a copy of the supplied map with its keys transformed by the supplied function, which
@@ -242,17 +226,16 @@ public final class MapUtils {
       return 0;
     }
 
-    return Ordering.natural().max(
-        FluentIterable.from(map.keySet())
-            .transform(StringUtils.lengthFunction()));
+    return Ordering.natural()
+        .max(FluentIterable.from(map.keySet()).transform(StringUtils.lengthFunction()));
   }
 
   /**
    * Just like {@link com.google.common.base.Functions#forMap(Map, Object)} except it allows a
    * potentially non-constant {@link Function} as the default.
    */
-  public static <K, V> Function<K, V> asFunction(Map<K, ? extends V> map,
-      Function<K, ? extends V> defaultFunction) {
+  public static <K, V> Function<K, V> asFunction(
+      Map<K, ? extends V> map, Function<K, ? extends V> defaultFunction) {
     return new ForMapWithDefaultFunction<K, V>(map, defaultFunction);
   }
 
@@ -300,13 +283,13 @@ public final class MapUtils {
 
   /**
    * Creates a {@link ImmutableMap} by pairing up a sequence of keys and values. The {@code n}-th
-   * key is paired to the {@code n}-th value.  Neither null keys nor null values are permitted.  The
-   * keys must be unique or an {@link IllegalArgumentException} will be thrown.  If the numberof
+   * key is paired to the {@code n}-th value. Neither null keys nor null values are permitted. The
+   * keys must be unique or an {@link IllegalArgumentException} will be thrown. If the numberof
    * elements returned by the two {@link Iterable}s differ, an {@link IllegalArgumentException} will
    * be thrown.
    */
-  public static <K, V> ImmutableMap<K, V> copyParallelListsToMap(Iterable<K> keys,
-      Iterable<V> values) {
+  public static <K, V> ImmutableMap<K, V> copyParallelListsToMap(
+      Iterable<K> keys, Iterable<V> values) {
     final ImmutableMap.Builder<K, V> ret = ImmutableMap.builder();
 
     final Iterator<K> keyIt = keys.iterator();
@@ -330,35 +313,36 @@ public final class MapUtils {
   }
 
   /**
-   * Creates a {@code LaxImmutableMapBuilder} which will behave exactly like a
-   * {@link com.google.common.collect.ImmutableMap.Builder} except it will allow adding the
-   * same key-value pair more than once. "Same" is determined by the value's equality method.
-   * The behavior of this builder and the resulting {@link ImmutableMap} is deterministic.
+   * Creates a {@code LaxImmutableMapBuilder} which will behave exactly like a {@link
+   * com.google.common.collect.ImmutableMap.Builder} except it will allow adding the same key-value
+   * pair more than once. "Same" is determined by the value's equality method. The behavior of this
+   * builder and the resulting {@link ImmutableMap} is deterministic.
    */
-  public static <K,V> LaxImmutableMapBuilder<K,V> immutableMapBuilderAllowingSameEntryTwice() {
+  public static <K, V> LaxImmutableMapBuilder<K, V> immutableMapBuilderAllowingSameEntryTwice() {
     return new MonotonicLaxImmutableMapBuilder<>(false);
   }
 
   /**
-   * Creates a {@code LaxImmutableMapBuilder} which will behave exactly like a
-   * {@link com.google.common.collect.ImmutableMap.Builder} except it will silently ignore
-   * any attempt to add a new entry with a previously seen key.
-   * The behavior of this builder and the resulting {@link ImmutableMap} is deterministic.
+   * Creates a {@code LaxImmutableMapBuilder} which will behave exactly like a {@link
+   * com.google.common.collect.ImmutableMap.Builder} except it will silently ignore any attempt to
+   * add a new entry with a previously seen key. The behavior of this builder and the resulting
+   * {@link ImmutableMap} is deterministic.
    */
-  public static <K,V> LaxImmutableMapBuilder<K,V> immutableMapBuilderIgnoringDuplicates() {
+  public static <K, V> LaxImmutableMapBuilder<K, V> immutableMapBuilderIgnoringDuplicates() {
     return new MonotonicLaxImmutableMapBuilder<>(true);
   }
 
   /**
-   * Creates a {@code LaxImmutableMapBuilder} which will behave exactly like a
-   * {@link com.google.common.collect.ImmutableMap.Builder} except that when attempting to add
-   * a value for a previously seen key, the greater of the older value and the new value according
-   * to the provided comparator will be used.  In case of a tie, the incumbent stays.
+   * Creates a {@code LaxImmutableMapBuilder} which will behave exactly like a {@link
+   * com.google.common.collect.ImmutableMap.Builder} except that when attempting to add a value for
+   * a previously seen key, the greater of the older value and the new value according to the
+   * provided comparator will be used. In case of a tie, the incumbent stays.
    *
-   * The behavior of this builder and the resulting {@link ImmutableMap} will be deterministic if
+   * <p>The behavior of this builder and the resulting {@link ImmutableMap} will be deterministic if
    * the supplied comparator is.
    */
-  public static <K,V> LaxImmutableMapBuilder<K,V> immutableMapBuilderResolvingDuplicatesBy(Comparator<? super V> conflictComparator) {
+  public static <K, V> LaxImmutableMapBuilder<K, V> immutableMapBuilderResolvingDuplicatesBy(
+      Comparator<? super V> conflictComparator) {
     return new NonMonotonicLaxImmutableMapBuilder<>(Ordering.from(conflictComparator));
   }
 
@@ -408,14 +392,15 @@ public final class MapUtils {
    * of {@link Map.Entry}.
    */
   public static <K, V1, V2> Iterable<Map.Entry<K, V2>> transformValues(
-      Iterable<Map.Entry<K, V1>> input,
-      final Function<? super V1, V2> valueTransformer) {
-    return Iterables.transform(input, new Function<Entry<K, V1>, Entry<K, V2>>() {
-      @Override
-      public Entry<K, V2> apply(final Entry<K, V1> input) {
-        return Maps.immutableEntry(input.getKey(), valueTransformer.apply(input.getValue()));
-      }
-    });
+      Iterable<Map.Entry<K, V1>> input, final Function<? super V1, V2> valueTransformer) {
+    return Iterables.transform(
+        input,
+        new Function<Entry<K, V1>, Entry<K, V2>>() {
+          @Override
+          public Entry<K, V2> apply(final Entry<K, V1> input) {
+            return Maps.immutableEntry(input.getKey(), valueTransformer.apply(input.getValue()));
+          }
+        });
   }
 
   /**
@@ -425,13 +410,15 @@ public final class MapUtils {
   public static <K, V1, V2> Iterable<Map.Entry<K, V2>> transformEntries(
       Iterable<Map.Entry<K, V1>> input,
       final Maps.EntryTransformer<? super K, ? super V1, V2> entryTransformer) {
-    return Iterables.transform(input, new Function<Entry<K, V1>, Entry<K, V2>>() {
-      @Override
-      public Entry<K, V2> apply(final Entry<K, V1> input) {
-        return Maps.immutableEntry(input.getKey(),
-            entryTransformer.transformEntry(input.getKey(), input.getValue()));
-      }
-    });
+    return Iterables.transform(
+        input,
+        new Function<Entry<K, V1>, Entry<K, V2>>() {
+          @Override
+          public Entry<K, V2> apply(final Entry<K, V1> input) {
+            return Maps.immutableEntry(
+                input.getKey(), entryTransformer.transformEntry(input.getKey(), input.getValue()));
+          }
+        });
   }
 
   /**
@@ -459,8 +446,8 @@ public final class MapUtils {
   }
 
   /**
-   * Returns a wrapper around an {@link com.google.common.collect.ImmutableMap.Builder} which
-   * hides the differences between it and {@link com.google.common.collect.ImmutableMultimap.Builder} for
+   * Returns a wrapper around an {@link com.google.common.collect.ImmutableMap.Builder} which hides
+   * the differences between it and {@link com.google.common.collect.ImmutableMultimap.Builder} for
    * the purpose of population. Beware {@link com.google.common.collect.ImmutableMap.Builder} will
    * still throw an exception for duplicate entries!
    */
@@ -488,7 +475,7 @@ abstract class AbstractKeyValueSink<K, V> implements KeyValueSink<K, V> {
 }
 
 final class ImmutableMapBuilderSink<K, V> extends AbstractKeyValueSink<K, V> {
-  final ImmutableMap.Builder<K,V> builder;
+  final ImmutableMap.Builder<K, V> builder;
 
   ImmutableMapBuilderSink(final ImmutableMap.Builder<K, V> builder) {
     this.builder = checkNotNull(builder);
@@ -499,12 +486,10 @@ final class ImmutableMapBuilderSink<K, V> extends AbstractKeyValueSink<K, V> {
     builder.put(key, value);
     return this;
   }
-
-
 }
 
 final class ImmutableMultimapBuilderSink<K, V> extends AbstractKeyValueSink<K, V> {
-  final ImmutableMultimap.Builder<K,V> builder;
+  final ImmutableMultimap.Builder<K, V> builder;
 
   ImmutableMultimapBuilderSink(final ImmutableMultimap.Builder<K, V> builder) {
     this.builder = checkNotNull(builder);

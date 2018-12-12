@@ -1,5 +1,8 @@
 package edu.isi.nlp.strings.offsets;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Function;
@@ -9,24 +12,19 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
-
 import java.util.Comparator;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-/**
- * Represents an inclusive range of offsets.
- */
+/** Represents an inclusive range of offsets. */
 public class OffsetRange<OffsetType extends Offset<OffsetType>> {
 
   private final OffsetType startInclusive;
   private final OffsetType endInclusive;
 
   @JsonCreator
-  public static <OffsetType extends Offset<OffsetType>> OffsetRange<OffsetType> fromInclusiveEndpoints(
-      @JsonProperty("start") OffsetType startInclusive,
-      @JsonProperty("end") OffsetType endInclusive) {
+  public static <OffsetType extends Offset<OffsetType>>
+      OffsetRange<OffsetType> fromInclusiveEndpoints(
+          @JsonProperty("start") OffsetType startInclusive,
+          @JsonProperty("end") OffsetType endInclusive) {
     checkArgument(startInclusive.asInt() <= endInclusive.asInt());
     return new OffsetRange<>(startInclusive, endInclusive);
   }
@@ -69,8 +67,8 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
       return false;
     }
     final OffsetRange other = (OffsetRange) obj;
-    return Objects.equal(this.startInclusive, other.startInclusive) && Objects
-        .equal(this.endInclusive, other.endInclusive);
+    return Objects.equal(this.startInclusive, other.startInclusive)
+        && Objects.equal(this.endInclusive, other.endInclusive);
   }
 
   public static <T extends Offset<T>> Ordering<OffsetRange<T>> byLengthOrdering() {
@@ -105,7 +103,7 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
    * not a total ordering because {@link OffsetRange}s with the same start position but different
    * end positions will compare as equal.
    *
-   * Consider producing a compound ordering with {@link #byEndOrdering()} using {@link
+   * <p>Consider producing a compound ordering with {@link #byEndOrdering()} using {@link
    * Ordering#compound(Comparator)} or using one of the predefined total orderings.
    */
   public static <T extends Offset<T>> Ordering<OffsetRange<T>> byStartOrdering() {
@@ -117,7 +115,7 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
    * not a total ordering because {@link OffsetRange}s with the same end position but different
    * start positions will compare as equal.
    *
-   * Consider producing a compound ordering with {@link #byStartOrdering()} using {@link
+   * <p>Consider producing a compound ordering with {@link #byStartOrdering()} using {@link
    * Ordering#compound(Comparator)} or using one of the predefined total orderings.
    */
   public static <T extends Offset<T>> Ordering<OffsetRange<T>> byEndOrdering() {
@@ -129,7 +127,8 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
    * ties by placing the earlier end position first.
    */
   public static <T extends Offset<T>> Ordering<OffsetRange<T>> byEarlierStartEarlierEndOrdering() {
-    return Ordering.<T>natural().onResultOf(OffsetRange.<T>toStartInclusiveFunction())
+    return Ordering.<T>natural()
+        .onResultOf(OffsetRange.<T>toStartInclusiveFunction())
         .compound(Ordering.<T>natural().onResultOf(OffsetRange.<T>toEndInclusiveFunction()));
   }
 
@@ -138,34 +137,30 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
    * ties by placing the later end position first.
    */
   public static <T extends Offset<T>> Ordering<OffsetRange<T>> byEarlierStartLaterEndOrdering() {
-    return Ordering.<T>natural().onResultOf(OffsetRange.<T>toStartInclusiveFunction())
+    return Ordering.<T>natural()
+        .onResultOf(OffsetRange.<T>toStartInclusiveFunction())
         .compound(
             Ordering.<T>natural().onResultOf(OffsetRange.<T>toEndInclusiveFunction()).reverse());
   }
 
-  public static OffsetRange<CharOffset> inclusiveCharOffsetRange(int startInclusive,
-      int endInclusive) {
-    return fromInclusiveEndpoints(CharOffset.asCharOffset(startInclusive),
-        CharOffset.asCharOffset(endInclusive));
+  public static OffsetRange<CharOffset> inclusiveCharOffsetRange(
+      int startInclusive, int endInclusive) {
+    return fromInclusiveEndpoints(
+        CharOffset.asCharOffset(startInclusive), CharOffset.asCharOffset(endInclusive));
   }
 
-  /**
-   * Prefer {@link #inclusiveCharOffsetRange(int, int)}
-   */
+  /** Prefer {@link #inclusiveCharOffsetRange(int, int)} */
   public static OffsetRange<CharOffset> charOffsetRange(int startInclusive, int endInclusive) {
     return inclusiveCharOffsetRange(startInclusive, endInclusive);
   }
 
-  public static OffsetRange<ByteOffset> byteOffsetRange(final int startInclusive,
-      final int endInclusive) {
-    return OffsetRange.fromInclusiveEndpoints(ByteOffset.asByteOffset(startInclusive),
-        ByteOffset.asByteOffset(endInclusive));
+  public static OffsetRange<ByteOffset> byteOffsetRange(
+      final int startInclusive, final int endInclusive) {
+    return OffsetRange.fromInclusiveEndpoints(
+        ByteOffset.asByteOffset(startInclusive), ByteOffset.asByteOffset(endInclusive));
   }
 
-
-  /**
-   * This returns optional because it is not possible to represent an empty offset span
-   */
+  /** This returns optional because it is not possible to represent an empty offset span */
   public static Optional<OffsetRange<CharOffset>> charOffsetsOfWholeString(String s) {
     if (s.isEmpty()) {
       return Optional.absent();
@@ -174,12 +169,12 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
   }
 
   /**
-   * Returns a new {@code OffsetRange} of the same type with the start and end points
-   * shifted by the specified amount.
+   * Returns a new {@code OffsetRange} of the same type with the start and end points shifted by the
+   * specified amount.
    */
   public OffsetRange<OffsetType> shiftedCopy(final int shiftAmount) {
-    return new OffsetRange<>(startInclusive().shiftedCopy(shiftAmount),
-        endInclusive().shiftedCopy(shiftAmount));
+    return new OffsetRange<>(
+        startInclusive().shiftedCopy(shiftAmount), endInclusive().shiftedCopy(shiftAmount));
   }
 
   public boolean overlaps(OffsetRange<OffsetType> other) {
@@ -192,28 +187,27 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
 
     if (meAsRange.isConnected(otherAsRange)) {
       final Range<OffsetType> intersectionRange = meAsRange.intersection(otherAsRange);
-      return Optional.of(fromInclusiveEndpoints(intersectionRange.lowerEndpoint(), intersectionRange.upperEndpoint()));
+      return Optional.of(
+          fromInclusiveEndpoints(
+              intersectionRange.lowerEndpoint(), intersectionRange.upperEndpoint()));
     } else {
       return Optional.absent();
     }
   }
 
-  /**
-   * Returns if the given offset is within the inclusive bounds of this range.
-   */
+  /** Returns if the given offset is within the inclusive bounds of this range. */
   public boolean contains(final OffsetType x) {
     return x.asInt() >= startInclusive().asInt() && x.asInt() <= endInclusive().asInt();
   }
 
-  /**
-   * Returns if the given inclusive offset range is within the inclusive bounds of this range.
-   */
+  /** Returns if the given inclusive offset range is within the inclusive bounds of this range. */
   public boolean contains(OffsetRange<OffsetType> other) {
     return asRange().encloses(other.asRange());
   }
 
   public static <OffsetType extends Offset<OffsetType>>
-  Predicate<OffsetRange<OffsetType>> containedInPredicate(final OffsetRange<OffsetType> container) {
+      Predicate<OffsetRange<OffsetType>> containedInPredicate(
+          final OffsetRange<OffsetType> container) {
     return new Predicate<OffsetRange<OffsetType>>() {
       @Override
       public boolean apply(OffsetRange<OffsetType> input) {
@@ -224,8 +218,8 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
 
   /**
    * Returns this range with its start and end positions clipped to fit within {@code bounds}. If
-   * this does not intersect {@code bounds}, returns {@link com.google.common.base.Optional#absent()}
-   * .
+   * this does not intersect {@code bounds}, returns {@link
+   * com.google.common.base.Optional#absent()} .
    */
   public Optional<OffsetRange<OffsetType>> clipToBounds(OffsetRange<OffsetType> bounds) {
     if (bounds.contains(this)) {
@@ -253,7 +247,6 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
     return LengthFunction.INSTANCE;
   }
 
-
   private enum LengthFunction implements Function<OffsetRange<?>, Integer> {
     INSTANCE {
       @Override
@@ -267,5 +260,4 @@ public class OffsetRange<OffsetType extends Offset<OffsetType>> {
   public String toString() {
     return "[" + startInclusive().toString() + "-" + endInclusive().toString() + "]";
   }
-
 }

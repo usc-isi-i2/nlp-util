@@ -1,14 +1,10 @@
 package edu.isi.nlp.parsing;
 
-import edu.isi.nlp.ConstituentNode;
-
 import com.google.common.annotations.Beta;
-
+import edu.isi.nlp.ConstituentNode;
 import java.io.IOException;
 
-/**
- * Class to get pre-made head finders for common tree formats and languages.
- */
+/** Class to get pre-made head finders for common tree formats and languages. */
 @Beta
 public final class HeadFinders {
 
@@ -17,11 +13,10 @@ public final class HeadFinders {
   }
 
   /**
-   * Gets a head finder for English parses in Penn Treebank format using the standard Collins
-   * rules.
+   * Gets a head finder for English parses in Penn Treebank format using the standard Collins rules.
    */
-  public static <NodeT extends ConstituentNode<NodeT, ?>> HeadFinder<NodeT> getEnglishPTBHeadFinder()
-      throws IOException {
+  public static <NodeT extends ConstituentNode<NodeT, ?>>
+      HeadFinder<NodeT> getEnglishPTBHeadFinder() throws IOException {
     return EnglishAndChineseHeadRules.createEnglishPTBFromResources();
   }
 
@@ -29,8 +24,8 @@ public final class HeadFinders {
    * Gets a head finder for Chinese parses in Penn Treebank format using rules from Honglin Sun and
    * Daniel Jurafsky. 2004. Shallow Semantic Parsing of Chinese.
    */
-  public static <NodeT extends ConstituentNode<NodeT, ?>> HeadFinder<NodeT> getChinesePTBHeadFinder()
-      throws IOException {
+  public static <NodeT extends ConstituentNode<NodeT, ?>>
+      HeadFinder<NodeT> getChinesePTBHeadFinder() throws IOException {
     return EnglishAndChineseHeadRules.createChinesePTBFromResources();
   }
 
@@ -38,8 +33,8 @@ public final class HeadFinders {
    * Gets a head finder for Spanish parses in ANCORA format. Borrows heavily from OpenNLP's Spanish
    * head finder.
    */
-  public static <NodeT extends ConstituentNode<NodeT, ?>> HeadFinder<NodeT> getSpanishAncoraHeadFinder()
-      throws IOException {
+  public static <NodeT extends ConstituentNode<NodeT, ?>>
+      HeadFinder<NodeT> getSpanishAncoraHeadFinder() throws IOException {
     return SpanishHeadRules.createFromResources();
   }
 }

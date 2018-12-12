@@ -60,11 +60,9 @@ public abstract class AbstractOffset<SelfType extends Offset<SelfType>>
     return Objects.hashCode(value);
   }
 
-
   @Override
   public final int compareTo(final SelfType o) {
     checkNotNull(o);
     return Ints.compare(asInt(), o.asInt());
   }
 }
-

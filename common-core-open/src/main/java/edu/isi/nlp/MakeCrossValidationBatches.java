@@ -1,11 +1,6 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.collections.CollectionUtils;
-import edu.isi.nlp.collections.ListUtils;
-import edu.isi.nlp.files.FileUtils;
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Predicates.in;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -18,10 +13,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.collections.CollectionUtils;
+import edu.isi.nlp.collections.ListUtils;
+import edu.isi.nlp.files.FileUtils;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +26,8 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
 import java.util.SortedMap;
-
-import static com.google.common.base.Predicates.in;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Given a list of files and a number of splits, creates training/test file lists for
@@ -39,15 +36,14 @@ import static com.google.common.base.Predicates.in;
  * into three folds will result in folds of size (4, 4, 3).
  *
  * <p>Normally, cross-validation batches are made such that as much data as possible is used in
- * training. However, if the {@code singleFoldTraining} parameter is set to true, a single fold
- * is used in training. Thus, across folds, each document appears exactly once in the training
- * data and exactly once in the testing data. In a standard cross-validation setup, each data point
- * appears in the training data {@code k-1} times for {@code k} folds and exactly once in the
- * testing data.</p>
+ * training. However, if the {@code singleFoldTraining} parameter is set to true, a single fold is
+ * used in training. Thus, across folds, each document appears exactly once in the training data and
+ * exactly once in the testing data. In a standard cross-validation setup, each data point appears
+ * in the training data {@code k-1} times for {@code k} folds and exactly once in the testing data.
  *
- * <p>
- * For example, in a normal cross-validation setup with three folds (A, B, C) you have the following
- * test: train pairs:
+ * <p>For example, in a normal cross-validation setup with three folds (A, B, C) you have the
+ * following test: train pairs:
+ *
  * <pre>
  * A: (B, C)
  * B: (A, C)
@@ -55,17 +51,15 @@ import static com.google.common.base.Predicates.in;
  * </pre>
  *
  * In single fold training you have:
+ *
  * <pre>
  * A: B
  * B: C
  * C: A
  * </pre>
- * </p>
  *
- * <p>Note that in the single fold case, each fold is tested by training on the "next" fold. This
- * is arbitrary, but as documents are shuffled before being placed in folds this is not
- * problematic.</p>
- *
+ * <p>Note that in the single fold case, each fold is tested by training on the "next" fold. This is
+ * arbitrary, but as documents are shuffled before being placed in folds this is not problematic.
  */
 public final class MakeCrossValidationBatches {
 
@@ -180,39 +174,51 @@ public final class MakeCrossValidationBatches {
 
       // Create maps for training and test. These are sorted to avoid arbitrary ordering.
       final SortedMap<Symbol, File> trainDocIdMap =
-          ImmutableSortedMap.copyOf(Maps.filterKeys(docIdMap, in(trainDocIds)),
-              SymbolUtils.byStringOrdering());
+          ImmutableSortedMap.copyOf(
+              Maps.filterKeys(docIdMap, in(trainDocIds)), SymbolUtils.byStringOrdering());
       final SortedMap<Symbol, File> testDocIdMap =
-          ImmutableSortedMap.copyOf(Maps.filterKeys(docIdMap, in(testDocIds)),
-              SymbolUtils.byStringOrdering());
+          ImmutableSortedMap.copyOf(
+              Maps.filterKeys(docIdMap, in(testDocIds)), SymbolUtils.byStringOrdering());
 
       // Don't write out the maps for file lists as the keys are not actually document IDs
       if (useFileMap) {
-        final File trainingMapOutputFile = new File(outputDirectory, outputName + "." +
-            StringUtils.padWithMax(batchNum, maxBatch) + ".training.docIDToFileMap");
-        FileUtils.writeSymbolToFileMap(trainDocIdMap, Files.asCharSink(trainingMapOutputFile,
-            Charsets.UTF_8));
+        final File trainingMapOutputFile =
+            new File(
+                outputDirectory,
+                outputName
+                    + "."
+                    + StringUtils.padWithMax(batchNum, maxBatch)
+                    + ".training.docIDToFileMap");
+        FileUtils.writeSymbolToFileMap(
+            trainDocIdMap, Files.asCharSink(trainingMapOutputFile, Charsets.UTF_8));
 
-        final File testMapOutputFile = new File(outputDirectory, outputName + "." +
-            StringUtils.padWithMax(batchNum, maxBatch) + ".test.docIDToFileMap");
-        FileUtils.writeSymbolToFileMap(testDocIdMap, Files.asCharSink(testMapOutputFile,
-            Charsets.UTF_8));
+        final File testMapOutputFile =
+            new File(
+                outputDirectory,
+                outputName
+                    + "."
+                    + StringUtils.padWithMax(batchNum, maxBatch)
+                    + ".test.docIDToFileMap");
+        FileUtils.writeSymbolToFileMap(
+            testDocIdMap, Files.asCharSink(testMapOutputFile, Charsets.UTF_8));
         foldMaps.add(testMapOutputFile);
       }
 
       // Write out file lists
-      final ImmutableList<File> trainingFilesForBatch = ImmutableList.copyOf(trainDocIdMap.values());
+      final ImmutableList<File> trainingFilesForBatch =
+          ImmutableList.copyOf(trainDocIdMap.values());
       final ImmutableList<File> testFilesForBatch = ImmutableList.copyOf(testDocIdMap.values());
-      final File trainingOutputFile = new File(outputDirectory, outputName + "." +
-          StringUtils.padWithMax(batchNum, maxBatch) + ".training.list");
-      FileUtils.writeFileList(trainingFilesForBatch,
-          Files.asCharSink(trainingOutputFile,
-              Charsets.UTF_8));
-      final File testOutputFile = new File(outputDirectory, outputName + "." +
-          StringUtils.padWithMax(batchNum, maxBatch) + ".test.list");
-      FileUtils.writeFileList(testFilesForBatch,
-          Files.asCharSink(testOutputFile,
-              Charsets.UTF_8));
+      final File trainingOutputFile =
+          new File(
+              outputDirectory,
+              outputName + "." + StringUtils.padWithMax(batchNum, maxBatch) + ".training.list");
+      FileUtils.writeFileList(
+          trainingFilesForBatch, Files.asCharSink(trainingOutputFile, Charsets.UTF_8));
+      final File testOutputFile =
+          new File(
+              outputDirectory,
+              outputName + "." + StringUtils.padWithMax(batchNum, maxBatch) + ".test.list");
+      FileUtils.writeFileList(testFilesForBatch, Files.asCharSink(testOutputFile, Charsets.UTF_8));
       foldLists.add(testOutputFile);
 
       ++batchNum;
@@ -222,18 +228,23 @@ public final class MakeCrossValidationBatches {
     }
 
     // Write out lists of files/maps created
-    FileUtils.writeFileList(foldLists.build(),
+    FileUtils.writeFileList(
+        foldLists.build(),
         Files.asCharSink(new File(outputDirectory, "folds.list"), Charsets.UTF_8));
     if (useFileMap) {
-      FileUtils.writeFileList(foldMaps.build(),
+      FileUtils.writeFileList(
+          foldMaps.build(),
           Files.asCharSink(new File(outputDirectory, "folds.maplist"), Charsets.UTF_8));
     }
-    log.info("Wrote {} cross validation batches from {} to directory {}", numBatches,
-        sourceFiles.getAbsoluteFile(), outputDirectory.getAbsolutePath());
+    log.info(
+        "Wrote {} cross validation batches from {} to directory {}",
+        numBatches,
+        sourceFiles.getAbsoluteFile(),
+        outputDirectory.getAbsolutePath());
   }
 
-  private static ImmutableList<Symbol> shuffledDocIds(final int randomSeed,
-      final ImmutableMap<Symbol, File> docIdMap) {
+  private static ImmutableList<Symbol> shuffledDocIds(
+      final int randomSeed, final ImmutableMap<Symbol, File> docIdMap) {
     final ArrayList<Symbol> docIds = Lists.newArrayList(docIdMap.keySet());
     Collections.shuffle(docIds, new Random(randomSeed));
     return ImmutableList.copyOf(docIds);
@@ -241,18 +252,19 @@ public final class MakeCrossValidationBatches {
 
   private static ImmutableList<ImmutableList<Symbol>> createTrainFolds(
       final ImmutableList<ImmutableList<Symbol>> testFolds,
-      final ImmutableList<Symbol> docIds, final boolean singleFoldTraining) {
+      final ImmutableList<Symbol> docIds,
+      final boolean singleFoldTraining) {
     final ImmutableList.Builder<ImmutableList<Symbol>> ret = ImmutableList.builder();
 
     for (int i = 0; i < testFolds.size(); i++) {
       final Set<Symbol> testDocIds = ImmutableSet.copyOf(testFolds.get(i));
       final ImmutableList<Symbol> trainDocIds =
           singleFoldTraining
-          // In the single fold training case, use the "next" fold as the training data. We use
-          // the modulus to wrap around the list.
-          ? testFolds.get((i + 1) % testFolds.size())
-          // In the normal case, just use all the remaining data for training.
-          : Sets.difference(ImmutableSet.copyOf(docIds), testDocIds).immutableCopy().asList();
+              // In the single fold training case, use the "next" fold as the training data. We use
+              // the modulus to wrap around the list.
+              ? testFolds.get((i + 1) % testFolds.size())
+              // In the normal case, just use all the remaining data for training.
+              : Sets.difference(ImmutableSet.copyOf(docIds), testDocIds).immutableCopy().asList();
       ret.add(trainDocIds);
     }
     return ret.build();

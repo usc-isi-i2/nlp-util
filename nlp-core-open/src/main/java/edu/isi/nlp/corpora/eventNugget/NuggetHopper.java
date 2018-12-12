@@ -16,7 +16,5 @@ public abstract class NuggetHopper {
   @Value.Parameter
   public abstract ImmutableList<NuggetEventMention> eventMentions();
 
-  public static class Builder extends ImmutableNuggetHopper.Builder {
-
-  }
+  public static class Builder extends ImmutableNuggetHopper.Builder {}
 }

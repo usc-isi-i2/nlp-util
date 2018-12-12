@@ -1,18 +1,15 @@
 package edu.isi.nlp.evaluation;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-/**
- * A default implementation for {@link Alignment}.
- */
+/** A default implementation for {@link Alignment}. */
 @Beta
 public final class MultimapAlignment<LeftT, RightT> implements Alignment<LeftT, RightT> {
 
@@ -21,7 +18,8 @@ public final class MultimapAlignment<LeftT, RightT> implements Alignment<LeftT, 
   final ImmutableSetMultimap<LeftT, RightT> leftToRight;
   final ImmutableSetMultimap<RightT, LeftT> rightToLeft;
 
-  private MultimapAlignment(final Iterable<? extends LeftT> leftItems,
+  private MultimapAlignment(
+      final Iterable<? extends LeftT> leftItems,
       final Iterable<? extends RightT> rightItems,
       final Multimap<? extends LeftT, ? extends RightT> leftToRight,
       final Multimap<? extends RightT, ? extends LeftT> rightToLeft) {
@@ -36,8 +34,8 @@ public final class MultimapAlignment<LeftT, RightT> implements Alignment<LeftT, 
   /**
    * Creates an {@link Alignment} from {@link Multimap}s.
    *
-   * @param leftItems   all items in the left alignment set.
-   * @param rightItems  all items in the right alignment set.
+   * @param leftItems all items in the left alignment set.
+   * @param rightItems all items in the right alignment set.
    * @param leftToRight the mapping from left items to their right partners.
    * @param rightToLeft the mapping from right items to their left partners.
    */
@@ -74,7 +72,7 @@ public final class MultimapAlignment<LeftT, RightT> implements Alignment<LeftT, 
   @Override
   public Set<LeftT> alignedToRightItem(final Object rightItem) {
     if (rightToLeft.containsKey(rightItem)) {
-      return rightToLeft.get((RightT)rightItem);
+      return rightToLeft.get((RightT) rightItem);
     } else {
       return ImmutableSet.of();
     }
@@ -85,12 +83,11 @@ public final class MultimapAlignment<LeftT, RightT> implements Alignment<LeftT, 
   @Override
   public Set<RightT> alignedToLeftItem(final Object leftItem) {
     if (leftToRight.containsKey(leftItem)) {
-      return leftToRight.get((LeftT)leftItem);
+      return leftToRight.get((LeftT) leftItem);
     } else {
       return ImmutableSet.of();
     }
   }
-
 
   @Override
   public Set<LeftT> allLeftItems() {
@@ -109,8 +106,10 @@ public final class MultimapAlignment<LeftT, RightT> implements Alignment<LeftT, 
   public static final class Builder<LeftT, RightT> {
     private final ImmutableSet.Builder<LeftT> allLeftItems = ImmutableSet.builder();
     private final ImmutableSet.Builder<RightT> allRightItems = ImmutableSet.builder();
-    private final ImmutableSetMultimap.Builder<LeftT, RightT> leftToRight = ImmutableSetMultimap.builder();
-    private final ImmutableSetMultimap.Builder<RightT, LeftT> rightToLeft = ImmutableSetMultimap.builder();
+    private final ImmutableSetMultimap.Builder<LeftT, RightT> leftToRight =
+        ImmutableSetMultimap.builder();
+    private final ImmutableSetMultimap.Builder<RightT, LeftT> rightToLeft =
+        ImmutableSetMultimap.builder();
 
     private Builder() {}
 
@@ -130,9 +129,9 @@ public final class MultimapAlignment<LeftT, RightT> implements Alignment<LeftT, 
       return this;
     }
 
-    public MultimapAlignment<LeftT,RightT> build() {
-      return new MultimapAlignment<LeftT, RightT>(allLeftItems.build(), allRightItems.build(),
-          leftToRight.build(), rightToLeft.build());
+    public MultimapAlignment<LeftT, RightT> build() {
+      return new MultimapAlignment<LeftT, RightT>(
+          allLeftItems.build(), allRightItems.build(), leftToRight.build(), rightToLeft.build());
     }
   }
 }

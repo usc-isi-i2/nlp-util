@@ -3,7 +3,6 @@ package edu.isi.nlp.scoring;
 import com.google.common.base.Objects;
 import java.util.Map;
 
-
 /**
  * Represents any item with an associated score. Note that this class intentionally does not
  * implement comparable to avoid only working with comparable wrapped types. If you need a
@@ -59,9 +58,6 @@ public final class Scored<T> {
       return false;
     }
     final Scored<?> other = (Scored<?>) obj;
-    return Objects.equal(item, other.item) &&
-        score == other.score;
+    return Objects.equal(item, other.item) && score == other.score;
   }
-
-
 };

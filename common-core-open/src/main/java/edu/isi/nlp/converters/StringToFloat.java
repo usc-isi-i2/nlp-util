@@ -4,8 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StringToFloat implements StringConverter<Float> {
 
-  public StringToFloat() {
-  }
+  public StringToFloat() {}
 
   public Class<Float> getValueClass() {
     return Float.class;

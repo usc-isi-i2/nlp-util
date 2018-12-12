@@ -1,23 +1,20 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Throwables;
 import com.linkedin.paldb.api.Configuration;
 import com.linkedin.paldb.api.PalDB;
 import com.linkedin.paldb.api.StoreWriter;
-
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
-
 import javax.annotation.Nonnull;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A PalDB-backed {@link KeyValueSink}
  *
- * Internally, {@link String}s are used for the keys to avoid serializing {@link Symbol}s.
+ * <p>Internally, {@link String}s are used for the keys to avoid serializing {@link Symbol}s.
  */
 final class PalDBKeyValueSink implements KeyValueSink<Symbol, byte[]> {
 
@@ -30,8 +27,8 @@ final class PalDBKeyValueSink implements KeyValueSink<Symbol, byte[]> {
   @Nonnull
   static KeyValueSink<Symbol, byte[]> forFile(final File dbFile, final boolean compressValues)
       throws IOException {
-    final Configuration configuration = PalDB.newConfiguration()
-        .set("compression.enabled", Boolean.toString(compressValues));
+    final Configuration configuration =
+        PalDB.newConfiguration().set("compression.enabled", Boolean.toString(compressValues));
     final StoreWriter writer;
     try {
       writer = PalDB.createWriter(dbFile, configuration);

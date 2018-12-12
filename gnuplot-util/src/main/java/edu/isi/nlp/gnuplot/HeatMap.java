@@ -1,20 +1,17 @@
 package edu.isi.nlp.gnuplot;
 
-import edu.isi.nlp.StringUtils;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static edu.isi.nlp.gnuplot.GnuPlotUtils.gnuPlotString;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.Files;
-
+import edu.isi.nlp.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static edu.isi.nlp.gnuplot.GnuPlotUtils.gnuPlotString;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * A two-dimensional heatmap.  In a heatmap, there are two independent variables, on on each axis,
+ * A two-dimensional heatmap. In a heatmap, there are two independent variables, on on each axis,
  * and the points at their intersection are colored according to the value of a third, dependent
  * variable.
  */
@@ -28,8 +25,12 @@ public final class HeatMap implements GnuPlottable {
   private final Axis xAxis;
   private final Axis yAxis;
 
-  private HeatMap(List<? extends List<Double>> data, /*Nullable*/ String title,
-      Palette palette, Axis xAxis, Axis yAxis) {
+  private HeatMap(
+      List<? extends List<Double>> data, /*Nullable*/
+      String title,
+      Palette palette,
+      Axis xAxis,
+      Axis yAxis) {
     this.title = title;
     this.xAxis = checkNotNull(xAxis);
     this.yAxis = checkNotNull(yAxis);
@@ -41,8 +42,11 @@ public final class HeatMap implements GnuPlottable {
     }
     for (final List<Double> row : data) {
       dataCopy.add(ImmutableList.copyOf(row));
-      checkArgument(row.size() == rowLength, "Heat map data contains "
-          + "rows of different lengths {} and {}", rowLength, row.size());
+      checkArgument(
+          row.size() == rowLength,
+          "Heat map data contains " + "rows of different lengths {} and {}",
+          rowLength,
+          row.size());
     }
     this.data = dataCopy.build();
     this.palette = checkNotNull(palette);
@@ -63,9 +67,7 @@ public final class HeatMap implements GnuPlottable {
     return ret.build();
   }
 
-  /**
-   * Builds {@link HeatMap}s.
-   */
+  /** Builds {@link HeatMap}s. */
   public static final class Builder {
 
     private final List<? extends List<Double>> data;
@@ -111,12 +113,12 @@ public final class HeatMap implements GnuPlottable {
       sb.append(StringUtils.spaceJoiner().join(row));
       sb.append("\n");
     }
-     /* for (int row = 0; row < data.size(); ++row) {
-        final List<Double> rowData = data.get(row);
-        for (int col =0; col<rowData.size(); ++col) {
-          sb.append(row + " " + col + " " + rowData.get(col)+"\n");
-        }
-      }*/
+    /* for (int row = 0; row < data.size(); ++row) {
+      final List<Double> rowData = data.get(row);
+      for (int col =0; col<rowData.size(); ++col) {
+        sb.append(row + " " + col + " " + rowData.get(col)+"\n");
+      }
+    }*/
     pb.appendData(sb.toString());
   }
 
@@ -127,9 +129,9 @@ public final class HeatMap implements GnuPlottable {
     sb.append(palette.command()).append("\n");
     xAxis.appendCommands(sb);
     yAxis.appendCommands(sb);
-      /*sb.append("set view map\n");
-      sb.append("set dgrid3d\n");
-      sb.append("splot 'data' using 1:2:3 with pm3d\n");*/
+    /*sb.append("set view map\n");
+    sb.append("set dgrid3d\n");
+    sb.append("splot 'data' using 1:2:3 with pm3d\n");*/
     sb.append("plot '");
     addPlotCommand(sb);
     sb.append("' matrix with image");
@@ -148,7 +150,8 @@ public final class HeatMap implements GnuPlottable {
      * See Steve Eddins, "Rainbow Color Map Critiques: An Overview and Annotated Bibliography.
      * http://www.mathworks.com/tagteam/81137_92238v00_RainbowColorMap_57312.pdf.
      *
-     * Adaptation of Parula to gnuplot is from https://github.com/Gnuplotting/gnuplot-palettes/blob/master/parula.pal
+     * <p>Adaptation of Parula to gnuplot is from
+     * https://github.com/Gnuplotting/gnuplot-palettes/blob/master/parula.pal
      */
     PARULA {
       @Override
@@ -223,5 +226,4 @@ public final class HeatMap implements GnuPlottable {
 
     public abstract String command();
   }
-
 }

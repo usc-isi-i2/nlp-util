@@ -1,43 +1,41 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.Finishable;
-import edu.isi.nlp.Inspector;
-import edu.isi.nlp.collections.BootstrapIterator;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-
+import edu.isi.nlp.Finishable;
+import edu.isi.nlp.Inspector;
+import edu.isi.nlp.collections.BootstrapIterator;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * An inspector which can use a supplied strategy to do some sort of scoring or inspection of a
- * corpus using bootstrapping.  A strategy must supply two things: a way of mapping every observed
- * item to some sort of summary (an {@link BootstrapInspector.ObservationSummarizer}
- * and one or more ways of aggregating a collection of collections of summaries into a final output
- * (a {@link BootstrapInspector.SummaryAggregator}.
+ * corpus using bootstrapping. A strategy must supply two things: a way of mapping every observed
+ * item to some sort of summary (an {@link BootstrapInspector.ObservationSummarizer} and one or more
+ * ways of aggregating a collection of collections of summaries into a final output (a {@link
+ * BootstrapInspector.SummaryAggregator}.
  *
- * The bootstrap inspector will apply the {@code ObservationSummarizer} to each item it observes and
- * remember the result.  When it is {@link #finish()}ed, it will then take a specified number of
+ * <p>The bootstrap inspector will apply the {@code ObservationSummarizer} to each item it observes
+ * and remember the result. When it is {@link #finish()}ed, it will then take a specified number of
  * samples with replacement from the collection of summaries. Each of these samples will be
  * presented to the {@code SummaryAggregators}. Finally, each {@code SummaryAggregator}'s {@code
  * finish()} method will be called to produce final output.
  *
- * To make an example concrete, your {@code ObservationSummarizer} could produce the true positive,
- * false positive, and false negative counts for some classification task on a document.  The
- * aggregator could sum these of the corpus and create a corpus-wide F-measure and then output the
- * mean and standard deviation of these F-measures. This would give you some idea how robust your
- * F-measure is with respect to the corpus composition.
+ * <p>To make an example concrete, your {@code ObservationSummarizer} could produce the true
+ * positive, false positive, and false negative counts for some classification task on a document.
+ * The aggregator could sum these of the corpus and create a corpus-wide F-measure and then output
+ * the mean and standard deviation of these F-measures. This would give you some idea how robust
+ * your F-measure is with respect to the corpus composition.
  *
- * If you don't know how many samples to use, we suggest 1000 as a reasonable default.
+ * <p>If you don't know how many samples to use, we suggest 1000 as a reasonable default.
  */
 @Beta
 public final class BootstrapInspector<ObsT, SummaryT> implements Inspector<ObsT> {
@@ -50,7 +48,8 @@ public final class BootstrapInspector<ObsT, SummaryT> implements Inspector<ObsT>
   private BootstrapInspector(
       final ObservationSummarizer<ObsT, SummaryT> observationSummarizer,
       final Iterable<? extends SummaryAggregator<SummaryT>> summaryAggregators,
-      final int numSamples, final Random rng) {
+      final int numSamples,
+      final Random rng) {
     checkArgument(numSamples > 0, "Number of bootstrap samples must be positive");
     this.numSamples = numSamples;
     this.rng = checkNotNull(rng);
@@ -84,7 +83,7 @@ public final class BootstrapInspector<ObsT, SummaryT> implements Inspector<ObsT>
    * observation is for one document, a good summary would be the number of true positives, false
    * positives, and false negatives.
    *
-   * @param <ObsT>     The type of thing to be observed. Contravariant.
+   * @param <ObsT> The type of thing to be observed. Contravariant.
    * @param <SummaryT> The type of summary produced. Covariant.
    */
   public interface ObservationSummarizer<ObsT, SummaryT> {
@@ -93,7 +92,7 @@ public final class BootstrapInspector<ObsT, SummaryT> implements Inspector<ObsT>
   }
 
   /**
-   * A strategy of aggregating bootstrap samples into some sort of final output.  This will be shown
+   * A strategy of aggregating bootstrap samples into some sort of final output. This will be shown
    * some number of sampled collections of summaries and will then take some action when {@link
    * #finish()} is called.
    *
@@ -156,9 +155,8 @@ public final class BootstrapInspector<ObsT, SummaryT> implements Inspector<ObsT>
     }
 
     public BootstrapInspector<ObsT, SummaryT> build() {
-      return new BootstrapInspector<ObsT, SummaryT>(observationSummarizer,
-          summaryAggregators.build(), numSamples, rng);
+      return new BootstrapInspector<ObsT, SummaryT>(
+          observationSummarizer, summaryAggregators.build(), numSamples, rng);
     }
   }
 }
-

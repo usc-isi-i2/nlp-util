@@ -1,19 +1,15 @@
 package edu.isi.nlp.clusters;
 
-import edu.isi.nlp.symbols.Symbol;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+import edu.isi.nlp.symbols.Symbol;
+import java.io.File;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public final class ClusterTest {
 
@@ -49,19 +45,23 @@ public final class ClusterTest {
     Assert.assertEquals(train.asSymbolTruncatedToNBits(2), Symbol.from("11"));
     Assert.assertEquals(banana.asSymbolTruncatedToNBits(2), Symbol.from("10"));
 
-		/*assertEquals(train.asInteger(), 30);
-                assertEquals(banana.asInteger(), 10);
+    /*assertEquals(train.asInteger(), 30);
+                  assertEquals(banana.asInteger(), 10);
 
-		assertEquals(train.asIntegerTruncatedToNBits(2), 3);
-		assertEquals(banana.asIntegerTruncatedToNBits(2), 2);*/
+    assertEquals(train.asIntegerTruncatedToNBits(2), 3);
+    assertEquals(banana.asIntegerTruncatedToNBits(2), 2);*/
 
     //	assertEquals(train.asSymbolTruncatedToNBits(ImmutableList.of(2,3,5)),
     //		ImmutableSet.of(Symbol.from("11"), Symbol.from("111"), Symbol.from("11110")));
 
-    assertEquals(ImmutableSet.copyOf(clusters.getWords(train)),
-        ImmutableSet.of(Symbol.from("train")));
-    assertEquals(ImmutableSet.copyOf(clusters.getWords(train, 2)), ImmutableSet.of(
-        Symbol.from("spaceship"), Symbol.from("airplane"), Symbol.from("train"),
-        Symbol.from("car")));
+    assertEquals(
+        ImmutableSet.copyOf(clusters.getWords(train)), ImmutableSet.of(Symbol.from("train")));
+    assertEquals(
+        ImmutableSet.copyOf(clusters.getWords(train, 2)),
+        ImmutableSet.of(
+            Symbol.from("spaceship"),
+            Symbol.from("airplane"),
+            Symbol.from("train"),
+            Symbol.from("car")));
   }
 }

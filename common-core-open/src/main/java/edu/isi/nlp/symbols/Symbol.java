@@ -1,38 +1,37 @@
 package edu.isi.nlp.symbols;
 
-import edu.isi.nlp.HasStableHashCode;
-import edu.isi.nlp.StringUtils;
-import edu.isi.nlp.UnicodeFriendlyString;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Function;
-
+import edu.isi.nlp.HasStableHashCode;
+import edu.isi.nlp.StringUtils;
+import edu.isi.nlp.UnicodeFriendlyString;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-
 /**
  * Symbol (adapted from Serif) is represents an interned String. Symbol-ized Strings can be used to
  * reduce memory requirements for frequently repeated Strings (e.g. parse node names) and to speed
  * up comparisons.
  *
- * It is guaranteed that for any <code>String</code>s <code>a</code> and <code>b</code>, if
+ * <p>It is guaranteed that for any <code>String</code>s <code>a</code> and <code>b</code>, if
+ *
  * <pre>
  * Symbol aSym = Symbol.from(a);
  * Symbol bSym = Symbol.from(b);
  * </pre>
+ *
  * it is true that <code>(aSym == bSym) == a.equals(b)</code>.
  *
- * Prefer using {@link #equalTo(Symbol)} to {@link #equals(Object)} when doing
- * direct comparisons between symbols for type-safety.
+ * <p>Prefer using {@link #equalTo(Symbol)} to {@link #equals(Object)} when doing direct comparisons
+ * between symbols for type-safety.
  *
- * The hashcode is not stable across program runs.
+ * <p>The hashcode is not stable across program runs.
  *
  * @author rgabbard
  */
@@ -71,9 +70,7 @@ public final class Symbol implements Serializable, HasStableHashCode {
     return from(unicodeFriendlyString.utf16CodeUnits());
   }
 
-  /**
-   * Returns the string this Symbol represents. Will never be {@code null}.
-   */
+  /** Returns the string this Symbol represents. Will never be {@code null}. */
   @JsonProperty("string")
   public String asString() {
     return string;
@@ -86,17 +83,15 @@ public final class Symbol implements Serializable, HasStableHashCode {
   }
 
   /**
-   * A type-safe version of {@link #equals(Object)}.  We found that accidental comparisons of
-   * symbols to non-symbols was a frequent source of error, so prefer using this to {@link
-   * #equals(Object)} when the types should be known.
+   * A type-safe version of {@link #equals(Object)}. We found that accidental comparisons of symbols
+   * to non-symbols was a frequent source of error, so prefer using this to {@link #equals(Object)}
+   * when the types should be known.
    */
   public boolean equalTo(Symbol other) {
     return equals(other);
   }
 
-  /**
-   * (non-Javadoc) Returns the <code>String</code> this <code>Symbol</code> was created from.
-   */
+  /** (non-Javadoc) Returns the <code>String</code> this <code>Symbol</code> was created from. */
   @Override
   public String toString() {
     return asString();
@@ -107,12 +102,13 @@ public final class Symbol implements Serializable, HasStableHashCode {
     return string.hashCode();
   }
 
-  public static final Function<? super String, Symbol> FromString = new Function<String, Symbol>() {
-    @Override
-    public Symbol apply(String input) {
-      return Symbol.from(input);
-    }
-  };
+  public static final Function<? super String, Symbol> FromString =
+      new Function<String, Symbol>() {
+        @Override
+        public Symbol apply(String input) {
+          return Symbol.from(input);
+        }
+      };
 
   // serialization support
   private static final long serialVersionUID = 1L;
@@ -125,6 +121,4 @@ public final class Symbol implements Serializable, HasStableHashCode {
   private Object readResolve() throws ObjectStreamException {
     return Symbol.from(this.string);
   }
-
 }
-

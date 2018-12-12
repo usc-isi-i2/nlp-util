@@ -1,26 +1,24 @@
 package edu.isi.nlp.corpora.ere;
 
-import com.google.common.base.Optional;
-
-import java.util.Objects;
-
-import javax.annotation.Nullable;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Optional;
+import java.util.Objects;
+import javax.annotation.Nullable;
 
 public final class EREEntityArgument implements EREArgument {
 
   private final String role;
-  @Nullable
-  private final LinkRealis realis;
+  @Nullable private final LinkRealis realis;
   private final EREEntityMention entityMention;
   // nullable to preserve backwards compatibility
-  @Nullable
-  private final EREEntity ereEntity;
+  @Nullable private final EREEntity ereEntity;
 
-  private EREEntityArgument(final String role, @Nullable final LinkRealis realis,
-      final EREEntityMention entityMention, @Nullable final EREEntity ereEntity) {
+  private EREEntityArgument(
+      final String role,
+      @Nullable final LinkRealis realis,
+      final EREEntityMention entityMention,
+      @Nullable final EREEntity ereEntity) {
     this.realis = realis;
     this.ereEntity = ereEntity;
     this.role = checkNotNull(role);
@@ -31,13 +29,16 @@ public final class EREEntityArgument implements EREArgument {
     return from(role, null, entityMention);
   }
 
-  public static EREEntityArgument from(final String role, @Nullable final LinkRealis realis,
-      final EREEntityMention entityMention) {
+  public static EREEntityArgument from(
+      final String role, @Nullable final LinkRealis realis, final EREEntityMention entityMention) {
     return new EREEntityArgument(role, realis, entityMention, null);
   }
 
-  public static EREEntityArgument from(final String role, @Nullable final LinkRealis realis,
-      final EREEntityMention entityMention, final EREEntity ereEntity) {
+  public static EREEntityArgument from(
+      final String role,
+      @Nullable final LinkRealis realis,
+      final EREEntityMention entityMention,
+      final EREEntity ereEntity) {
     return new EREEntityArgument(role, realis, entityMention, ereEntity);
   }
 
@@ -78,10 +79,10 @@ public final class EREEntityArgument implements EREArgument {
       return false;
     }
     final EREEntityArgument that = (EREEntityArgument) o;
-    return Objects.equals(role, that.role) &&
-        realis == that.realis &&
-        Objects.equals(entityMention, that.entityMention) &&
-        Objects.equals(ereEntity, that.ereEntity);
+    return Objects.equals(role, that.role)
+        && realis == that.realis
+        && Objects.equals(entityMention, that.entityMention)
+        && Objects.equals(ereEntity, that.ereEntity);
   }
 
   @Override
@@ -91,11 +92,16 @@ public final class EREEntityArgument implements EREArgument {
 
   @Override
   public String toString() {
-    return "EREEntityArgument{" +
-        "role='" + role + '\'' +
-        ", realis=" + realis +
-        ", entityMention=" + entityMention +
-        ", ereEntity=" + ereEntity +
-        '}';
+    return "EREEntityArgument{"
+        + "role='"
+        + role
+        + '\''
+        + ", realis="
+        + realis
+        + ", entityMention="
+        + entityMention
+        + ", ereEntity="
+        + ereEntity
+        + '}';
   }
 }

@@ -1,6 +1,8 @@
 package edu.isi.nlp.coreference.measures;
 
-import edu.isi.nlp.collections.CollectionUtils;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Iterables.concat;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
@@ -9,23 +11,19 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
+import edu.isi.nlp.collections.CollectionUtils;
 import java.util.Collection;
 import java.util.Set;
-
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.concat;
 
 /**
  * Scores coreference clusterings by a variant of the BLANC measure which allows both different
  * items sets in the key and the reference and for the same item to appear in multiple clusters.
  *
- * The differing items case is handled by Luo et al. "An Extension of BLANC to System Mentions." ACL
- * 2014, whose approach we follow. The extension to items appearing in multiple clusters is our
+ * <p>The differing items case is handled by Luo et al. "An Extension of BLANC to System Mentions."
+ * ACL 2014, whose approach we follow. The extension to items appearing in multiple clusters is our
  * own.
  *
- * See Marta Recasens Potau.  "Coreference: Theory, Annotation, Resolution, and Evaluation." PhD.
+ * <p>See Marta Recasens Potau. "Coreference: Theory, Annotation, Resolution, and Evaluation." PhD.
  * Dissertation. University of Barcelona http://stel.ub.edu/cba2010/phd/phd.pdf
  */
 @Beta
@@ -37,16 +35,16 @@ public final class MultiBLANCScorer implements BLANCScorer {
   }
 
   @Override
-  public BLANCResult score(final Iterable<? extends Iterable<?>> predicted,
-      final Iterable<? extends Iterable<?>> gold) {
+  public BLANCResult score(
+      final Iterable<? extends Iterable<?>> predicted, final Iterable<? extends Iterable<?>> gold) {
     final Iterable<Set<Object>> predictedAsSets = CorefScorerUtils.toSets(predicted);
     final Iterable<Set<Object>> goldAsSets = CorefScorerUtils.toSets(gold);
 
     return scoreSets(predictedAsSets, goldAsSets);
   }
 
-  private BLANCResult scoreSets(final Iterable<Set<Object>> predicted,
-      final Iterable<Set<Object>> gold) {
+  private BLANCResult scoreSets(
+      final Iterable<Set<Object>> predicted, final Iterable<Set<Object>> gold) {
 
     final Multimap<Object, Set<Object>> predictedItemToGroup =
         CollectionUtils.makeSetElementsToContainersMultimap(predicted);
@@ -71,8 +69,7 @@ public final class MultiBLANCScorer implements BLANCScorer {
     // |N_r|
     int nonCorefLinksInResponse = 0;
 
-    final Set<Object> allItems = Sets.union(responseItems,
-        keyItems).immutableCopy();
+    final Set<Object> allItems = Sets.union(responseItems, keyItems).immutableCopy();
 
     for (final Object item : allItems) {
       final boolean inKey = keyItems.contains(item);
@@ -104,7 +101,8 @@ public final class MultiBLANCScorer implements BLANCScorer {
       }
 
       if (inResponse) {
-        nonCorefLinksInResponse += responseItems.size() - predictedNeighbors.size() + selfAdjustment;
+        nonCorefLinksInResponse +=
+            responseItems.size() - predictedNeighbors.size() + selfAdjustment;
       }
 
       if (inKey && inResponse) {
@@ -115,8 +113,13 @@ public final class MultiBLANCScorer implements BLANCScorer {
       }
     }
 
-    return BLANCResult.fromSetCounts(keyItems.equals(responseItems),
-        corefLinksInBoth, corefLinksInKey, corefLinksInResponse, nonCorefInBoth,
-        nonCorefLinksInKey, nonCorefLinksInResponse);
+    return BLANCResult.fromSetCounts(
+        keyItems.equals(responseItems),
+        corefLinksInBoth,
+        corefLinksInKey,
+        corefLinksInResponse,
+        nonCorefInBoth,
+        nonCorefLinksInKey,
+        nonCorefLinksInResponse);
   }
 }

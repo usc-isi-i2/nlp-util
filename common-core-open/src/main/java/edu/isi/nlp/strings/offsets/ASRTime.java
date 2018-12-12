@@ -6,7 +6,6 @@ public final class ASRTime extends AbstractOffset<ASRTime> {
     super(val);
   }
 
-
   public static ASRTime of(int val) {
     return new ASRTime(val);
   }

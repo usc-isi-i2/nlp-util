@@ -1,7 +1,7 @@
 package edu.isi.nlp.xml;
 
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
@@ -14,16 +14,11 @@ import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.ls.DOMImplementationLS;
-
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -32,13 +27,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.ls.DOMImplementationLS;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-/**
- * Some utilities for working with XML files.
- */
+/** Some utilities for working with XML files. */
 @Beta
 public final class XMLUtils {
 
@@ -70,14 +64,15 @@ public final class XMLUtils {
    * Returns the element's next sibling with a tag matching the given name.
    *
    * @param element the element
-   * @param name    the tag of the desired sibling
+   * @param name the tag of the desired sibling
    * @return a sibling matching the tag, or {@link Optional#absent()} if there is none
    */
   public static Optional<Element> nextSibling(final Element element, final String name) {
-    for (Node childNode = element.getNextSibling(); childNode != null;
-         childNode = childNode.getNextSibling()) {
-      if (childNode instanceof Element && ((Element) childNode).getTagName()
-          .equalsIgnoreCase(name)) {
+    for (Node childNode = element.getNextSibling();
+        childNode != null;
+        childNode = childNode.getNextSibling()) {
+      if (childNode instanceof Element
+          && ((Element) childNode).getTagName().equalsIgnoreCase(name)) {
         return Optional.of((Element) childNode);
       }
     }
@@ -90,8 +85,9 @@ public final class XMLUtils {
         return (Element) child;
       }
     }
-    throw new XMLUnexpectedInputException(String
-        .format("Parent with tag %s lacks required child element %s", parent.getTagName(), name));
+    throw new XMLUnexpectedInputException(
+        String.format(
+            "Parent with tag %s lacks required child element %s", parent.getTagName(), name));
   }
 
   public static Symbol requiredSymbolAttribute(final Node e, final String attribute) {
@@ -107,8 +103,8 @@ public final class XMLUtils {
     if (val.equalsIgnoreCase("false")) {
       return false;
     }
-    throw new XMLUnexpectedInputException(String
-        .format(
+    throw new XMLUnexpectedInputException(
+        String.format(
             "%s has required boolean attribute %s, but it doesn't parse as a boolean: %s; true or false required",
             ((Element) e).getTagName(), attribute, e));
   }
@@ -120,11 +116,11 @@ public final class XMLUtils {
       return Float.parseFloat(val);
     } catch (final NumberFormatException ex) {
       throw new XMLUnexpectedInputException(
-          String.format("%s has required float attribute %s, but it doesn't parse as a float: %s",
+          String.format(
+              "%s has required float attribute %s, but it doesn't parse as a float: %s",
               ((Element) e).getTagName(), attribute, e));
     }
   }
-
 
   public static double requiredDoubleAttribute(final Node e, final String attribute) {
     final String val = requiredAttribute(e, attribute);
@@ -133,7 +129,8 @@ public final class XMLUtils {
       return Double.parseDouble(val);
     } catch (final NumberFormatException ex) {
       throw new XMLUnexpectedInputException(
-          String.format("%s has required double attribute %s, but it doesn't parse as a double: %s",
+          String.format(
+              "%s has required double attribute %s, but it doesn't parse as a double: %s",
               ((Element) e).getTagName(), attribute, e));
     }
   }
@@ -145,7 +142,8 @@ public final class XMLUtils {
       return Integer.parseInt(val);
     } catch (final NumberFormatException ex) {
       throw new XMLUnexpectedInputException(
-          String.format("%s has required int attribute %s, but it doesn't parse as an int : %s",
+          String.format(
+              "%s has required int attribute %s, but it doesn't parse as an int : %s",
               ((Element) e).getTagName(), attribute, e));
     }
   }
@@ -157,7 +155,8 @@ public final class XMLUtils {
       return Long.parseLong(val);
     } catch (final NumberFormatException ex) {
       throw new XMLUnexpectedInputException(
-          String.format("%s has required long attribute %s, but it doesn't parse as a long: %s",
+          String.format(
+              "%s has required long attribute %s, but it doesn't parse as a long: %s",
               ((Element) e).getTagName(), attribute, e));
     }
   }
@@ -174,8 +173,9 @@ public final class XMLUtils {
       return val;
     } else {
       throw new XMLUnexpectedInputException(
-          String.format("%s missing required attribute %s: %s.", e.getTagName(), attribute,
-              prettyPrintElementLocally(e)));
+          String.format(
+              "%s missing required attribute %s: %s.",
+              e.getTagName(), attribute, prettyPrintElementLocally(e)));
     }
   }
 
@@ -228,8 +228,8 @@ public final class XMLUtils {
     }
   }
 
-  public static String defaultStringAttribute(final Element e, final String attribute,
-      final String defaultValue) {
+  public static String defaultStringAttribute(
+      final Element e, final String attribute, final String defaultValue) {
     final String val = e.getAttribute(attribute);
 
     if (!val.isEmpty()) {
@@ -239,8 +239,8 @@ public final class XMLUtils {
     }
   }
 
-  public static Optional<Integer> optionalIntegerAttribute(final Element e,
-      final String attribute) {
+  public static Optional<Integer> optionalIntegerAttribute(
+      final Element e, final String attribute) {
     final String val = e.getAttribute(attribute);
 
     if (!val.isEmpty()) {
@@ -270,8 +270,8 @@ public final class XMLUtils {
     }
   }
 
-  public static Optional<Boolean> optionalBooleanAttribute(final Element e,
-      final String attribute) {
+  public static Optional<Boolean> optionalBooleanAttribute(
+      final Element e, final String attribute) {
     final String val = e.getAttribute(attribute);
 
     if (!val.isEmpty()) {
@@ -280,8 +280,8 @@ public final class XMLUtils {
       } else if (val.equalsIgnoreCase("false")) {
         return Optional.of(false);
       } else {
-        throw new XMLUnexpectedInputException(String
-            .format(
+        throw new XMLUnexpectedInputException(
+            String.format(
                 "%s has required boolean attribute %s, but it doesn't parse as a boolean: %s; specify true or false",
                 e.getTagName(), attribute, e));
       }
@@ -289,7 +289,6 @@ public final class XMLUtils {
       return Optional.absent();
     }
   }
-
 
   public static Optional<Double> optionalDoubleAttribute(final Element e, final String attribute) {
     final String val = e.getAttribute(attribute);
@@ -299,11 +298,10 @@ public final class XMLUtils {
     } else {
       return Optional.absent();
     }
-
   }
 
-  public static List<Symbol> optionalSymbolList(final Element e, final String attribute,
-      Splitter splitter) {
+  public static List<Symbol> optionalSymbolList(
+      final Element e, final String attribute, Splitter splitter) {
     final String val = e.getAttribute(attribute);
 
     return FluentIterable.from(splitter.split(val))
@@ -311,26 +309,22 @@ public final class XMLUtils {
         .toList();
   }
 
-  /**
-   * @deprecated
-   */
+  /** @deprecated */
   @Deprecated
   public static List<Symbol> optionalSymbolList(final Element e, final String attribute) {
-    return optionalSymbolList(e, attribute,
-        Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults());
+    return optionalSymbolList(
+        e, attribute, Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults());
   }
 
-  /**
-   * @deprecated
-   */
+  /** @deprecated */
   @Deprecated
   public static List<Symbol> requiredSymbolList(final Element e, final String attribute) {
-    return requiredSymbolList(e, attribute,
-        Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults());
+    return requiredSymbolList(
+        e, attribute, Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults());
   }
 
-  public static List<Symbol> requiredSymbolList(final Element e, final String attribute,
-      Splitter splitter) {
+  public static List<Symbol> requiredSymbolList(
+      final Element e, final String attribute, Splitter splitter) {
     final String val = requiredAttribute(e, attribute);
 
     return FluentIterable.from(splitter.split(val))
@@ -338,24 +332,23 @@ public final class XMLUtils {
         .toList();
   }
 
-  /**
-   * @deprecated
-   */
+  /** @deprecated */
   @Deprecated
   public static List<String> requiredStringList(final Element e, final String attribute) {
-    return requiredStringList(e, attribute,
-        Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults());
+    return requiredStringList(
+        e, attribute, Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults());
   }
 
-  public static List<String> requiredStringList(final Element e, final String attribute,
-      Splitter splitter) {
+  public static List<String> requiredStringList(
+      final Element e, final String attribute, Splitter splitter) {
     final String val = requiredAttribute(e, attribute);
 
     return FluentIterable.from(splitter.split(val)).toList();
   }
 
   public static String dumpElement(final Element e) {
-    return ((DOMImplementationLS) e.getOwnerDocument().getImplementation()).createLSSerializer()
+    return ((DOMImplementationLS) e.getOwnerDocument().getImplementation())
+        .createLSSerializer()
         .writeToString(e);
   }
 
@@ -377,29 +370,33 @@ public final class XMLUtils {
     }
   }
 
-  public static abstract class FromXMLLoader<T> {
+  public abstract static class FromXMLLoader<T> {
 
     public abstract T from(Element e);
   }
 
-  public static final FromXMLLoader<String> ToContentString = new FromXMLLoader<String>() {
-    @Override
-    public String from(final Element e) {
-      return e.getTextContent();
-    }
-  };
+  public static final FromXMLLoader<String> ToContentString =
+      new FromXMLLoader<String>() {
+        @Override
+        public String from(final Element e) {
+          return e.getTextContent();
+        }
+      };
 
   public static <T> List<T> childrenToList(final Element e, final FromXMLLoader<T> childToXML) {
     return childrenToList(e, null, childToXML);
   }
 
-  public static <T> List<T> childrenToList(final Element e, final String kidName,
-      final FromXMLLoader<T> childToXML) {
+  public static <T> List<T> childrenToList(
+      final Element e, final String kidName, final FromXMLLoader<T> childToXML) {
     return childrenToListInternal(e, kidName, childToXML, true);
   }
 
-  private static <T> List<T> childrenToListInternal(final Element e,
-      final String kidName, final FromXMLLoader<T> childToXML, final boolean throwOnMismatch) {
+  private static <T> List<T> childrenToListInternal(
+      final Element e,
+      final String kidName,
+      final FromXMLLoader<T> childToXML,
+      final boolean throwOnMismatch) {
     final List<T> list = Lists.newArrayList();
 
     for (Node kid = e.getFirstChild(); kid != null; kid = kid.getNextSibling()) {
@@ -408,9 +405,10 @@ public final class XMLUtils {
         if (kidName == null || is(kidElement, kidName)) {
           list.add(childToXML.from(kidElement));
         } else if (throwOnMismatch) {
-          throw new XMLUnexpectedInputException(String
-              .format("Expected children of type %s but encountered %s", kidName,
-                  kidElement.getTagName()));
+          throw new XMLUnexpectedInputException(
+              String.format(
+                  "Expected children of type %s but encountered %s",
+                  kidName, kidElement.getTagName()));
         }
       }
     }
@@ -418,8 +416,8 @@ public final class XMLUtils {
     return list;
   }
 
-  public static <T> List<T> matchingChildrenToList(final Element e,
-      final String kidName, final FromXMLLoader<T> childToXML) {
+  public static <T> List<T> matchingChildrenToList(
+      final Element e, final String kidName, final FromXMLLoader<T> childToXML) {
     return childrenToListInternal(e, kidName, childToXML, false);
   }
 
@@ -451,8 +449,8 @@ public final class XMLUtils {
     return singleChild;
   }
 
-  public static <T> T requiredSingleChild(final Element e, final String childName,
-      final FromXMLLoader<T> loader) {
+  public static <T> T requiredSingleChild(
+      final Element e, final String childName, final FromXMLLoader<T> loader) {
     return loader.from(requiredSingleChild(e, childName));
   }
 
@@ -487,9 +485,7 @@ public final class XMLUtils {
     };
   }
 
-  /**
-   * Returns an {@link Iterable} over all children of {@code e} with tag {@code tag}
-   */
+  /** Returns an {@link Iterable} over all children of {@code e} with tag {@code tag} */
   public static Iterable<Element> childrenWithTag(Element e, String tag) {
     return new ElementChildrenIterable(e, tagNameIsPredicate(tag));
   }
@@ -549,7 +545,10 @@ public final class XMLUtils {
       final Node attr = attributes.item(i);
       ret.put(attr.getNodeName(), "\"" + attr.getNodeValue() + "\"");
     }
-    return "<" + e.getNodeName() + " " + Joiner.on(" ").withKeyValueSeparator("=").join(ret.build())
+    return "<"
+        + e.getNodeName()
+        + " "
+        + Joiner.on(" ").withKeyValueSeparator("=").join(ret.build())
         + "/>";
   }
 }

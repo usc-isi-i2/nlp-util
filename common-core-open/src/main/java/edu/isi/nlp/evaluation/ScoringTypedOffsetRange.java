@@ -1,10 +1,6 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.HasDocID;
-import edu.isi.nlp.strings.offsets.HasOffsetRange;
-import edu.isi.nlp.strings.offsets.Offset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Equivalence;
@@ -12,13 +8,16 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Ints;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import edu.isi.nlp.HasDocID;
+import edu.isi.nlp.strings.offsets.HasOffsetRange;
+import edu.isi.nlp.strings.offsets.Offset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import edu.isi.nlp.symbols.Symbol;
 
 /**
  * A struct to wrap an {@link OffsetRange} alongside the corresponding {@link Symbol} type and
- * document id. The type is meant to represent the class label in a multi-class prediction tag,
- * such as a named entity type or a part of speech.
+ * document id. The type is meant to represent the class label in a multi-class prediction tag, such
+ * as a named entity type or a part of speech.
  */
 @Beta
 public final class ScoringTypedOffsetRange<T extends Offset<T>>
@@ -28,14 +27,15 @@ public final class ScoringTypedOffsetRange<T extends Offset<T>>
   private final Symbol type;
   private final OffsetRange<T> offsetRange;
 
-  private ScoringTypedOffsetRange(final Symbol docId, final Symbol type, final OffsetRange<T> offsetRange) {
+  private ScoringTypedOffsetRange(
+      final Symbol docId, final Symbol type, final OffsetRange<T> offsetRange) {
     this.docId = checkNotNull(docId);
     this.type = checkNotNull(type);
     this.offsetRange = checkNotNull(offsetRange);
   }
 
-  public static <T extends Offset<T>> ScoringTypedOffsetRange<T> create(final Symbol docId,
-      final Symbol type, final OffsetRange<T> offsetRange) {
+  public static <T extends Offset<T>> ScoringTypedOffsetRange<T> create(
+      final Symbol docId, final Symbol type, final OffsetRange<T> offsetRange) {
     return new ScoringTypedOffsetRange<T>(docId, type, offsetRange);
   }
 
@@ -79,8 +79,8 @@ public final class ScoringTypedOffsetRange<T extends Offset<T>>
   }
 
   /**
-   * Returns an enum-wrapped {@link Equivalence} that uses only the document id and offset range
-   * to compare {@link ScoringTypedOffsetRange}s.
+   * Returns an enum-wrapped {@link Equivalence} that uses only the document id and offset range to
+   * compare {@link ScoringTypedOffsetRange}s.
    */
   public static DocIdOffsetEquivalence docIdOffsetEquivalence() {
     return new DocIdOffsetEquivalence();
@@ -94,17 +94,25 @@ public final class ScoringTypedOffsetRange<T extends Offset<T>>
    * Provides an ordering of {@code ScoringTypedOffsetRange} by their degree of overlap with a
    * reference {@code ScoringTypedOffsetRange}, from least overlap to most.
    */
-  public static <OffsetType extends Offset<OffsetType>> Ordering<ScoringTypedOffsetRange<OffsetType>>
-    orderByOverlapWith(final ScoringTypedOffsetRange<OffsetType> reference) {
+  public static <OffsetType extends Offset<OffsetType>>
+      Ordering<ScoringTypedOffsetRange<OffsetType>> orderByOverlapWith(
+          final ScoringTypedOffsetRange<OffsetType> reference) {
     return new Ordering<ScoringTypedOffsetRange<OffsetType>>() {
       @Override
-      public int compare(final ScoringTypedOffsetRange<OffsetType> left, final
-      ScoringTypedOffsetRange<OffsetType> right) {
+      public int compare(
+          final ScoringTypedOffsetRange<OffsetType> left,
+          final ScoringTypedOffsetRange<OffsetType> right) {
         final int leftIntersectionSize =
-            left.offsetRange().intersection(reference.offsetRange())
-                .transform(OffsetRange.lengthFunction()).or(0);
-        final int rightIntersectionSize = right.offsetRange().intersection(reference.offsetRange())
-            .transform(OffsetRange.lengthFunction()).or(0);
+            left.offsetRange()
+                .intersection(reference.offsetRange())
+                .transform(OffsetRange.lengthFunction())
+                .or(0);
+        final int rightIntersectionSize =
+            right
+                .offsetRange()
+                .intersection(reference.offsetRange())
+                .transform(OffsetRange.lengthFunction())
+                .or(0);
 
         return Ints.compare(leftIntersectionSize, rightIntersectionSize);
       }
@@ -120,9 +128,7 @@ public final class ScoringTypedOffsetRange<T extends Offset<T>>
     }
   }
 
-  /**
-   * Equivalence that ignores the scoring type.
-   */
+  /** Equivalence that ignores the scoring type. */
   private static final class DocIdOffsetEquivalence extends Equivalence<ScoringTypedOffsetRange> {
 
     @Override
@@ -132,7 +138,8 @@ public final class ScoringTypedOffsetRange<T extends Offset<T>>
 
     @Override
     protected int doHash(ScoringTypedOffsetRange scoringTypedOffsetRange) {
-      return Objects.hashCode(scoringTypedOffsetRange.docID(), scoringTypedOffsetRange.offsetRange());
+      return Objects.hashCode(
+          scoringTypedOffsetRange.docID(), scoringTypedOffsetRange.offsetRange());
     }
   }
 }

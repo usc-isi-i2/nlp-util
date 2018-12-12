@@ -1,28 +1,24 @@
 package edu.isi.nlp.indri.bin;
 
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.indri.IndriFileProcessor;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Predicates.compose;
+import static com.google.common.base.Predicates.in;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.indri.IndriFileProcessor;
+import edu.isi.nlp.parameters.Parameters;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
-
 import lemurproject.indri.IndexEnvironment;
 import lemurproject.indri.IndexStatus;
 import lemurproject.indri.Specification;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Predicates.compose;
-import static com.google.common.base.Predicates.in;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class IndexBuilder {
 
@@ -64,23 +60,29 @@ public final class IndexBuilder {
     final int memory = params.getPositiveInteger("memoryInMB");
     final boolean storeDocs = params.getBoolean("storeDocs");
     final Predicate<File> fileFilter = getFileFilter(params);
-    final IndriFileProcessor indriFileProcessor = params.getParameterInitializedObject(
-        "indriFileProcessorClass", IndriFileProcessor.class);
+    final IndriFileProcessor indriFileProcessor =
+        params.getParameterInitializedObject("indriFileProcessorClass", IndriFileProcessor.class);
 
-    log.info("Building index for corpus {} format to {} using processor {}",
-        corpusRoot, outputDirectory, indriFileProcessor.getClass().getName());
+    log.info(
+        "Building index for corpus {} format to {} using processor {}",
+        corpusRoot,
+        outputDirectory,
+        indriFileProcessor.getClass().getName());
 
     final IndexEnvironment env = setupIndexer(outputDirectory, memory, storeDocs);
 
-    recursiveIndex(corpusRoot, env, indriFileProcessor,
-        fileFilter);
+    recursiveIndex(corpusRoot, env, indriFileProcessor, fileFilter);
     log.info("Indexed {} documents", env.documentsIndexed());
     env.close();
     log.info("Index complete");
   }
 
-  private static void recursiveIndex(File dir, IndexEnvironment env,
-      IndriFileProcessor indriFileProcessor, Predicate<File> fileFilter) throws Exception {
+  private static void recursiveIndex(
+      File dir,
+      IndexEnvironment env,
+      IndriFileProcessor indriFileProcessor,
+      Predicate<File> fileFilter)
+      throws Exception {
     checkArgument(dir.isDirectory());
     for (final File f : dir.listFiles()) {
       if (f.isFile() && fileFilter.apply(f)) {
@@ -110,11 +112,10 @@ public final class IndexBuilder {
   private static final class StatusMonitor extends IndexStatus {
 
     @Override
-    public void status(int code, String documentFile, String error,
-        int documentsIndexed, int documentsSeen) {
+    public void status(
+        int code, String documentFile, String error, int documentsIndexed, int documentsSeen) {
       if (code == action_code.FileOpen.swigValue()) {
-        log.info("Documents: " + documentsIndexed + "\n" +
-            "Opened " + documentFile);
+        log.info("Documents: " + documentsIndexed + "\n" + "Opened " + documentFile);
       } else if (code == action_code.FileSkip.swigValue()) {
         log.info("Skipped " + documentFile);
       } else if (code == action_code.FileError.swigValue()) {
@@ -127,16 +128,14 @@ public final class IndexBuilder {
     }
   }
 
-  /**
-   * ************** Configuration methods **************************
-   */
+  /** ************** Configuration methods ************************** */
   private static final long ONE_MEGABYTE = 1048576;
 
   // note we must pass in the status monitor because we need to ensure the
   // monitor outlasts the IndexEnvironment. If the JVM garbage collects it
   // because its only reference is in native code, then we will get a crash.
-  private static IndexEnvironment setupIndexer(File outputDirectory, int memory,
-      boolean storeDocs) throws Exception {
+  private static IndexEnvironment setupIndexer(File outputDirectory, int memory, boolean storeDocs)
+      throws Exception {
     final IndexEnvironment env = new IndexEnvironment();
     env.setMemory(memory * ONE_MEGABYTE);
     final Specification spec = env.getFileClassSpec("trectext");
@@ -144,14 +143,13 @@ public final class IndexBuilder {
     env.setStoreDocs(storeDocs);
     // if we don't build indices on DOCNO then getting the docIds at query time is
     // extremely slow
-    env.setMetadataIndexedFields(new String[]{"docno"}, new String[]{"docno"});
+    env.setMetadataIndexedFields(new String[] {"docno"}, new String[] {"docno"});
     env.create(outputDirectory.getAbsolutePath(), statusMonitor);
     return env;
   }
 
   private static final String RESTRICT_TO_EXTENSIONS = "restrictToExtensions";
-  public static final Function<File, String>
-      FILE_TO_EXTENSION_FUNCTION =
+  public static final Function<File, String> FILE_TO_EXTENSION_FUNCTION =
       new Function<File, String>() {
         @Override
         public String apply(File input) {

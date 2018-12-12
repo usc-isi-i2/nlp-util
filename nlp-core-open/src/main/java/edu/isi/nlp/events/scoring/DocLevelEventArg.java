@@ -1,13 +1,12 @@
 package edu.isi.nlp.events.scoring;
 
-import edu.isi.nlp.HasDocID;
-import edu.isi.nlp.events.HasEventType;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.events.HasEventArgType;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import edu.isi.nlp.HasDocID;
+import edu.isi.nlp.events.HasEventArgType;
+import edu.isi.nlp.events.HasEventType;
+import edu.isi.nlp.symbols.Symbol;
 
 public final class DocLevelEventArg implements HasDocID, HasEventType, HasEventArgType {
 
@@ -16,16 +15,16 @@ public final class DocLevelEventArg implements HasDocID, HasEventType, HasEventA
   private final Symbol argumentType;
   private final String corefID;
 
-  DocLevelEventArg(final Symbol docID, final Symbol eventType,
-      final Symbol argumentType, final String corefID) {
+  DocLevelEventArg(
+      final Symbol docID, final Symbol eventType, final Symbol argumentType, final String corefID) {
     this.docID = checkNotNull(docID);
     this.eventType = checkNotNull(eventType);
     this.argumentType = checkNotNull(argumentType);
     this.corefID = checkNotNull(corefID);
   }
 
-  public static DocLevelEventArg create(final Symbol docID, final Symbol eventType,
-      final Symbol argumentType, final String corefID) {
+  public static DocLevelEventArg create(
+      final Symbol docID, final Symbol eventType, final Symbol argumentType, final String corefID) {
     return new DocLevelEventArg(docID, eventType, argumentType, corefID);
   }
 

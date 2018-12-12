@@ -18,10 +18,7 @@ public final class IntUtils {
     throw new UnsupportedOperationException();
   }
 
-
-  /**
-   * Fisher-Yates suffer a primitive int array
-   */
+  /** Fisher-Yates suffer a primitive int array */
   public static void shuffle(final int[] arr, final Random rng) {
     // Fisher-Yates shuffle
     for (int i = arr.length; i > 1; i--) {
@@ -35,9 +32,7 @@ public final class IntUtils {
     }
   }
 
-  /**
-   * Produces an array of integers from 0 (inclusive) to len (exclusive)
-   */
+  /** Produces an array of integers from 0 (inclusive) to len (exclusive) */
   public static int[] arange(final int len) {
     checkArgument(len > 0);
     final int[] ret = new int[len];
@@ -46,7 +41,6 @@ public final class IntUtils {
     }
     return ret;
   }
-
 
   public static void writeTo(final int[] arr, final DataOutputStream out) throws IOException {
     out.writeInt(arr.length);
@@ -64,9 +58,7 @@ public final class IntUtils {
     return ret;
   }
 
-  /**
-   * Note: this does not warn about overflow beyond the range of a long.
-   */
+  /** Note: this does not warn about overflow beyond the range of a long. */
   public static Long sum(Iterable<Integer> values) {
     long ret = 0;
     for (final int x : values) {
@@ -74,6 +66,4 @@ public final class IntUtils {
     }
     return ret;
   }
-
-
 }

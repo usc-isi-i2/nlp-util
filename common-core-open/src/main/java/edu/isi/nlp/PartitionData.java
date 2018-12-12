@@ -1,10 +1,7 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.collections.CollectionUtils;
-import edu.isi.nlp.collections.ListUtils;
-import edu.isi.nlp.files.FileUtils;
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -16,45 +13,44 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.math.DoubleMath;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.collections.CollectionUtils;
+import edu.isi.nlp.collections.ListUtils;
+import edu.isi.nlp.files.FileUtils;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Divides a data set into almost equally-sized partitions after optionally holding out a portion
- * of the data. For example, this could be used to divide into three equal partitions (33.3% of the
- * data each), to hold out 10% of the data and then split into three partitions (10% held out,
- * 30% in each partition), or do a simple train/test split (by specifying one partition).
+ * Divides a data set into almost equally-sized partitions after optionally holding out a portion of
+ * the data. For example, this could be used to divide into three equal partitions (33.3% of the
+ * data each), to hold out 10% of the data and then split into three partitions (10% held out, 30%
+ * in each partition), or do a simple train/test split (by specifying one partition).
  *
- * This uses the following parameters in the com.bbn.bue.common.partitionData namespace:
+ * <p>This uses the following parameters in the com.bbn.bue.common.partitionData namespace:
  *
- * fileList or fileMap: Specify exactly of these to give the input as a file list or document id to
- * file map. If a list is specified, all output is in the form of file lists, etc.
+ * <p>fileList or fileMap: Specify exactly of these to give the input as a file list or document id
+ * to file map. If a list is specified, all output is in the form of file lists, etc.
  *
- * holdOutProportion: The proportion of the data to hold out, for example .25 for 25%. May be zero.
- * holdOutFile: The file to write the held out file list/map to. Must be specified if
+ * <p>holdOutProportion: The proportion of the data to hold out, for example .25 for 25%. May be
+ * zero. holdOutFile: The file to write the held out file list/map to. Must be specified if
  * holdOutProportion is greater than zero. It is an error to specify this if holdOutProportion is
  * zero.
  *
- * numPartitions: The number of partitions to create. Partitions are created after any held out
+ * <p>numPartitions: The number of partitions to create. Partitions are created after any held out
  * data is removed. This can be one to allow for a simple train/test split that is defined using
- * holdOutProportion.
- * randomSeed: The random seed to use when shuffling the data before data is held out and
- * partitioned.
+ * holdOutProportion. randomSeed: The random seed to use when shuffling the data before data is held
+ * out and partitioned.
  *
- * partitionOutputDir: The directory to write the file lists/maps that give each partition.
- * partitionListFile: The file to write the list of partition lists/maps to.
- * partitionPrefix: The prefix to give the filename of each partition. The output files will be
- * of the format <code>%partitionOutputDir%/%partitionPrefix%.%partitionNumber%.{map,list}</code>
- * where the partition number is zero-indexed.
+ * <p>partitionOutputDir: The directory to write the file lists/maps that give each partition.
+ * partitionListFile: The file to write the list of partition lists/maps to. partitionPrefix: The
+ * prefix to give the filename of each partition. The output files will be of the format <code>
+ * %partitionOutputDir%/%partitionPrefix%.%partitionNumber%.{map,list}</code> where the partition
+ * number is zero-indexed.
  */
 public final class PartitionData {
 
@@ -148,9 +144,11 @@ public final class PartitionData {
 
     // 1.0 is a valid probability but not a valid hold out value
     checkArgument(holdOut != 1.0, "Hold out proportion must be less than all of the data");
-    checkArgument(holdOutFile.isPresent() == (holdOut > 0.0),
+    checkArgument(
+        holdOutFile.isPresent() == (holdOut > 0.0),
         PARAM_HOLD_OUT + " must be specified if and only if hold out amount is greater than zero");
-    checkArgument(holdOut > 0.0 || nPartitions > 1,
+    checkArgument(
+        holdOut > 0.0 || nPartitions > 1,
         "Neither hold out nor more than one partition specified. Nothing to do.");
 
     // Figure out how much is held out
@@ -159,13 +157,14 @@ public final class PartitionData {
     // Prevent requesting .99999 of 10 documents, which is all of them.
     checkArgument(nHeldOut < nDocuments, "Cannot hold out all documents");
     // Prevent requesting .00001 of 10 documents, which is none of them.
-    checkArgument(holdOut == 0.0 || nHeldOut > 0,
-        "Hold out amount is non-zero but less than one document");
+    checkArgument(
+        holdOut == 0.0 || nHeldOut > 0, "Hold out amount is non-zero but less than one document");
     log.info("Holding out {} documents", nHeldOut);
 
     // Compute how much is left over after hold out
     final int nRemaining = nDocuments - nHeldOut;
-    checkArgument(nRemaining >= nPartitions,
+    checkArgument(
+        nRemaining >= nPartitions,
         "More partitions requested than number of non-held out documents");
     log.info("Dividing {} documents into {} partitions", nRemaining, nPartitions);
 
@@ -176,7 +175,8 @@ public final class PartitionData {
     final ImmutableSet<Symbol> heldOut = ImmutableSet.copyOf(documents.subList(0, nHeldOut));
     final ImmutableSet<Symbol> remaining =
         ImmutableSet.copyOf(documents.subList(nHeldOut, nDocuments));
-    checkState(heldOut.size() + remaining.size() == nDocuments,
+    checkState(
+        heldOut.size() + remaining.size() == nDocuments,
         "Number of documents in held out and partitioned data differs from original number of documents");
 
     int outputDocuments = 0;
@@ -185,28 +185,44 @@ public final class PartitionData {
       outputDocuments += writeHoldOut(heldOut, holdOutFile.get(), documentMap);
     }
 
-    outputDocuments += writePartitions(remaining, nPartitions, outputDirectory, partitionListFile,
-        partitionPrefix, documentMap);
+    outputDocuments +=
+        writePartitions(
+            remaining,
+            nPartitions,
+            outputDirectory,
+            partitionListFile,
+            partitionPrefix,
+            documentMap);
 
     checkState(nDocuments == outputDocuments, "Incorrect number of documents written");
   }
 
-  private static int writeHoldOut(final ImmutableSet<Symbol> heldOut,
-      final File holdOutFile, final ImmutableMap<Symbol, File> documentMap) throws IOException {
+  private static int writeHoldOut(
+      final ImmutableSet<Symbol> heldOut,
+      final File holdOutFile,
+      final ImmutableMap<Symbol, File> documentMap)
+      throws IOException {
     if (documentMap != null) {
-      FileUtils.writeSymbolToFileMap(filterMapToKeysPreservingOrder(documentMap, heldOut),
+      FileUtils.writeSymbolToFileMap(
+          filterMapToKeysPreservingOrder(documentMap, heldOut),
           Files.asCharSink(holdOutFile, Charsets.UTF_8));
     } else {
-      FileUtils.writeFileList(Lists.transform(heldOut.asList(), SymbolToFileFunction.INSTANCE),
+      FileUtils.writeFileList(
+          Lists.transform(heldOut.asList(), SymbolToFileFunction.INSTANCE),
           Files.asCharSink(holdOutFile, Charsets.UTF_8));
     }
     log.info("Wrote held out data to {}", holdOutFile);
     return heldOut.size();
   }
 
-  private static int writePartitions(final ImmutableSet<Symbol> remaining, final int nPartitions,
-      final File outputDirectory, final File partitionListFile, final String partitionPrefix,
-      final ImmutableMap<Symbol, File> documentMap) throws IOException {
+  private static int writePartitions(
+      final ImmutableSet<Symbol> remaining,
+      final int nPartitions,
+      final File outputDirectory,
+      final File partitionListFile,
+      final String partitionPrefix,
+      final ImmutableMap<Symbol, File> documentMap)
+      throws IOException {
     int outputDocuments = 0;
 
     // Partition remaining data
@@ -220,16 +236,18 @@ public final class PartitionData {
     for (int partitionNum = 0; partitionNum < partitions.size(); partitionNum++) {
       final ImmutableList<Symbol> partition = partitions.get(partitionNum);
       // maxPartition -1 since partitions are indexed starting at 0
-      final String partitionFileName = partitionPrefix + '.'
-          + StringUtils.padWithMax(partitionNum, maxPartition - 1);
+      final String partitionFileName =
+          partitionPrefix + '.' + StringUtils.padWithMax(partitionNum, maxPartition - 1);
       final File partitionFile;
       if (documentMap != null) {
         partitionFile = new File(outputDirectory, partitionFileName + ".map");
-        FileUtils.writeSymbolToFileMap(filterMapToKeysPreservingOrder(documentMap, partition),
+        FileUtils.writeSymbolToFileMap(
+            filterMapToKeysPreservingOrder(documentMap, partition),
             Files.asCharSink(partitionFile, Charsets.UTF_8));
       } else {
         partitionFile = new File(outputDirectory, partitionFileName + ".list");
-        FileUtils.writeFileList(Lists.transform(partition, SymbolToFileFunction.INSTANCE),
+        FileUtils.writeFileList(
+            Lists.transform(partition, SymbolToFileFunction.INSTANCE),
             Files.asCharSink(partitionFile, Charsets.UTF_8));
       }
       partitionFiles.add(partitionFile);
@@ -238,8 +256,8 @@ public final class PartitionData {
     }
 
     // Write out lists of files/maps created
-    FileUtils.writeFileList(partitionFiles.build(),
-        Files.asCharSink(partitionListFile, Charsets.UTF_8));
+    FileUtils.writeFileList(
+        partitionFiles.build(), Files.asCharSink(partitionListFile, Charsets.UTF_8));
     log.info("Wrote partition list to {}", partitionListFile);
 
     return outputDocuments;

@@ -7,9 +7,9 @@ import edu.isi.nlp.strings.offsets.UTF16Offset;
 import org.immutables.value.Value;
 
 /**
- * A {@link UnicodeFriendlyString} which does not contain a non-BMP character. This class
- * should never be referenced directly. Always create {@link UnicodeFriendlyString}s
- * via {@link StringUtils#unicodeFriendly(String)}. See the interface Javadoc for details.
+ * A {@link UnicodeFriendlyString} which does not contain a non-BMP character. This class should
+ * never be referenced directly. Always create {@link UnicodeFriendlyString}s via {@link
+ * StringUtils#unicodeFriendly(String)}. See the interface Javadoc for details.
  */
 @IsiNlpImmutable
 @Value.Immutable
@@ -61,10 +61,10 @@ abstract class StringWithoutNonBmp extends AbstractUnicodeFriendlyString
   }
 
   @Override
-  public UnicodeFriendlyString substringByCodePoints(final CharOffset startCodepointInclusive,
-      final CharOffset endCodepointExclusive) {
-    return StringWithoutNonBmp.of(utf16CodeUnits().substring(startCodepointInclusive.asInt(),
-        endCodepointExclusive.asInt()));
+  public UnicodeFriendlyString substringByCodePoints(
+      final CharOffset startCodepointInclusive, final CharOffset endCodepointExclusive) {
+    return StringWithoutNonBmp.of(
+        utf16CodeUnits().substring(startCodepointInclusive.asInt(), endCodepointExclusive.asInt()));
   }
 
   @Override
@@ -78,8 +78,8 @@ abstract class StringWithoutNonBmp extends AbstractUnicodeFriendlyString
   }
 
   @Override
-  public final Optional<CharOffset> codePointIndexOf(UnicodeFriendlyString other,
-      CharOffset startIndex) {
+  public final Optional<CharOffset> codePointIndexOf(
+      UnicodeFriendlyString other, CharOffset startIndex) {
     if (startIndex.asInt() < 0 || startIndex.asInt() > lengthInCodePoints()) {
       throw new IndexOutOfBoundsException("StartIndex was out of bounds: " + startIndex);
     }
@@ -93,8 +93,9 @@ abstract class StringWithoutNonBmp extends AbstractUnicodeFriendlyString
 
   @Override
   public final <T> void processCodePoints(CodePointProcessor<T> codePointProcessor) {
-    for (int i=0; i<utf16CodeUnits().length(); ++i) {
-      codePointProcessor.processCodepoint(this, CharOffset.asCharOffset(i), utf16CodeUnits().codePointAt(i));
+    for (int i = 0; i < utf16CodeUnits().length(); ++i) {
+      codePointProcessor.processCodepoint(
+          this, CharOffset.asCharOffset(i), utf16CodeUnits().codePointAt(i));
     }
   }
 
@@ -115,4 +116,3 @@ abstract class StringWithoutNonBmp extends AbstractUnicodeFriendlyString
 
   public static class Builder extends ImmutableStringWithoutNonBmp.Builder {}
 }
-

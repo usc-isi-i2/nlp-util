@@ -1,15 +1,13 @@
 package edu.isi.nlp.clusters;
 
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
-
+import edu.isi.nlp.symbols.Symbol;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Represents a single Brown cluster. Brown clusters are identified by binary strings (cluster IDs)
@@ -23,9 +21,7 @@ public final class Cluster {
   @JsonCreator
   private Cluster(@JsonProperty("clusterID") final Symbol clusterID) {
     this.cluster = clusterID;
-
   }
-
 
   /*
    * Create a cluster from a binary string.
@@ -54,8 +50,6 @@ public final class Cluster {
     } else {
       return cluster;
     }
-
-
   }
 
   public List<Symbol> asSymbolTruncatedToNBits(final Iterable<Integer> bitLevels) {
@@ -71,10 +65,7 @@ public final class Cluster {
       return Symbol.from(cluster.toString().substring(0, numBits));
     } else {
       return Symbol.from("0");
-
     }
-
-
   }
 
   /*

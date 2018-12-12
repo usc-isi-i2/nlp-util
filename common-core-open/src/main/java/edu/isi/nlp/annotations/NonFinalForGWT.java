@@ -5,11 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Indicates that the annotated field is only non-final because GWT does not allow final fields.
- */
+/** Indicates that the annotated field is only non-final because GWT does not allow final fields. */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.FIELD})
-public @interface NonFinalForGWT {
-
-}
+public @interface NonFinalForGWT {}

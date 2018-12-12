@@ -2,18 +2,14 @@ package edu.isi.nlp;
 
 import com.google.common.base.Function;
 
-/**
- * Utility methods for working with Class objects
- */
+/** Utility methods for working with Class objects */
 public final class ClassUtils {
 
   private ClassUtils() {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * A Guava {@link Function} to convert classes to their names. Does not accept {@code null}.
-   */
+  /** A Guava {@link Function} to convert classes to their names. Does not accept {@code null}. */
   public static Function<Class, String> nameFunction() {
     return ClassUtils.ClassNameFunction.INSTANCE;
   }
@@ -27,9 +23,7 @@ public final class ClassUtils {
     }
   }
 
-  /**
-   * A {@link Function} mapping objects to their {@link Class}. Does not accept {@code null}.
-   */
+  /** A {@link Function} mapping objects to their {@link Class}. Does not accept {@code null}. */
   public static Function<Object, Class<?>> classFunction() {
     return ClassFunction.INSTANCE;
   }

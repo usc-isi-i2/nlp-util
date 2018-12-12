@@ -20,39 +20,32 @@ import javax.annotation.Nullable;
  * Right now this is implemented rather inefficiently, but we can do fancy things with lookup
  * tables, etc. to speed things up in the future.
  *
- * This class is heavily indebted to Guava's {@code CharMatcher} for its design and part of its
+ * <p>This class is heavily indebted to Guava's {@code CharMatcher} for its design and part of its
  * implementation.
  *
- * Unlike {@code CharMatcher} this operates over {@link String}s rather than more generic {@link
+ * <p>Unlike {@code CharMatcher} this operates over {@link String}s rather than more generic {@link
  * CharSequence}s because in pre-8 Java you can't easily get the code points of a {@code
  * CharSequence}.
  *
- * Behavior in the presence of unpaired surrogates is undefined.
+ * <p>Behavior in the presence of unpaired surrogates is undefined.
  *
  * @author Ryan Gabbard, Noah Rivkin, Jay DeYoung
  */
 public abstract class CodepointMatcher implements Predicate<Integer> {
 
-  protected CodepointMatcher() {
-  }
+  protected CodepointMatcher() {}
 
-  /**
-   * Matches any character.
-   */
+  /** Matches any character. */
   public static CodepointMatcher any() {
     return ANY;
   }
 
-  /**
-   * Matches no characters.
-   */
+  /** Matches no characters. */
   public static CodepointMatcher none() {
     return NONE;
   }
 
-  /**
-   * Matches any character in the sequence
-   */
+  /** Matches any character in the sequence */
   public static CodepointMatcher anyOf(final String sequence) {
     switch (sequence.length()) {
       case 0:
@@ -64,16 +57,12 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     }
   }
 
-  /**
-   * Matches the character given as the argument
-   */
+  /** Matches the character given as the argument */
   public static CodepointMatcher is(String s) {
     return new Is(s);
   }
 
-  /**
-   * Matches anything matched by {@link Character#isWhitespace(int)}
-   */
+  /** Matches anything matched by {@link Character#isWhitespace(int)} */
   public static CodepointMatcher whitespace() {
     return Whitespace.INSTANCE;
   }
@@ -87,23 +76,17 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     return Punctuation.INSTANCE;
   }
 
-  /**
-   * Matches code points in the Unicode general category {@link Character#CURRENCY_SYMBOL}.
-   */
+  /** Matches code points in the Unicode general category {@link Character#CURRENCY_SYMBOL}. */
   public static CodepointMatcher currencySymbols() {
     return Currency.INSTANCE;
   }
 
-  /**
-   * Matches code points matched by {@link Character#isAlphabetic(int)}.
-   */
+  /** Matches code points matched by {@link Character#isAlphabetic(int)}. */
   public static CodepointMatcher alphabetic() {
     return Alphabetic.INSTANCE;
   }
 
-  /**
-   * Matches codepoints matched by {@link Character#isLetter(int)}
-   */
+  /** Matches codepoints matched by {@link Character#isLetter(int)} */
   public static CodepointMatcher letter() {
     return Letter.INSTANCE;
   }
@@ -116,37 +99,27 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     return Alphanumeric.INSTANCE;
   }
 
-  /**
-   * Matches code points matched by {@link Character#isUpperCase(char)}.
-   */
+  /** Matches code points matched by {@link Character#isUpperCase(char)}. */
   public static CodepointMatcher uppercase() {
     return Uppercase.INSTANCE;
   }
 
-  /**
-   * Matches code points matched by {@link Character#isLowerCase(char)} (char)}.
-   */
+  /** Matches code points matched by {@link Character#isLowerCase(char)} (char)}. */
   public static CodepointMatcher lowercase() {
     return Lowercase.INSTANCE;
   }
 
-  /**
-   * Matches code points matched with the Unicode category {@code TITLECASE_LETTER}.
-   */
+  /** Matches code points matched with the Unicode category {@code TITLECASE_LETTER}. */
   public static CodepointMatcher titlecaseLetter() {
     return new HasUnicodeCategory(Character.TITLECASE_LETTER);
   }
 
-  /**
-   * Matches code points matched with the Unicode category {@code OTHER_LETTER}.
-   */
+  /** Matches code points matched with the Unicode category {@code OTHER_LETTER}. */
   public static CodepointMatcher otherLetter() {
     return new HasUnicodeCategory(Character.OTHER_LETTER);
   }
 
-  /**
-   * Matches code points matched with the Unicode category {@code MODIFIER_LETTER}.
-   */
+  /** Matches code points matched with the Unicode category {@code MODIFIER_LETTER}. */
   public static CodepointMatcher modifierLetter() {
     return new HasUnicodeCategory(Character.MODIFIER_LETTER);
   }
@@ -159,9 +132,7 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     return UNCASED;
   }
 
-  /**
-   * Matches the code points matched by {@link Character#isDigit(char)}.
-   */
+  /** Matches the code points matched by {@link Character#isDigit(char)}. */
   public static CodepointMatcher digit() {
     return Digit.INSTANCE;
   }
@@ -191,17 +162,16 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
   }
 
   public static CharMatcher asCharMatcher(final CodepointMatcher matcher) {
-    return CharMatcher.forPredicate(new Predicate<Character>() {
-      @Override
-      public boolean apply(@Nullable final Character input) {
-        return matcher.matches(input.charValue());
-      }
-    });
+    return CharMatcher.forPredicate(
+        new Predicate<Character>() {
+          @Override
+          public boolean apply(@Nullable final Character input) {
+            return matcher.matches(input.charValue());
+          }
+        });
   }
 
-  /**
-   * Matches all characters in the basic multilingual plane.
-   */
+  /** Matches all characters in the basic multilingual plane. */
   public static CodepointMatcher basicMultilingualPlane() {
     return BMP.INSTANCE;
   }
@@ -229,14 +199,12 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     return true;
   }
 
-  /**
-   * Value returned by {@link #offsetIn(String)} when there is no match.
-   */
+  /** Value returned by {@link #offsetIn(String)} when there is no match. */
   public static final int NO_MATCH_OFFSET = -1;
 
   /**
    * Returns the character offset (not the code point index!) in the provided string of the first
-   * code point which is matched.  If there is no match, {@link #NO_MATCH_OFFSET} is returned.
+   * code point which is matched. If there is no match, {@link #NO_MATCH_OFFSET} is returned.
    */
   public final int offsetIn(String s) {
     for (int offset = 0; offset < s.length(); ) {
@@ -295,7 +263,7 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
       first += Character.charCount(codePoint);
     }
 
-    //remove trailing matches
+    // remove trailing matches
     for (last = s.length() - 1; last >= first; --last) {
       if (Character.isLowSurrogate(s.charAt(last))) {
         --last;
@@ -353,9 +321,7 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     return sb.toString();
   }
 
-  /**
-   * Returns a copy of the input string that has been trimmed, and then collapsed
-   */
+  /** Returns a copy of the input string that has been trimmed, and then collapsed */
   public final String trimAndCollapseFrom(String s, char replacementCharacter) {
     return collapseFrom(trimFrom(s), replacementCharacter);
   }
@@ -366,8 +332,9 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
   }
 
   public static CodepointMatcher forPredicate(Predicate<? super Integer> predicate) {
-    return predicate instanceof CodepointMatcher ? (CodepointMatcher) predicate
-                                                 : new ForPredicate(predicate);
+    return predicate instanceof CodepointMatcher
+        ? (CodepointMatcher) predicate
+        : new ForPredicate(predicate);
   }
 
   public static CodepointMatcher forCharacter(char c) {
@@ -421,8 +388,11 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
 
     @Override
     public String toString() {
-      return new StringBuilder().append("CodepointMatcher.forCodepoint(")
-          .appendCodePoint(codepoint).append(")").toString();
+      return new StringBuilder()
+          .append("CodepointMatcher.forCodepoint(")
+          .appendCodePoint(codepoint)
+          .append(")")
+          .toString();
     }
 
     @Override
@@ -460,8 +430,11 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
 
     @Override
     public String toString() {
-      return new StringBuilder().append("CodepointMatcher.hasUnicodeCategory(")
-          .append(category).append(")").toString();
+      return new StringBuilder()
+          .append("CodepointMatcher.hasUnicodeCategory(")
+          .append(category)
+          .append(")")
+          .toString();
     }
 
     @Override
@@ -512,15 +485,13 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     }
   }
 
-
   private static final class Alphanumeric extends CodepointMatcher {
 
     private static final Alphanumeric INSTANCE = new Alphanumeric();
 
     @Override
     public boolean matches(final int codepoint) {
-      return Character.isDigit(codepoint)
-          || Character.isAlphabetic(codepoint);
+      return Character.isDigit(codepoint) || Character.isAlphabetic(codepoint);
     }
 
     @Override
@@ -672,7 +643,6 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
       final Not other = (Not) obj;
       return Objects.equals(this.wrapped, other.wrapped);
     }
-
   }
 
   private static final class Or extends CodepointMatcher {
@@ -683,7 +653,8 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     @JsonProperty("right")
     private final CodepointMatcher right;
 
-    Or(@JsonProperty("left") final CodepointMatcher left,
+    Or(
+        @JsonProperty("left") final CodepointMatcher left,
         @JsonProperty("right") final CodepointMatcher right) {
       this.left = checkNotNull(left);
       this.right = checkNotNull(right);
@@ -708,11 +679,9 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
         return false;
       }
       final Or other = (Or) obj;
-      return Objects.equals(this.left, other.left)
-          && Objects.equals(this.right, other.right);
+      return Objects.equals(this.left, other.left) && Objects.equals(this.right, other.right);
     }
   }
-
 
   private static final class And extends CodepointMatcher {
 
@@ -722,7 +691,8 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     @JsonProperty("right")
     private final CodepointMatcher right;
 
-    And(@JsonProperty("left") final CodepointMatcher left,
+    And(
+        @JsonProperty("left") final CodepointMatcher left,
         @JsonProperty("right") final CodepointMatcher right) {
       this.left = checkNotNull(left);
       this.right = checkNotNull(right);
@@ -747,14 +717,13 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
         return false;
       }
       final And other = (And) obj;
-      return Objects.equals(this.left, other.left)
-          && Objects.equals(this.right, other.right);
+      return Objects.equals(this.left, other.left) && Objects.equals(this.right, other.right);
     }
   }
 
   private static final class AnyOf extends CodepointMatcher {
 
-    final private String sequence;
+    private final String sequence;
     private int[] codepoints;
 
     public AnyOf(String sequence) {
@@ -787,8 +756,8 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
 
   private static final class Is extends CodepointMatcher {
 
-    final private String s;
-    final private int match;
+    private final String s;
+    private final int match;
 
     public Is(String s) {
       this.s = s;
@@ -807,17 +776,11 @@ public abstract class CodepointMatcher implements Predicate<Integer> {
     }
   }
 
-
   private static final CodepointMatcher ANY =
       CodepointMatcher.forPredicate(Predicates.alwaysTrue());
   private static final CodepointMatcher NONE =
       CodepointMatcher.forPredicate(Predicates.alwaysFalse());
 
   private static final CodepointMatcher UNCASED =
-      and(letter(),
-          not(or(
-              titlecaseLetter(),
-              or(
-                  uppercase(),
-                  lowercase()))));
+      and(letter(), not(or(titlecaseLetter(), or(uppercase(), lowercase()))));
 }

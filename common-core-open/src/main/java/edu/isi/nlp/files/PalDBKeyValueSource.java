@@ -1,7 +1,6 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
@@ -10,13 +9,11 @@ import com.google.common.io.ByteSource;
 import com.linkedin.paldb.api.NotFoundException;
 import com.linkedin.paldb.api.PalDB;
 import com.linkedin.paldb.api.StoreReader;
-
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.File;
 import java.io.IOException;
-
 import javax.annotation.Nonnull;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A PalDB-backed {@link KeyValueSource}.

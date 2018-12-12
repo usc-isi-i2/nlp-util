@@ -1,27 +1,26 @@
 package edu.isi.nlp.io;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @Beta
 /**
  * Provides a way of iterating over multiple XML files concatenated together. When processing all
  * files in a very large corpus, it is often significantly more efficient to do this.
  *
- * WARNING: The current implementation is limited and not generally correct.
- * It is intended to be used only on XML documents output by BBN Serif.
+ * <p>WARNING: The current implementation is limited and not generally correct. It is intended to be
+ * used only on XML documents output by BBN Serif.
  */
 public final class ConcatenatedXMLIterableFactory {
 
@@ -30,8 +29,7 @@ public final class ConcatenatedXMLIterableFactory {
 
   private static final int MEGABYTES = 1024 * 1024;
 
-  private ConcatenatedXMLIterableFactory(String splitPattern,
-      int maxDocBytes) {
+  private ConcatenatedXMLIterableFactory(String splitPattern, int maxDocBytes) {
     this.splitString = checkNotNull(splitPattern);
     checkArgument(maxDocBytes > 0);
     this.maxDocBytes = maxDocBytes;
@@ -56,8 +54,7 @@ public final class ConcatenatedXMLIterableFactory {
 
   /**
    * Since we can't declare an {@link java.io.IOException} on the {@link #iterator()} method, be
-   * aware that any exceptions during reading will be wrapped in a {@link
-   * ConcatenatedXMLException}.
+   * aware that any exceptions during reading will be wrapped in a {@link ConcatenatedXMLException}.
    */
   private final class ConcatenatedXMLFile implements Iterable<CharSource> {
 

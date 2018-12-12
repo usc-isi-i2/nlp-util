@@ -1,39 +1,32 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
-
+import edu.isi.nlp.symbols.Symbol;
+import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import javax.annotation.Nonnull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import javax.annotation.Nonnull;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
-/**
- * Tests {@link ZipFiles}.
- */
+/** Tests {@link ZipFiles}. */
 public class ZipFilesTest {
 
   private static final byte[] testDocument = "Hello world!".getBytes(Charsets.UTF_8);
   private static final Symbol docId = Symbol.from("TEST_DOCUMENT");
 
-  @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+  @Rule public TemporaryFolder folder = new TemporaryFolder();
   private ZipFile zipFile;
   private ZipEntry entry;
 
@@ -46,24 +39,26 @@ public class ZipFilesTest {
 
   @Test
   public void entryAsByteSource() throws IOException {
-    assertEquals("Hello world.\n",
+    assertEquals(
+        "Hello world.\n",
         ZipFiles.entryAsByteSource(zipFile, entry).asCharSource(Charsets.UTF_8).read());
   }
 
   @Test
   public void entryAsString() throws IOException {
-    assertEquals("Hello world.\n",
-        ZipFiles.entryAsString(zipFile, entry, Charsets.UTF_8));
+    assertEquals("Hello world.\n", ZipFiles.entryAsString(zipFile, entry, Charsets.UTF_8));
   }
 
   @Test
   public void testKeyValueSource() throws IOException {
-    final Function<String, Symbol> docIdExtractor = new Function<String, Symbol>() {
-      @Override
-      public Symbol apply(final String input) {
-        return Symbol.from(input.substring(input.lastIndexOf('/') + 1).replaceAll("\\.txt$", ""));
-      }
-    };
+    final Function<String, Symbol> docIdExtractor =
+        new Function<String, Symbol>() {
+          @Override
+          public Symbol apply(final String input) {
+            return Symbol.from(
+                input.substring(input.lastIndexOf('/') + 1).replaceAll("\\.txt$", ""));
+          }
+        };
     final ImmutableKeyValueSource<Symbol, ByteSource> source =
         KeyValueSources.fromZip(zipFile, docIdExtractor);
     assertEquals(ImmutableSet.of(Symbol.from("2016-09-20-01")), source.keySet());
@@ -88,22 +83,24 @@ public class ZipFilesTest {
 
   @Test
   public void testKeyValueSinkFunction() throws IOException {
-    final Function<Symbol, String> keyToEntryFunction = new Function<Symbol, String>() {
-      @Nonnull
-      @Override
-      public String apply(final Symbol input) {
-        checkNotNull(input);
-        return "files/" + input.asString() + ".txt";
-      }
-    };
-    final Function<String, Symbol> entryToKeyFunction = new Function<String, Symbol>() {
-      @Nonnull
-      @Override
-      public Symbol apply(final String input) {
-        final String filename = input.substring(input.lastIndexOf('/') + 1);
-        return Symbol.from(filename.replaceAll(".txt$", ""));
-      }
-    };
+    final Function<Symbol, String> keyToEntryFunction =
+        new Function<Symbol, String>() {
+          @Nonnull
+          @Override
+          public String apply(final Symbol input) {
+            checkNotNull(input);
+            return "files/" + input.asString() + ".txt";
+          }
+        };
+    final Function<String, Symbol> entryToKeyFunction =
+        new Function<String, Symbol>() {
+          @Nonnull
+          @Override
+          public Symbol apply(final String input) {
+            final String filename = input.substring(input.lastIndexOf('/') + 1);
+            return Symbol.from(filename.replaceAll(".txt$", ""));
+          }
+        };
 
     final File zipFile = folder.newFile("test.zip");
     final KeyValueSink<Symbol, byte[]> sink = KeyValueSinks.forZip(zipFile, keyToEntryFunction);

@@ -1,17 +1,15 @@
 package edu.isi.nlp.graphviz;
 
-import edu.isi.nlp.AbstractParameterizedModule;
-import edu.isi.nlp.parameters.Parameters;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.inject.Provides;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.AbstractParameterizedModule;
+import edu.isi.nlp.parameters.Parameters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +19,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import javax.inject.Inject;
 import javax.inject.Qualifier;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DotRenderer {
 
@@ -46,7 +42,7 @@ public final class DotRenderer {
 
   public void renderToFile(Graph graph, File outputFile) throws IOException, InterruptedException {
     final File dotCommands = File.createTempFile("dotRenderer", ".dot");
-    //dotCommands.deleteOnExit();;
+    // dotCommands.deleteOnExit();;
     Files.asCharSink(dotCommands, Charsets.UTF_8).write(graph.toDot());
     renderToFile(dotCommands, outputFile);
   }
@@ -57,8 +53,12 @@ public final class DotRenderer {
 
     log.info("Rendering {} to {}", dotCommandFile, outputFile);
 
-    final ImmutableList<String> commands = ImmutableList.of(dotBinary.getAbsolutePath(),
-        dotCommandFile.getAbsolutePath(), "-Tpdf", "-o" + outputFile.getAbsolutePath());
+    final ImmutableList<String> commands =
+        ImmutableList.of(
+            dotBinary.getAbsolutePath(),
+            dotCommandFile.getAbsolutePath(),
+            "-Tpdf",
+            "-o" + outputFile.getAbsolutePath());
     final ProcessBuilder processBuilder = new ProcessBuilder(commands);
     processBuilder.directory(outputFile.getParentFile());
     processBuilder.redirectErrorStream(true);
@@ -76,9 +76,13 @@ public final class DotRenderer {
     int exitCode = process.waitFor();
 
     if (exitCode != 0) {
-      throw new RuntimeException("Dot rendering failed with exit code " + exitCode
-          + ". Commands were " + commands + "\nOutput was: \n"
-          + output);
+      throw new RuntimeException(
+          "Dot rendering failed with exit code "
+              + exitCode
+              + ". Commands were "
+              + commands
+              + "\nOutput was: \n"
+              + output);
     }
   }
 
@@ -97,9 +101,7 @@ public final class DotRenderer {
     }
 
     @Override
-    public void configure() {
-
-    }
+    public void configure() {}
 
     @Provides
     @DotBinaryP

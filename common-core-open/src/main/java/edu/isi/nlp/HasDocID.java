@@ -1,12 +1,9 @@
 package edu.isi.nlp;
 
+import com.google.common.base.Function;
 import edu.isi.nlp.symbols.Symbol;
 
-import com.google.common.base.Function;
-
-/**
- * Anything which has an associated document ID.
- */
+/** Anything which has an associated document ID. */
 public interface HasDocID {
 
   Symbol docID();

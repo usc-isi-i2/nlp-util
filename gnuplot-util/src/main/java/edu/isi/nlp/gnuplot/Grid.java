@@ -10,7 +10,8 @@ public interface Grid {
       public String asPlotCommand() {
         return " back ";
       }
-    }, FRONT {
+    },
+    FRONT {
       @Override
       public String asPlotCommand() {
         return " front ";

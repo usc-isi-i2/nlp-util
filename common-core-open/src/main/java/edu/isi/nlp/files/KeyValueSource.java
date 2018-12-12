@@ -1,10 +1,8 @@
 package edu.isi.nlp.files;
 
 import com.google.common.base.Optional;
-
 import java.io.IOException;
 import java.util.Set;
-
 import javax.annotation.Nonnull;
 
 /**
@@ -13,11 +11,11 @@ import javax.annotation.Nonnull;
  * interface. In particular, the available keys can be changed in between a call to keySet() and a
  * call to get().
  *
- * This was originally implemented to support storing the linguistic analyses of many documents
- * together while abstracting away from how exactly they are stored (as individual files, in a
- * zip file, from a database).
+ * <p>This was originally implemented to support storing the linguistic analyses of many documents
+ * together while abstracting away from how exactly they are stored (as individual files, in a zip
+ * file, from a database).
  *
- * Some standard implementations are provided in {@link KeyValueSources}.
+ * <p>Some standard implementations are provided in {@link KeyValueSources}.
  *
  * @param <K> type of the key
  * @param <V> type of the value
@@ -27,8 +25,8 @@ public interface KeyValueSource<K, V> extends AutoCloseable {
 
   /**
    * Returns the set of keys currently present in the source. This may be expensive to compute, as
-   * the backing source may not provide a set of the keys and such a set may be very large. If
-   * only iteration is required, prefer {@link #keys()}.
+   * the backing source may not provide a set of the keys and such a set may be very large. If only
+   * iteration is required, prefer {@link #keys()}.
    *
    * @see #keys()
    */

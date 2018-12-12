@@ -1,15 +1,14 @@
 package edu.isi.nlp;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Utilities for dealing with randomness.
@@ -28,12 +27,11 @@ public final class RandomUtils {
 
   /**
    * Selects {@code numInts} from the range from {@code minInclusive} to {@code maxExclusive}.
-   * WARNING: the current implementation of this could be very slow if {@code numInts} is
-   * close to the size of the range.  The selected ints will be returned in order from least
-   * to greatest.
+   * WARNING: the current implementation of this could be very slow if {@code numInts} is close to
+   * the size of the range. The selected ints will be returned in order from least to greatest.
    */
-  public static List<Integer> distinctRandomIntsInRange(final Random rng, final int minInclusive,
-      final int maxExclusive, final int numInts) {
+  public static List<Integer> distinctRandomIntsInRange(
+      final Random rng, final int minInclusive, final int maxExclusive, final int numInts) {
     checkArgument(numInts <= (minInclusive - maxExclusive));
     final List<Integer> chosenInts = Lists.newArrayList();
 
@@ -53,12 +51,11 @@ public final class RandomUtils {
    * the source set, since there is no way to pick out arbitrary elements of a set except by
    * iteration.
    *
-   * WARNING: If the desired number of samples is close to the size of the source set, the current
-   * implementation could be very slow.
+   * <p>WARNING: If the desired number of samples is close to the size of the source set, the
+   * current implementation could be very slow.
    */
-  public static <T> Set<T> sampleHashingSetWithoutReplacement(final Set<T> sourceSet,
-      final int numSamples,
-      final Random rng) {
+  public static <T> Set<T> sampleHashingSetWithoutReplacement(
+      final Set<T> sourceSet, final int numSamples, final Random rng) {
     checkArgument(numSamples <= sourceSet.size());
 
     // first we find the indices of the selected elements
@@ -93,5 +90,4 @@ public final class RandomUtils {
     }
     return ret;
   }
-
 }

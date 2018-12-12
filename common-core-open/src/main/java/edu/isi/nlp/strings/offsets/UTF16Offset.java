@@ -1,11 +1,11 @@
 package edu.isi.nlp.strings.offsets;
 
 /**
- * Character offsets by UTF-16 code units.  If all code points in a string are in the
- * basic multilingual plane, these will be the same as {@link CharOffset}s. However,
- * characters outside the BMP will be encoded as two UTF-16 code units.
+ * Character offsets by UTF-16 code units. If all code points in a string are in the basic
+ * multilingual plane, these will be the same as {@link CharOffset}s. However, characters outside
+ * the BMP will be encoded as two UTF-16 code units.
  *
- * This is useful because Java stores strings using UTF-16 internally.
+ * <p>This is useful because Java stores strings using UTF-16 internally.
  */
 public final class UTF16Offset extends AbstractOffset<UTF16Offset> {
 

@@ -67,13 +67,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-
 /**
- * Represents a set of parameters passed into a program.  The parameters are assumed to originate as
+ * Represents a set of parameters passed into a program. The parameters are assumed to originate as
  * key-value pairs of <code>String</code>s, which can then be accessed in various validated ways.
  * This class is immutable. Keys will never be null or empty. Values will never be null.
  *
- * For all methods to get parameters, looking up a missing parameter throws an unchecked {@link
+ * <p>For all methods to get parameters, looking up a missing parameter throws an unchecked {@link
  * MissingRequiredParameter} exception.
  *
  * @author rgabbard
@@ -100,8 +99,7 @@ public final class Parameters {
   /**
    * Creates a new set of parameters with only those parameters in the specified namespace (that is,
    * prefixed by "namespace.". The namespace prefix and period will be removed from parameter names
-   * in the new {@code Parameters}.  The name space name should *not* have a
-   * trailing ".".
+   * in the new {@code Parameters}. The name space name should *not* have a trailing ".".
    */
   public Parameters copyNamespace(final String requestedNamespace) {
     checkArgument(!requestedNamespace.isEmpty());
@@ -142,8 +140,7 @@ public final class Parameters {
 
   /**
    * Returns if any parameter in this parameter set begins the the specified string, followed by a
-   * dot. The argument may not be empty.  The name space name should *not* have a
-   * trailing ".".
+   * dot. The argument may not be empty. The name space name should *not* have a trailing ".".
    */
   public boolean isNamespacePresent(final String requestedNamespace) {
     checkArgument(requestedNamespace.length() > 0);
@@ -152,9 +149,7 @@ public final class Parameters {
     return Iterables.any(params.keySet(), StringUtils.startsWith(probe));
   }
 
-  /**
-   * Creates a copy of this parameter set.
-   */
+  /** Creates a copy of this parameter set. */
   public Parameters copy() {
     return new Parameters(params, namespace);
   }
@@ -202,7 +197,6 @@ public final class Parameters {
     return sOut.toString();
   }
 
-
   public static Parameters loadSerifStyle(final File f) throws IOException {
     return new SerifStyleParameterFileLoader.Builder().build().load(f);
   }
@@ -230,30 +224,26 @@ public final class Parameters {
   }
 
   /**
-   * Combines these parameters with the others supplied to make a new <code>Parameters</code>. The new parameters
-   * will contain all mappings present in either. If a mapping is present in both, the <code>other</code> argument
-   * parameters take precedence.
+   * Combines these parameters with the others supplied to make a new <code>Parameters</code>. The
+   * new parameters will contain all mappings present in either. If a mapping is present in both,
+   * the <code>other</code> argument parameters take precedence.
    */
   // this is currently unused anywhere, and it will require a little
   // thought how best to make it interact with namespacing
-        /*public Parameters compose(final Parameters other) {
-                checkNotNull(other);
-		final Map<String, String> newMap = Maps.newHashMap();
-		newMap.putAll(params);
-		newMap.putAll(other.params);
-		return new Parameters(newMap);
-	}*/
+  /*public Parameters compose(final Parameters other) {
+                 checkNotNull(other);
+  	final Map<String, String> newMap = Maps.newHashMap();
+  	newMap.putAll(params);
+  	newMap.putAll(other.params);
+  	return new Parameters(newMap);
+  }*/
 
-  /**
-   * Returns true iff the key <code>param</code> is assigned a value.
-   */
+  /** Returns true iff the key <code>param</code> is assigned a value. */
   public boolean isPresent(final String param) {
     return params.containsKey(checkNotNull(param));
   }
 
-  /**
-   * Gets the value for a parameter as a raw string.
-   */
+  /** Gets the value for a parameter as a raw string. */
   public String getString(final String param) {
     checkNotNull(param);
     checkArgument(!param.isEmpty());
@@ -282,8 +272,8 @@ public final class Parameters {
 
   public Optional<List<Symbol>> getOptionalSymbolList(final String param) {
     if (isPresent(param)) {
-      return Optional
-          .of(getList(param, SymbolUtils.StringToSymbol(), new AlwaysValid<Symbol>(), "Symbol"));
+      return Optional.of(
+          getList(param, SymbolUtils.StringToSymbol(), new AlwaysValid<Symbol>(), "Symbol"));
     } else {
       return Optional.absent();
     }
@@ -311,10 +301,12 @@ public final class Parameters {
    * Gets the parameter string for the key <code>param</code>, then runs it throught the converter
    * and checks it with the validator.
    *
-   * @param expectation What we expected to see, for produceing error messages.  e.g. "integer" or
-   *                    "comma-separated list of strings"
+   * @param expectation What we expected to see, for produceing error messages. e.g. "integer" or
+   *     "comma-separated list of strings"
    */
-  public <T> T get(final String param, final StringConverter<T> converter,
+  public <T> T get(
+      final String param,
+      final StringConverter<T> converter,
       final Validator<T> validator,
       final String expectation) {
     checkNotNull(param);
@@ -350,10 +342,12 @@ public final class Parameters {
    * Gets the parameter string *list* for the key <code>param</code>, then runs each element
    * throught the converter and checks it with the validator.
    *
-   * @param expectation What we expected to see, for produceing error messages.  e.g. "integer" or
-   *                    "comma-separated list of strings"
+   * @param expectation What we expected to see, for produceing error messages. e.g. "integer" or
+   *     "comma-separated list of strings"
    */
-  public <T> List<T> getList(final String param, final StringConverter<T> converter,
+  public <T> List<T> getList(
+      final String param,
+      final StringConverter<T> converter,
       final Validator<T> validator,
       final String expectation) {
     checkNotNull(param);
@@ -371,8 +365,7 @@ public final class Parameters {
       try {
         ret = converter.decode(value);
       } catch (final Exception e) {
-        throw new ParameterConversionException(fullString(param), value, e,
-            expectation);
+        throw new ParameterConversionException(fullString(param), value, e, expectation);
       }
 
       try {
@@ -392,8 +385,7 @@ public final class Parameters {
   }
 
   /**
-   * Looks up a parameter.  If the value is not in <code>possibleValues</code>, throws and
-   * exception.
+   * Looks up a parameter. If the value is not in <code>possibleValues</code>, throws and exception.
    *
    * @param possibleValues May not be null. May not be empty.
    * @throws InvalidEnumeratedPropertyException if the parameter value is not on the list.
@@ -412,7 +404,7 @@ public final class Parameters {
   }
 
   /**
-   * Looks up a parameter, then uses the value as a key in a map lookup.  If the value is not a key
+   * Looks up a parameter, then uses the value as a key in a map lookup. If the value is not a key
    * in the map, throws an exception.
    *
    * @param possibleValues May not be null. May not be empty.
@@ -426,8 +418,8 @@ public final class Parameters {
     final T ret = possibleValues.get(value);
 
     if (ret == null) {
-      throw new InvalidEnumeratedPropertyException(fullString(param), value,
-          possibleValues.keySet());
+      throw new InvalidEnumeratedPropertyException(
+          fullString(param), value, possibleValues.keySet());
     }
     return ret;
   }
@@ -438,16 +430,14 @@ public final class Parameters {
 
   public <T extends Enum<T>> Optional<T> getOptionalEnum(final String param, final Class<T> clazz) {
     if (isPresent(param)) {
-      return Optional
-          .of(this.get(param, new StringToEnum<>(clazz), new AlwaysValid<T>(), "enumeration"));
+      return Optional.of(
+          this.get(param, new StringToEnum<>(clazz), new AlwaysValid<T>(), "enumeration"));
     } else {
       return Optional.absent();
     }
   }
 
-  /**
-   * Gets a parameter whose value is a (possibly empty) list of enums.
-   */
+  /** Gets a parameter whose value is a (possibly empty) list of enums. */
   public <T extends Enum<T>> List<T> getEnumList(final String param, final Class<T> clazz) {
     return this.getList(param, new StringToEnum<>(clazz), new AlwaysValid<T>(), "enumeration");
   }
@@ -492,8 +482,8 @@ public final class Parameters {
     return parameterInitializedObjectForClass(clazz, param, superClass);
   }
 
-  public <T> Optional<T> getOptionalParameterInitializedObject(final String param,
-      final Class<T> superClass) {
+  public <T> Optional<T> getOptionalParameterInitializedObject(
+      final String param, final Class<T> superClass) {
     if (isPresent(param)) {
       return Optional.of(getParameterInitializedObject(param, superClass));
     } else {
@@ -501,9 +491,8 @@ public final class Parameters {
     }
   }
 
-
-  private <T> T parameterInitializedObjectForClass(final Class<?> clazz,
-      final String param, final Class<T> superClass) {
+  private <T> T parameterInitializedObjectForClass(
+      final Class<?> clazz, final String param, final Class<T> superClass) {
     Optional<Object> ret;
 
     try {
@@ -516,21 +505,27 @@ public final class Parameters {
         ret = createViaZeroArgConstructor(clazz, param);
       }
     } catch (IllegalAccessException | InstantiationException | InvocationTargetException iae) {
-      throw new ParameterException("While attempting to load parameter-initialized object from "
-          + param + " :", iae);
+      throw new ParameterException(
+          "While attempting to load parameter-initialized object from " + param + " :", iae);
     }
 
     if (!ret.isPresent()) {
-      throw new ParameterValidationException(fullString(param), getString(param),
-          new RuntimeException(String.format("Class %s has neither fromParameters(params) "
-                  + "static factory method or constructor which takes params",
-              clazz.getName())));
+      throw new ParameterValidationException(
+          fullString(param),
+          getString(param),
+          new RuntimeException(
+              String.format(
+                  "Class %s has neither fromParameters(params) "
+                      + "static factory method or constructor which takes params",
+                  clazz.getName())));
     }
 
     if (superClass.isInstance(ret.get())) {
       return (T) ret.get();
     } else {
-      throw new ParameterValidationException(fullString(param), getString(param),
+      throw new ParameterValidationException(
+          fullString(param),
+          getString(param),
           new RuntimeException(
               String.format("Can't cast %s to %s", clazz.getName(), superClass.getName())));
     }
@@ -583,20 +578,14 @@ public final class Parameters {
     return ret.build();
   }
 
-  /**
-   * Gets a parameter whose value is a (possibly empty) list of integers.
-   */
+  /** Gets a parameter whose value is a (possibly empty) list of integers. */
   public List<Integer> getIntegerList(final String param) {
-    return getList(param, new StringToInteger(),
-        new AlwaysValid<Integer>(), "integer");
+    return getList(param, new StringToInteger(), new AlwaysValid<Integer>(), "integer");
   }
 
-  /**
-   * Gets a "true/false" parameter.
-   */
+  /** Gets a "true/false" parameter. */
   public boolean getBoolean(final String param) {
-    return get(param, new StrictStringToBoolean(),
-        new AlwaysValid<Boolean>(), "boolean");
+    return get(param, new StrictStringToBoolean(), new AlwaysValid<Boolean>(), "boolean");
   }
 
   public Optional<Boolean> getOptionalBoolean(final String param) {
@@ -607,12 +596,9 @@ public final class Parameters {
     }
   }
 
-  /**
-   * Gets a parameter whose value is a (possibly empty) list of booleans.
-   */
+  /** Gets a parameter whose value is a (possibly empty) list of booleans. */
   public List<Boolean> getBooleanList(final String param) {
-    return getList(param, new StrictStringToBoolean(),
-        new AlwaysValid<Boolean>(), "boolean");
+    return getList(param, new StrictStringToBoolean(), new AlwaysValid<Boolean>(), "boolean");
   }
 
   public Optional<String> getOptionalString(final String param) {
@@ -623,13 +609,9 @@ public final class Parameters {
     }
   }
 
-
-  /**
-   * Gets an integer parameter.
-   */
+  /** Gets an integer parameter. */
   public int getInteger(final String param) {
-    return get(param, new StringToInteger(),
-        new AlwaysValid<Integer>(), "integer");
+    return get(param, new StringToInteger(), new AlwaysValid<Integer>(), "integer");
   }
 
   public Optional<Integer> getOptionalInteger(final String param) {
@@ -642,35 +624,26 @@ public final class Parameters {
 
   public Optional<Integer> getOptionalPositiveInteger(final String param) {
     if (isPresent(param)) {
-      return Optional.of(get(param, new StringToInteger(),
-          new IsPositive<Integer>(), "positive integer"));
+      return Optional.of(
+          get(param, new StringToInteger(), new IsPositive<Integer>(), "positive integer"));
     } else {
       return Optional.absent();
     }
   }
 
-  /**
-   * Gets an positive integer parameter.
-   */
+  /** Gets an positive integer parameter. */
   public int getPositiveInteger(final String param) {
-    return get(param, new StringToInteger(),
-        new IsPositive<Integer>(), "positive integer");
+    return get(param, new StringToInteger(), new IsPositive<Integer>(), "positive integer");
   }
 
-  /**
-   * Gets a parameter whose value is a (possibly empty) list of positive integers.
-   */
+  /** Gets a parameter whose value is a (possibly empty) list of positive integers. */
   public List<Integer> getPositiveIntegerList(final String param) {
-    return getList(param, new StringToInteger(),
-        new IsPositive<Integer>(), "positive integer");
+    return getList(param, new StringToInteger(), new IsPositive<Integer>(), "positive integer");
   }
 
-  /**
-   * Gets a positive double parameter.
-   */
+  /** Gets a positive double parameter. */
   public double getPositiveDouble(final String param) {
-    return get(param, new StringToDouble(),
-        new IsPositive<Double>(), "positive double");
+    return get(param, new StringToDouble(), new IsPositive<Double>(), "positive double");
   }
 
   public Optional<Double> getOptionalPositiveDouble(final String param) {
@@ -680,71 +653,48 @@ public final class Parameters {
     return Optional.absent();
   }
 
-  /**
-   * Gets a parameter whose value is a (possibly empty) list of positive doubles.
-   */
+  /** Gets a parameter whose value is a (possibly empty) list of positive doubles. */
   public List<Double> getPositiveDoubleList(final String param) {
-    return getList(param, new StringToDouble(),
-        new IsPositive<Double>(), "positive double");
+    return getList(param, new StringToDouble(), new IsPositive<Double>(), "positive double");
   }
 
-  /**
-   * Gets a non-negative double parameter.
-   */
+  /** Gets a non-negative double parameter. */
   public double getNonNegativeDouble(final String param) {
-    return get(param, new StringToDouble(),
-        new IsNonNegative<Double>(), "non-negative double");
+    return get(param, new StringToDouble(), new IsNonNegative<Double>(), "non-negative double");
   }
 
-  /**
-   * Gets a parameter whose value is a (possibly empty) list of non-negative doubles.
-   */
+  /** Gets a parameter whose value is a (possibly empty) list of non-negative doubles. */
   public List<Double> getNonNegativeDoubleList(final String param) {
-    return getList(param, new StringToDouble(),
-        new IsNonNegative<Double>(), "non-negative double");
+    return getList(param, new StringToDouble(), new IsNonNegative<Double>(), "non-negative double");
   }
 
-  /**
-   * Gets a non-negative integer number parameter.
-   */
+  /** Gets a non-negative integer number parameter. */
   public int getNonNegativeInteger(final String param) {
-    return get(param, new StringToInteger(),
-        new IsNonNegative<Integer>(), "non-negative integer");
+    return get(param, new StringToInteger(), new IsNonNegative<Integer>(), "non-negative integer");
   }
 
-  /**
-   * Gets a double parameter.
-   */
+  /** Gets a double parameter. */
   public double getDouble(final String param) {
-    return get(param, new StringToDouble(),
-        new AlwaysValid<Double>(), "double");
+    return get(param, new StringToDouble(), new AlwaysValid<Double>(), "double");
   }
 
-  /**
-   * Gets a double between 0.0 and 1.0, inclusive.
-   */
+  /** Gets a double between 0.0 and 1.0, inclusive. */
   public double getProbability(final String param) {
-    return get(param, new StringToDouble(),
-        new IsInRange<>(Range.closed(0.0, 1.0)),
-        "probability");
+    return get(param, new StringToDouble(), new IsInRange<>(Range.closed(0.0, 1.0)), "probability");
   }
 
   private StringConverter<File> getFileConverter() {
-    if (isPresent(DO_OS_CONVERSION_PARAM) &&
-        getBoolean(DO_OS_CONVERSION_PARAM)) {
+    if (isPresent(DO_OS_CONVERSION_PARAM) && getBoolean(DO_OS_CONVERSION_PARAM)) {
       return new StringToOSFile();
     } else {
       return new StringToFile();
     }
   }
 
-  /**
-   * Gets a file, which is required to exist.
-   */
+  /** Gets a file, which is required to exist. */
   public File getExistingFile(final String param) {
-    return get(param, getFileConverter(),
-        new And<>(new FileExists(), new IsFile()),
-        "existing file");
+    return get(
+        param, getFileConverter(), new And<>(new FileExists(), new IsFile()), "existing file");
   }
 
   public File getFirstExistingFile(String param) {
@@ -756,33 +706,31 @@ public final class Parameters {
       }
     }
 
-    throw new ParameterConversionException(fullString(param), fileStrings.toString(),
-        "No provided path is an existing file");
+    throw new ParameterConversionException(
+        fullString(param), fileStrings.toString(), "No provided path is an existing file");
   }
 
-  /**
-   * Gets a file or directory, which is required to exist.
-   */
+  /** Gets a file or directory, which is required to exist. */
   public File getExistingFileOrDirectory(final String param) {
-    return get(param, getFileConverter(), new FileExists(),
-        "existing file or directory");
+    return get(param, getFileConverter(), new FileExists(), "existing file or directory");
   }
 
   /**
-   * Gets a directory which is guaranteed to exist after the execution of this method.  If the
+   * Gets a directory which is guaranteed to exist after the execution of this method. If the
    * directory does not already exist, it and its parents are created. If this is not possible, an
    * exception is throws.
    */
   public File getAndMakeDirectory(final String param) {
-    final File f = get(param, new StringToFile(),
-        new AlwaysValid<File>(), "existing or creatable directory");
+    final File f =
+        get(param, new StringToFile(), new AlwaysValid<File>(), "existing or creatable directory");
 
     if (f.exists()) {
       if (f.isDirectory()) {
         return f.getAbsoluteFile();
       } else {
-        throw new ParameterValidationException(fullString(param), f
-            .getAbsolutePath().toString(),
+        throw new ParameterValidationException(
+            fullString(param),
+            f.getAbsolutePath().toString(),
             new ValidationException("Not an existing or creatable directory"));
       }
     } else {
@@ -791,11 +739,11 @@ public final class Parameters {
     }
   }
 
-  /**
-   * Gets a directory which already exists.
-   */
+  /** Gets a directory which already exists. */
   public File getExistingDirectory(final String param) {
-    return get(param, new StringToFile(),
+    return get(
+        param,
+        new StringToFile(),
         new And<>(new FileExists(), new IsDirectory()),
         "existing directory");
   }
@@ -810,8 +758,7 @@ public final class Parameters {
 
   /**
    * Gets a (possibly empty) list of existing directories. Will throw a {@link
-   * ParameterValidationException} if any of the supplied
-   * paths are not existing directories.
+   * ParameterValidationException} if any of the supplied paths are not existing directories.
    */
   public ImmutableList<File> getExistingDirectories(String param) {
     final List<String> fileStrings = getStringList(param);
@@ -820,8 +767,8 @@ public final class Parameters {
     for (final String dirName : fileStrings) {
       final File dir = new File(dirName.trim());
       if (!dir.isDirectory()) {
-        throw new ParameterValidationException(fullString(param), dirName,
-            "path does not exist or is not a directory");
+        throw new ParameterValidationException(
+            fullString(param), dirName, "path does not exist or is not a directory");
       }
       ret.add(dir);
     }
@@ -842,10 +789,11 @@ public final class Parameters {
       }
     }
 
-    throw new ParameterConversionException(fullString(param), directoryStrings.toString(),
+    throw new ParameterConversionException(
+        fullString(param),
+        directoryStrings.toString(),
         "No provided path is an existing directory");
   }
-
 
   public Optional<File> getOptionalExistingDirectory(final String param) {
     if (isPresent(param)) {
@@ -854,27 +802,26 @@ public final class Parameters {
     return Optional.absent();
   }
 
-  /**
-   * Gets a ,-separated set of Strings.
-   */
+  /** Gets a ,-separated set of Strings. */
   public Set<String> getStringSet(final String param) {
-    return get(param, new StringToStringSet(","),
+    return get(
+        param,
+        new StringToStringSet(","),
         new AlwaysValid<Set<String>>(),
         "comma-separated list of strings");
   }
 
-  /**
-   * Gets a parameter whose value is a (possibly empty) comma-separated list of Strings.
-   */
+  /** Gets a parameter whose value is a (possibly empty) comma-separated list of Strings. */
   public List<String> getStringList(final String param) {
-    return get(param, new StringToStringList(","),
+    return get(
+        param,
+        new StringToStringList(","),
         new AlwaysValid<List<String>>(),
         "comma-separated list of strings");
   }
 
   /**
-   * Gets a parameter whose value is a (possibly empty) comma-separated list of Strings, if
-   * present.
+   * Gets a parameter whose value is a (possibly empty) comma-separated list of Strings, if present.
    */
   public Optional<List<String>> getOptionalStringList(final String param) {
     if (isPresent(param)) {
@@ -891,20 +838,20 @@ public final class Parameters {
     }
   }
 
-  /**
-   * Gets a ,-separated set of Symbols
-   */
+  /** Gets a ,-separated set of Symbols */
   public Set<Symbol> getSymbolSet(final String param) {
-    return get(param, new StringToSymbolSet(","),
+    return get(
+        param,
+        new StringToSymbolSet(","),
         new AlwaysValid<Set<Symbol>>(),
         "comma-separated list of strings");
   }
 
-  /**
-   * Gets a parameter whose value is a (possibly empty) comma-separated list of Symbols.
-   */
+  /** Gets a parameter whose value is a (possibly empty) comma-separated list of Symbols. */
   public List<Symbol> getSymbolList(final String param) {
-    return get(param, new StringToSymbolList(","),
+    return get(
+        param,
+        new StringToSymbolList(","),
         new AlwaysValid<List<Symbol>>(),
         "comma-separated list of strings");
   }
@@ -915,8 +862,8 @@ public final class Parameters {
 
     if (ret.exists()) {
       if (ret.isDirectory()) {
-        throw new ParameterValidationException(fullString(param), val,
-            "Requested a file, but directory exists with that filename");
+        throw new ParameterValidationException(
+            fullString(param), val, "Requested a file, but directory exists with that filename");
       }
     } else {
       ret.getAbsoluteFile().getParentFile().mkdirs();
@@ -934,15 +881,14 @@ public final class Parameters {
     return new File(getString(param));
   }
 
-
   public File getCreatableDirectory(final String param) {
     final String val = getString(param);
     final File ret = new File(val);
 
     if (ret.exists()) {
       if (!ret.isDirectory()) {
-        throw new ParameterValidationException(fullString(param), val,
-            "Requested a directory, but a file exists with that filename");
+        throw new ParameterValidationException(
+            fullString(param), val, "Requested a directory, but a file exists with that filename");
       }
     } else {
       ret.getAbsoluteFile().mkdirs();
@@ -956,9 +902,11 @@ public final class Parameters {
     final int numFilesContained = dir.list().length;
 
     if (numFilesContained != 0) {
-      throw new ParameterValidationException(fullString(param), getString(param),
-          String.format("Requested an empty directory, but directory contains %d files.",
-              numFilesContained));
+      throw new ParameterValidationException(
+          fullString(param),
+          getString(param),
+          String.format(
+              "Requested an empty directory, but directory contains %d files.", numFilesContained));
     }
     return dir;
   }
@@ -979,8 +927,8 @@ public final class Parameters {
   public Optional<ImmutableSet<Symbol>> getOptionalFileAsSymbolSet(String param)
       throws IOException {
     if (isPresent(param)) {
-      return Optional
-          .of(FileUtils.loadSymbolSet(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
+      return Optional.of(
+          FileUtils.loadSymbolSet(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
     } else {
       return Optional.absent();
     }
@@ -1002,13 +950,12 @@ public final class Parameters {
   public Optional<ImmutableList<Symbol>> getOptionalFileAsSymbolList(String param)
       throws IOException {
     if (isPresent(param)) {
-      return Optional
-          .of(FileUtils.loadSymbolList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
+      return Optional.of(
+          FileUtils.loadSymbolList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
     } else {
       return Optional.absent();
     }
   }
-
 
   /**
    * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
@@ -1026,8 +973,8 @@ public final class Parameters {
   public Optional<ImmutableSet<String>> getOptionalFileAsStringSet(String param)
       throws IOException {
     if (isPresent(param)) {
-      return Optional
-          .of(FileUtils.loadStringSet(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
+      return Optional.of(
+          FileUtils.loadStringSet(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
     } else {
       return Optional.absent();
     }
@@ -1041,7 +988,6 @@ public final class Parameters {
     return FileUtils.loadStringList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8));
   }
 
-
   /**
    * Convenience method to call {@link #getExistingFile(String)} and then apply {@link
    * FileUtils#loadStringList(CharSource)} on it, if the param is present. If the param is missing,
@@ -1050,16 +996,16 @@ public final class Parameters {
   public Optional<ImmutableList<String>> getOptionalFileAsStringList(String param)
       throws IOException {
     if (isPresent(param)) {
-      return Optional
-          .of(FileUtils.loadStringList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
+      return Optional.of(
+          FileUtils.loadStringList(Files.asCharSource(getExistingFile(param), Charsets.UTF_8)));
     } else {
       return Optional.absent();
     }
   }
 
   public ImmutableMap<Symbol, File> getFileAsSymbolToFileMap(String param) throws IOException {
-    return FileUtils
-        .loadSymbolToFileMap(Files.asCharSource(getExistingFile(param), Charsets.UTF_8));
+    return FileUtils.loadSymbolToFileMap(
+        Files.asCharSource(getExistingFile(param), Charsets.UTF_8));
   }
 
   public Parameters getSubParameters(final String param) throws IOException {
@@ -1067,9 +1013,7 @@ public final class Parameters {
     return Parameters.loadSerifStyle(paramFile);
   }
 
-  /**
-   * Throws a ParameterException if neither parameter is defined.
-   */
+  /** Throws a ParameterException if neither parameter is defined. */
   public void assertAtLeastOneDefined(final String param1, final String param2) {
     if (!isPresent(param1) && !isPresent(param2)) {
       throw new ParameterException(
@@ -1077,9 +1021,7 @@ public final class Parameters {
     }
   }
 
-  /**
-   * Throws a ParameterException if none of the supplied parameters are defined.
-   */
+  /** Throws a ParameterException if none of the supplied parameters are defined. */
   public void assertAtLeastOneDefined(final String param1, final String... moreParams) {
     if (!isPresent(param1)) {
       for (final String moreParam : moreParams) {
@@ -1091,14 +1033,13 @@ public final class Parameters {
       paramsForError.add(param1);
       paramsForError.addAll(Arrays.asList(moreParams));
       throw new ParameterException(
-          String.format("At least one of %s must be defined.",
+          String.format(
+              "At least one of %s must be defined.",
               StringUtils.commaSpaceJoiner().join(paramsForError)));
     }
   }
 
-  /**
-   * Throws a ParameterException unless exactly one parameter is defined.
-   */
+  /** Throws a ParameterException unless exactly one parameter is defined. */
   public void assertExactlyOneDefined(final String param1, final String param2) {
     // Asserting that exactly one is defined is the same as asserting that they do not have the same
     // value for definedness.
@@ -1108,9 +1049,7 @@ public final class Parameters {
     }
   }
 
-  /**
-   * Throws a ParameterException unless exactly one parameter is defined.
-   */
+  /** Throws a ParameterException unless exactly one parameter is defined. */
   public void assertExactlyOneDefined(final String... params) {
     int definedCount = 0;
     for (final String param : params) {
@@ -1123,8 +1062,8 @@ public final class Parameters {
     }
     if (definedCount != 1) {
       throw new ParameterException(
-          String.format("Exactly one of %s must be defined.",
-              StringUtils.commaSpaceJoiner().join(params)));
+          String.format(
+              "Exactly one of %s must be defined.", StringUtils.commaSpaceJoiner().join(params)));
     }
   }
 
@@ -1145,8 +1084,8 @@ public final class Parameters {
   }
 
   /**
-   * If {@code param} is present, calls {@link #getCreatableDirectory(String)} with it.
-   * Otherwise, returns {@link Optional#absent()}
+   * If {@code param} is present, calls {@link #getCreatableDirectory(String)} with it. Otherwise,
+   * returns {@link Optional#absent()}
    */
   public Optional<File> getOptionalCreatableDirectory(final String param) {
     if (isPresent(param)) {
@@ -1165,7 +1104,9 @@ public final class Parameters {
     final String val = getString(param);
     final File ret = new File(root, val);
     if (!ret.exists()) {
-      throw new ParameterValidationException(fullString(param), ret.getAbsolutePath(),
+      throw new ParameterValidationException(
+          fullString(param),
+          ret.getAbsolutePath(),
           "Requested existing file, but the file does not exist");
     }
     return ret;
@@ -1181,19 +1122,18 @@ public final class Parameters {
         return paramName;
       }
     }
-    throw new ParameterException("One of " + Arrays.toString(paramNames)
-        + " must be present");
+    throw new ParameterException("One of " + Arrays.toString(paramNames) + " must be present");
   }
 
   /**
    * Gets the parameter associated with an annotation. Provided with an annotation class, this will
-   * check first if it has a {@code String} field called {@code param}.  If it does, its value is
+   * check first if it has a {@code String} field called {@code param}. If it does, its value is
    * returned. If not, it checks for a {@code String} field called {@code params}. If it exists, it
    * is split on ",", the elements are trimmed, and the return value of {@link
    * #getFirstExistingParamName(String[])} on the resulting array is returned. If neither is
    * present, a {@link ParameterException} is thrown.
    *
-   * The reason this hack-y thing exists is that it is often convenient for Guice annotations to
+   * <p>The reason this hack-y thing exists is that it is often convenient for Guice annotations to
    * include on the annotation the parameter typically used to set it when configuring from a param
    * file. However, we cannot specify array valued fields on annotations, so we need to use a
    * comma-separated {@code String}.
@@ -1204,8 +1144,9 @@ public final class Parameters {
     } catch (NoSuchFieldException e) {
       try {
         return getFirstExistingParamName(
-            StringUtils.onCommas().splitToList((String) clazz.getField("params").get(""))
-                .toArray(new String[]{}));
+            StringUtils.onCommas()
+                .splitToList((String) clazz.getField("params").get(""))
+                .toArray(new String[] {}));
       } catch (NoSuchFieldException e1) {
         throw new ParameterException("Annotation " + clazz + " must have param or params field");
       } catch (IllegalAccessException e1) {
@@ -1216,16 +1157,12 @@ public final class Parameters {
     }
   }
 
-  /**
-   * Returns the dot-separated namespace.
-   */
+  /** Returns the dot-separated namespace. */
   public String namespace() {
     return joinNamespace(namespace);
   }
 
-  /**
-   * Returns the namespace as a list.
-   */
+  /** Returns the namespace as a list. */
   public ImmutableList<String> namespaceAsList() {
     return namespace;
   }
@@ -1238,9 +1175,7 @@ public final class Parameters {
     return params;
   }
 
-  /**
-   * package-private
-   */
+  /** package-private */
   void registerListener(Listener listener) {
     listeners.add(listener);
   }
@@ -1249,8 +1184,7 @@ public final class Parameters {
     // all parameter requests eventually get routed through here,
     // so this is where we observe
     for (final Parameters.Listener listener : listeners) {
-      listener.observeParameterRequest(JOINER.join(
-          FluentIterable.from(namespace).append(param)));
+      listener.observeParameterRequest(JOINER.join(FluentIterable.from(namespace).append(param)));
     }
   }
 
@@ -1263,15 +1197,15 @@ public final class Parameters {
    * paramsToAdd}. If there are collisions between this and {@code paramsToAdd}, {@code
    * paramsToAdd}'s value is preferred.
    *
-   * The result maintains the namespace of {@code this} and parameters from {@code paramsToAdd} are
-   * copied into the current namespace using their names relative to the {@code paramsToAdd}'s
-   * working namespace.  For example, suppose {@code this}'s namespace is {@code com.bbn.foo} and
-   * {@code paramsToAdd}'s namespace is {@code com.bbn.bar.meep}.  If {code paramsToAdd} has a
+   * <p>The result maintains the namespace of {@code this} and parameters from {@code paramsToAdd}
+   * are copied into the current namespace using their names relative to the {@code paramsToAdd}'s
+   * working namespace. For example, suppose {@code this}'s namespace is {@code com.bbn.foo} and
+   * {@code paramsToAdd}'s namespace is {@code com.bbn.bar.meep}. If {code paramsToAdd} has a
    * parameter whose original absolute name was {@code com.bbn.bar.meep.lalala.myParam}, it will
    * become {@code com.bbn.foo.lalala.myParam} in the result.
    *
-   * Beware this behavior may be confusing to users because error messages may refer to parameters
-   * which do not appear to exist.
+   * <p>Beware this behavior may be confusing to users because error messages may refer to
+   * parameters which do not appear to exist.
    */
   public Parameters copyMergingIntoCurrentNamespace(final Parameters paramsToAdd) {
     // we use the immutable map builder even though it requires tracking seen
@@ -1291,16 +1225,12 @@ public final class Parameters {
     return ret;
   }
 
-  /**
-   * Creates a new builder with the default (empty) namespace.
-   */
+  /** Creates a new builder with the default (empty) namespace. */
   public static Builder builder() {
     return new Builder(ImmutableList.<String>of());
   }
 
-  /**
-   * Creates a new builder with the specified namespace.
-   */
+  /** Creates a new builder with the specified namespace. */
   public static Builder builder(List<String> namespace) {
     return new Builder(namespace);
   }
@@ -1315,23 +1245,23 @@ public final class Parameters {
 
   /**
    * Returns the specified namespace joined into a string, for example {@code "foo.bar"} for {@code
-   * ["foo", "bar"]}. The namespace may consist of any number of elements, including none at all.
-   * No element in the namespace may begin or end with a period.
+   * ["foo", "bar"]}. The namespace may consist of any number of elements, including none at all. No
+   * element in the namespace may begin or end with a period.
    */
   public static String joinNamespace(final List<String> namespace) {
     for (final String element : namespace) {
-      checkArgument(!element.startsWith(DELIM),
-          "Namespace element may not begin with a period: " + element);
-      checkArgument(!element.endsWith(DELIM),
-          "Namespace element may not end with a period: " + element);
+      checkArgument(
+          !element.startsWith(DELIM), "Namespace element may not begin with a period: " + element);
+      checkArgument(
+          !element.endsWith(DELIM), "Namespace element may not end with a period: " + element);
     }
     return JOINER.join(namespace);
   }
 
   /**
    * Returns the specified namespace joined into a string, for example {@code "foo.bar"} for
-   * arguments {@code ["foo", "bar"]}. To match the behavior of {@link #joinNamespace(List)},
-   * the namespace may consist of any number of elements, including none at all. No element in the
+   * arguments {@code ["foo", "bar"]}. To match the behavior of {@link #joinNamespace(List)}, the
+   * namespace may consist of any number of elements, including none at all. No element in the
    * namespace may begin or end with a period.
    */
   public static String joinNamespace(final String... elements) {
@@ -1370,7 +1300,6 @@ public final class Parameters {
     }
   }
 
-
   interface Listener {
 
     void observeParameterRequest(String param);
@@ -1382,6 +1311,7 @@ public final class Parameters {
    * example, in the name finder, we might need to use a number of different name set groups, where
    * each group is defined by either a single name list or a map of name list names to name lists.
    * Using this we would have a parameter file like this:
+   *
    * <pre>
    *   # note foo is not used
    *   com.bbn.serif.names.lists.activeListGroups: standard,geonames,single
@@ -1396,9 +1326,10 @@ public final class Parameters {
    * The user could load these by {@code objectsFromNameSpace("com.bbn.serif.names.lists",
    * "activeListGroups", aNameSpaceToObjectMapperImplementation)}.
    *
-   * If {@code activeNameSpacesFeature} is absent this will thrown a {@link ParameterException}.
+   * <p>If {@code activeNameSpacesFeature} is absent this will thrown a {@link ParameterException}.
    */
-  public <T> ImmutableSet<T> objectsFromNamespaces(String baseNamespace,
+  public <T> ImmutableSet<T> objectsFromNamespaces(
+      String baseNamespace,
       String activeNamespacesFeature,
       NamespaceToObjectMapper<? extends T> nameSpaceToObjectMapper) {
     final Parameters subNamespace = copyNamespace(baseNamespace);
@@ -1407,9 +1338,15 @@ public final class Parameters {
       if (subNamespace.isNamespacePresent(activeNamespace)) {
         ret.add(nameSpaceToObjectMapper.fromNameSpace(subNamespace.copyNamespace(activeNamespace)));
       } else {
-        throw new ParameterException("Expected namespace " + baseNamespace + DELIM + activeNamespace
-            + "to exist because of value of " + activeNamespacesFeature + " but "
-            + "it did not");
+        throw new ParameterException(
+            "Expected namespace "
+                + baseNamespace
+                + DELIM
+                + activeNamespace
+                + "to exist because of value of "
+                + activeNamespacesFeature
+                + " but "
+                + "it did not");
       }
     }
     return ret.build();

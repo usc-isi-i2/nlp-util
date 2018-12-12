@@ -1,31 +1,26 @@
 package edu.isi.nlp.corpora.lightERE;
 
-
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.xml.XMLUnexpectedInputException;
-import edu.isi.nlp.xml.XMLUtils;
-import edu.isi.nlp.corpora.ere.EREException;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.corpora.ere.EREException;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.xml.XMLUnexpectedInputException;
+import edu.isi.nlp.xml.XMLUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * shamelessly stolen/borrowed from the richERE package com.bbn.nlp.corpora.ere
@@ -67,8 +62,8 @@ public class ERELoader {
     // The XML parser treats \r\n as a single character. This is problematic
     // when we are using character offsets. To avoid this, we replace
     // \r with an entity reference before parsing
-    final InputSource in = new InputSource(new StringReader(
-        s.replaceAll("\r", "\n")));//"&#xD;")));
+    final InputSource in =
+        new InputSource(new StringReader(s.replaceAll("\r", "\n"))); // "&#xD;")));
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(false);
@@ -151,7 +146,11 @@ public class ERELoader {
     idMap.put(docid, result);
     log.info(
         "reading in doc {}, found {} entities {} entity mentions {} relations {} relation mentions",
-        docid, entities, entity_mentions, relations, relation_mentions);
+        docid,
+        entities,
+        entity_mentions,
+        relations,
+        relation_mentions);
     return result;
   }
 
@@ -168,7 +167,7 @@ public class ERELoader {
       if (child instanceof Element) {
         if (((Element) child).getTagName().equals("entity_mention")) {
           final EREEntityMention entityMention = toEntityMention((Element) child, docid);
-//          mentionToCorefId.put(entityMention.getID(), id);
+          //          mentionToCorefId.put(entityMention.getID(), id);
           builder.withMention(entityMention);
         }
       }
@@ -190,7 +189,7 @@ public class ERELoader {
     final String text = xml.getTextContent();
 
     final EREEntityMention mention = EREEntityMention.from(id, type, source, offset, length, text);
-//    idMap.put(id, mention);
+    //    idMap.put(id, mention);
     return mention;
   }
 
@@ -233,7 +232,6 @@ public class ERELoader {
         if (((Element) child).getTagName().equals("trigger")) {
           builder.setTrigger(extractPossiblyAbsentTrigger((Element) child, docid));
         }
-
       }
     }
 
@@ -252,7 +250,6 @@ public class ERELoader {
     }
     return Optional.absent();
   }
-
 
   private EREEvent toEvent(final Element xml, final String docid) {
     final String id = generateID(XMLUtils.requiredAttribute(xml, "id"), docid);
@@ -340,8 +337,8 @@ public class ERELoader {
 
   private EREPlace extractPlace(final Element xml, final String docid) {
     final Optional<String> type = XMLUtils.optionalStringAttribute(xml, "type");
-    final String entity_mention_id = generateID(
-        XMLUtils.requiredAttribute(xml, "entity_mention_id"), docid);
+    final String entity_mention_id =
+        generateID(XMLUtils.requiredAttribute(xml, "entity_mention_id"), docid);
     return EREPlace.from(type, entity_mention_id);
   }
 
@@ -365,6 +362,4 @@ public class ERELoader {
   private String generateID(final String id, final String docid) {
     return docid + "-" + id;
   }
-
 }
-

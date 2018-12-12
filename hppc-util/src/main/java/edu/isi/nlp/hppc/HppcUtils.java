@@ -2,9 +2,7 @@ package edu.isi.nlp.hppc;
 
 import com.carrotsearch.hppc.ObjectCollection;
 
-/**
- * Utilities for working with the high-performance primitive collections library
- */
+/** Utilities for working with the high-performance primitive collections library */
 public final class HppcUtils {
 
   private HppcUtils() {

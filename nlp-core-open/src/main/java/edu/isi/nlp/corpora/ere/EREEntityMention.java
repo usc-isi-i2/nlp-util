@@ -1,9 +1,9 @@
 package edu.isi.nlp.corpora.ere;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class EREEntityMention implements ERESpanning {
   private final String id;
@@ -11,14 +11,16 @@ public final class EREEntityMention implements ERESpanning {
   private final ERESpan extent;
   private final Optional<ERESpan> head;
 
-  private EREEntityMention(final String id, final String type, final ERESpan extent, final Optional<ERESpan> head) {
+  private EREEntityMention(
+      final String id, final String type, final ERESpan extent, final Optional<ERESpan> head) {
     this.id = checkNotNull(id);
     this.type = checkNotNull(type);
     this.extent = checkNotNull(extent);
     this.head = head;
   }
 
-  public static EREEntityMention from(final String id, final String type, final ERESpan extent, final Optional<ERESpan> head) {
+  public static EREEntityMention from(
+      final String id, final String type, final ERESpan extent, final Optional<ERESpan> head) {
     return new EREEntityMention(id, type, extent, head);
   }
 
@@ -59,7 +61,6 @@ public final class EREEntityMention implements ERESpanning {
     final EREEntityMention other = (EREEntityMention) obj;
     return Objects.equal(id, other.id);
   }
-
 
   @Override
   public String toString() {

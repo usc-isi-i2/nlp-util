@@ -1,16 +1,15 @@
 package edu.isi.nlp.gnuplot;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A PlotBundle is rendering commands together with data which have not yet been tied to particular
@@ -22,7 +21,8 @@ public final class PlotBundle {
   private final ImmutableSet<DatafileReference> datafileReferences;
   private final ImmutableList<Object> commandComponents;
 
-  private PlotBundle(final Iterable<Object> commandComponents,
+  private PlotBundle(
+      final Iterable<Object> commandComponents,
       final Iterable<DatafileReference> datafileReferences) {
     this.commandComponents = ImmutableList.copyOf(commandComponents);
     this.datafileReferences = ImmutableSet.copyOf(datafileReferences);

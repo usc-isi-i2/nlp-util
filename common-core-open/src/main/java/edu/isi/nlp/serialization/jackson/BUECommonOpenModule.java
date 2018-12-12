@@ -1,13 +1,9 @@
 package edu.isi.nlp.serialization.jackson;
 
-
-import edu.isi.nlp.mixins.PatternMixin;
-
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
+import edu.isi.nlp.mixins.PatternMixin;
 import java.util.regex.Pattern;
-
 import javax.inject.Inject;
 
 public final class BUECommonOpenModule extends SimpleModule {

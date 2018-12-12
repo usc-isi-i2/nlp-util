@@ -1,12 +1,9 @@
 package edu.isi.nlp.corpora.lightERE;
 
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class EREEvent {
 
   private final String id;
@@ -33,11 +30,16 @@ public final class EREEvent {
 
   @Override
   public String toString() {
-    return "EREEvent{" +
-        "id='" + id + '\'' +
-        ", name='" + name + '\'' +
-        ", \nevents=" + events +
-        "\n}";
+    return "EREEvent{"
+        + "id='"
+        + id
+        + '\''
+        + ", name='"
+        + name
+        + '\''
+        + ", \nevents="
+        + events
+        + "\n}";
   }
 
   public static Builder builder(final String id, final String name) {
@@ -50,8 +52,7 @@ public final class EREEvent {
     private String name;
     private List<EREEventMention> events = Lists.newArrayList();
 
-    public Builder(final String id,
-        final String name) {
+    public Builder(final String id, final String name) {
       this.id = id;
       this.name = name;
     }
@@ -76,4 +77,3 @@ public final class EREEvent {
     }
   }
 }
-

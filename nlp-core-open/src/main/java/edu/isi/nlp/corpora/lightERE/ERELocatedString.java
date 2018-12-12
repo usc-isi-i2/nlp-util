@@ -1,8 +1,6 @@
 package edu.isi.nlp.corpora.lightERE;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public abstract class ERELocatedString {
 
   protected final String source;
@@ -11,7 +9,10 @@ public abstract class ERELocatedString {
   protected final int endOffset;
   protected final int length;
 
-  protected ERELocatedString(final String source, final String trigger, final int offset,
+  protected ERELocatedString(
+      final String source,
+      final String trigger,
+      final int offset,
       final int endOffset,
       final int length) {
     this.source = source;
@@ -52,12 +53,19 @@ public abstract class ERELocatedString {
 
   @Override
   public String toString() {
-    return "ERELocatedString{" +
-        "source='" + source + '\'' +
-        ", trigger='" + trigger + '\'' +
-        ", offset=" + offset +
-        ", endOffset=" + endOffset +
-        ", length=" + length +
-        '}';
+    return "ERELocatedString{"
+        + "source='"
+        + source
+        + '\''
+        + ", trigger='"
+        + trigger
+        + '\''
+        + ", offset="
+        + offset
+        + ", endOffset="
+        + endOffset
+        + ", length="
+        + length
+        + '}';
   }
 }

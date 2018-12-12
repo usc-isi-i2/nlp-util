@@ -1,18 +1,14 @@
 package edu.isi.nlp.io;
 
+import com.google.common.base.Optional;
 import edu.isi.nlp.files.KeyValueSource;
 import edu.isi.nlp.symbols.Symbol;
-
-import com.google.common.base.Optional;
-
 import java.io.IOException;
 
 /**
  * Interface for something which can provide the original text for a document.
  *
- *
- * This should be merged into the newer {@link KeyValueSource}
- * code.
+ * <p>This should be merged into the newer {@link KeyValueSource} code.
  *
  * @author Ryan Gabbard
  */

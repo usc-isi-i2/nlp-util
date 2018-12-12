@@ -1,15 +1,14 @@
 package edu.isi.nlp.collections;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utilities for working with {@link java.util.List}s.
@@ -22,15 +21,15 @@ public final class ListUtils {
   }
 
   /**
-   * Returns an unmodifiable view of the concatenation of two lists.
-   * This view will act like a {@link List} which has all of the items of
-   * {@code first} followed by all of the items in {@code second}.
+   * Returns an unmodifiable view of the concatenation of two lists. This view will act like a
+   * {@link List} which has all of the items of {@code first} followed by all of the items in {@code
+   * second}.
    *
-   * This has been requested as a Guava feature but never implemented:
+   * <p>This has been requested as a Guava feature but never implemented:
    * https://github.com/google/guava/issues/1029
    *
-   * If you don't need {@link List#size()} or the equality/hashcode guarantees, just use
-   * {@link com.google.common.collect.Iterables#concat(Iterable[])}
+   * <p>If you don't need {@link List#size()} or the equality/hashcode guarantees, just use {@link
+   * com.google.common.collect.Iterables#concat(Iterable[])}
    */
   public static <E> List<E> concat(List<? extends E> first, List<? extends E> second) {
     return new ConcatenatedListView<E>(first, second);
@@ -49,9 +48,7 @@ public final class ListUtils {
     return ImmutableList.copyOf(shuffled);
   }
 
-  /**
-   * See {@link #concat(List, List)}.
-   */
+  /** See {@link #concat(List, List)}. */
   private static final class ConcatenatedListView<E> extends AbstractList<E> {
 
     private final List<? extends E> list1;
@@ -75,7 +72,5 @@ public final class ListUtils {
     public int size() {
       return list1.size() + list2.size();
     }
-
-
   }
 }

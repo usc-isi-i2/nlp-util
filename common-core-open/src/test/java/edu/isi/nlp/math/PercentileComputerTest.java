@@ -1,21 +1,21 @@
 package edu.isi.nlp.math;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class PercentileComputerTest {
 
   // sample data from NIST's Handbook of Engineering Statistics
   // article on percentiles
   // http://www.itl.nist.gov/div898/handbook/prc/section2/prc252.htm
-  private static final double[] nistData = new double[]{
-      95.1772, 95.1567, 95.1937, 95.1959, 95.1442,
-      95.0610, 95.1591, 95.1195, 95.1065, 95.0925,
-      95.1990, 95.1682};
-  private static final double[] wikipediaData = new double[]{
-      15.0, 20.0, 35.0, 40.0, 50.0
-  };
+  private static final double[] nistData =
+      new double[] {
+        95.1772, 95.1567, 95.1937, 95.1959, 95.1442,
+        95.0610, 95.1591, 95.1195, 95.1065, 95.0925,
+        95.1990, 95.1682
+      };
+  private static final double[] wikipediaData = new double[] {15.0, 20.0, 35.0, 40.0, 50.0};
 
   @Test
   public void testNIST() {

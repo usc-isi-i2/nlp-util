@@ -25,22 +25,27 @@ import org.slf4j.LoggerFactory;
 /**
  * A class for parsing Serif-style parameter files to <code>Map<String, String></code>.
  *
- * Serif-style parameter files contain lines like:
+ * <p>Serif-style parameter files contain lines like:
+ *
  * <pre>
  * key: value
  * </pre>
+ *
  * If key has already been defined, the line must have the the <code>OVERRIDE</code> prefix like:
+ *
  * <pre>
  * OVERRIDE key: value
  * </pre>
  *
  * You may include other parameter files with relative or absolute paths as follows:
+ *
  * <pre>
  * INCLUDE foo/bar.params
  * INCLUDE /home/bob/foo.params
  * </pre>
  *
  * You may use the value of previously defined parameters in defining other parameters like this:
+ *
  * <pre>
  * foo: /home/bob
  * bar: %foo%/data.dat
@@ -58,11 +63,11 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
   private static final Logger log = LoggerFactory.getLogger(SerifStyleParameterFileLoader.class);
 
   /**
-   * The standard behavior of BBN parameter files is to crash if a parameter
-   * file redefines an already defined parameter without explicitly specifying the OVERRIDE prefix.
-   * Sometimes this behavior is inconvenient, so this parameter provides a way to turn it off, and
-   * allow silent redefinition.
-   * */
+   * The standard behavior of BBN parameter files is to crash if a parameter file redefines an
+   * already defined parameter without explicitly specifying the OVERRIDE prefix. Sometimes this
+   * behavior is inconvenient, so this parameter provides a way to turn it off, and allow silent
+   * redefinition.
+   */
   @Value.Default
   public boolean crashOnUndeclaredOverrides() {
     return true;
@@ -70,9 +75,7 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
 
   public static class Builder extends ImmutableSerifStyleParameterFileLoader.Builder {}
 
-  /**
-   * Parses a BBN-style parameter file to a Map.
-   */
+  /** Parses a BBN-style parameter file to a Map. */
   @Override
   public final Parameters load(final File configFile) throws IOException {
     final Loading loading = new Loading();
@@ -84,7 +87,9 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
   @IsiNlpImmutable
   abstract static class ParseIssue {
     abstract ImmutableList<File> includeStack();
+
     abstract int line();
+
     abstract String message();
 
     final String toUserMessage() {
@@ -131,9 +136,12 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
       for (String line : Files.readLines(absConfigFile, Charsets.UTF_8)) {
         if (line.startsWith("INCLUDE ")) {
           if (line.length() < 9) {
-            errors.add(ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
-            .includeStack(includeStack).line(i)
-                .message("INCLUDE must be followed by a filename: " + line).build());
+            errors.add(
+                ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
+                    .includeStack(includeStack)
+                    .line(i)
+                    .message("INCLUDE must be followed by a filename: " + line)
+                    .build());
             throw new UnrecoverableParseError();
           }
 
@@ -148,11 +156,11 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
           File includedFile = new File(includedFilename);
           if (!includedFile.isAbsolute()) {
             final File curDir = absConfigFile.getParentFile();
-            includedFile = new File(curDir, includedFilename); //relative path
+            includedFile = new File(curDir, includedFilename); // relative path
           }
           internalLoad(includedFile, includeStack);
         } else //noinspection StatementWithEmptyBody
-          if ((line.length() > 0 && line.charAt(0) == '#') || line.isEmpty()) {
+        if ((line.length() > 0 && line.charAt(0) == '#') || line.isEmpty()) {
           // comment, do nothing
         } else if (line.startsWith("UNSET ")) {
           final String key = line.substring(line.indexOf(' ') + 1).trim();
@@ -161,10 +169,12 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
           boolean override = false;
           if (line.startsWith("OVERRIDE ")) {
             if (line.length() < 10) {
-              errors.add(ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
-              .includeStack(includeStack).line(i)
-                  .message("OVERRIDE must be followed by a parameter setting: " + line)
-                  .build());
+              errors.add(
+                  ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
+                      .includeStack(includeStack)
+                      .line(i)
+                      .message("OVERRIDE must be followed by a parameter setting: " + line)
+                      .build());
               throw new UnrecoverableParseError();
             }
             line = line.substring(line.indexOf(' ') + 1);
@@ -174,12 +184,16 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
           // Check if we have any interpolation
           line = interpolateLine(line, includeStack, i);
 
-          // we limit the split to 2 so we only split on the first :, since our parameters may themselves contain :s
+          // we limit the split to 2 so we only split on the first :, since our parameters may
+          // themselves contain :s
           final String[] parts = line.split(":", 2);
           if (parts.length != 2 || parts[0].isEmpty() || parts[1].isEmpty()) {
-            errors.add(ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
-            .includeStack(includeStack).line(i)
-                    .message("Lines must be of the format key: value but got " + line).build());
+            errors.add(
+                ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
+                    .includeStack(includeStack)
+                    .line(i)
+                    .message("Lines must be of the format key: value but got " + line)
+                    .build());
             throw new UnrecoverableParseError();
           }
 
@@ -187,10 +201,12 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
           final String value = parts[1].trim();
 
           if (ret.containsKey(key) && !override) {
-            final ParseIssue issue = ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
-                .includeStack(includeStack).line(i)
-                .message("Attempting to override a parameter without OVERRIDE prefix: " + line)
-                .build();
+            final ParseIssue issue =
+                ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
+                    .includeStack(includeStack)
+                    .line(i)
+                    .message("Attempting to override a parameter without OVERRIDE prefix: " + line)
+                    .build();
             if (crashOnUndeclaredOverrides()) {
               errors.add(issue);
             } else {
@@ -217,10 +233,13 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
             changed = true;
           } else {
             // we treat interpolation errors as recoverable
-            errors.add(ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
-                .includeStack(includeStack).line(curLine)
-                .message("Could not interpolate for " + key + ". Available parameters are " + ret)
-                .build());
+            errors.add(
+                ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
+                    .includeStack(includeStack)
+                    .line(curLine)
+                    .message(
+                        "Could not interpolate for " + key + ". Available parameters are " + ret)
+                    .build());
           }
         }
       }
@@ -230,6 +249,4 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
 
   private static final Pattern INTERPOLATE_REGEX =
       Pattern.compile("%((\\w|\\.)+)%", Pattern.CASE_INSENSITIVE);
-
 }
-

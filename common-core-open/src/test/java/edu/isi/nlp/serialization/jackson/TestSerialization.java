@@ -1,6 +1,7 @@
 package edu.isi.nlp.serialization.jackson;
 
-import edu.isi.nlp.evaluation.FMeasureCounts;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,15 +9,11 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-
-import org.junit.Test;
-
+import edu.isi.nlp.evaluation.FMeasureCounts;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class TestSerialization {
 
@@ -26,8 +23,8 @@ public class TestSerialization {
   @SuppressWarnings("unchecked")
   @Test
   public void testFMeasureCounts() throws IOException {
-    final Map<String, FMeasureCounts> foo = ImmutableMap.of("Hello",
-        FMeasureCounts.fromTPFPFN(1, 2, 3));
+    final Map<String, FMeasureCounts> foo =
+        ImmutableMap.of("Hello", FMeasureCounts.fromTPFPFN(1, 2, 3));
     final File tmp = File.createTempFile("foo", "bar");
     tmp.deleteOnExit();
 
@@ -38,8 +35,8 @@ public class TestSerialization {
   @SuppressWarnings("unchecked")
   @Test
   public void testSerializingFromString() throws IOException {
-    final Map<String, FMeasureCounts> foo = ImmutableMap.of("Hello",
-        FMeasureCounts.fromTPFPFN(1, 2, 3));
+    final Map<String, FMeasureCounts> foo =
+        ImmutableMap.of("Hello", FMeasureCounts.fromTPFPFN(1, 2, 3));
     final String serialized = serializer.writeValueAsString(foo);
     assertEquals(foo, serializer.deserializeFromString(serialized, foo.getClass()));
   }
@@ -58,8 +55,8 @@ public class TestSerialization {
   @SuppressWarnings({"unchecked", "EqualsHashCode"})
   @Test
   public void testImmutableMultimapProxy() throws IOException {
-    final ImmutableMultimapWrapper expected = new ImmutableMultimapWrapper(
-        ImmutableMultimap.of("a", 1, "a", 2, "b", 3));
+    final ImmutableMultimapWrapper expected =
+        new ImmutableMultimapWrapper(ImmutableMultimap.of("a", 1, "a", 2, "b", 3));
     final String serialized = serializer.writeValueAsString(expected);
     assertEquals(expected, serializer.deserializeFromString(serialized, expected.getClass()));
   }
@@ -114,7 +111,8 @@ public class TestSerialization {
 
     @SuppressWarnings("deprecation")
     @JsonCreator
-    private static ImmutableMultimapWrapper fromJson(@JsonProperty("map") ImmutableMultimapProxy map) {
+    private static ImmutableMultimapWrapper fromJson(
+        @JsonProperty("map") ImmutableMultimapProxy map) {
       return new ImmutableMultimapWrapper(map.toImmutableMultimap());
     }
 
@@ -123,7 +121,6 @@ public class TestSerialization {
     private ImmutableMultimapProxy mapProxy() {
       return ImmutableMultimapProxy.forMultimap(map);
     }
-
 
     @Override
     public boolean equals(Object o) {

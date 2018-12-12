@@ -1,14 +1,13 @@
 package edu.isi.nlp.gnuplot;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class StackedBarChart implements GnuPlottable {
 
@@ -22,8 +21,14 @@ public final class StackedBarChart implements GnuPlottable {
   private final Grid grid;
 
   private StackedBarChart(
-      Iterable<StackedBar> stackedBars, String title, Axis xAxis, Axis yAxis,
-      List<String> barSegementNames, double boxWidth, Key key, Grid grid) {
+      Iterable<StackedBar> stackedBars,
+      String title,
+      Axis xAxis,
+      Axis yAxis,
+      List<String> barSegementNames,
+      double boxWidth,
+      Key key,
+      Grid grid) {
     this.stackedBars = ImmutableList.copyOf(stackedBars);
     this.barSegmentNames = ImmutableList.copyOf(barSegementNames);
     assertBarsAndSegementsCompatible();
@@ -46,9 +51,12 @@ public final class StackedBarChart implements GnuPlottable {
 
   private void assertBarsAndSegementsCompatible() {
     for (final StackedBar bar : stackedBars) {
-      checkArgument(bar.values().size() == barSegmentNames.size(),
+      checkArgument(
+          bar.values().size() == barSegmentNames.size(),
           "There are %s bar segments defined, but bar %s has only %s segements",
-          barSegmentNames.size(), bar, bar.values().size());
+          barSegmentNames.size(),
+          bar,
+          bar.values().size());
     }
   }
 
@@ -94,8 +102,7 @@ public final class StackedBarChart implements GnuPlottable {
     private Key key = Key.visibleKey().build();
     private Grid grid = NormalGrid.builder().build();
 
-    private Builder() {
-    }
+    private Builder() {}
 
     public Builder setTitle(String title) {
       this.title = checkNotNull(title);
@@ -145,8 +152,8 @@ public final class StackedBarChart implements GnuPlottable {
     }
 
     public StackedBarChart build() {
-      return new StackedBarChart(stackedBars.build(), title, xAxis, yAxis,
-          barSegmentNames.build(), boxWidth, key, grid);
+      return new StackedBarChart(
+          stackedBars.build(), title, xAxis, yAxis, barSegmentNames.build(), boxWidth, key, grid);
     }
   }
 
@@ -183,8 +190,11 @@ public final class StackedBarChart implements GnuPlottable {
         first = false;
       }
       final String segmentName = barSegmentNames.get(segmentIdx);
-      sb.append(" using ").append(segmentIdx + 2).append(":xticlabels(1)")
-          .append(" t ").append(GnuPlotUtils.gnuPlotString(segmentName));
+      sb.append(" using ")
+          .append(segmentIdx + 2)
+          .append(":xticlabels(1)")
+          .append(" t ")
+          .append(GnuPlotUtils.gnuPlotString(segmentName));
     }
   }
 }

@@ -1,10 +1,10 @@
 package edu.isi.nlp;
 
-import org.junit.Test;
-
 import static edu.isi.nlp.CodepointMatcher.digit;
 import static edu.isi.nlp.CodepointMatcher.not;
 import static junit.framework.TestCase.assertEquals;
+
+import org.junit.Test;
 
 public class CodePointMatcherTest {
 
@@ -29,21 +29,18 @@ public class CodePointMatcherTest {
         "a" + CHEESE_WEDGE + "aabbc\uD87E\uDDF3cabc" + CHEESE_WEDGE + "ccaacaba";
     final String reference = "-c\uD87E\uDDF3c-c-cc-c-";
     final String predicted =
-        CodepointMatcher.anyOf("a" + CHEESE_WEDGE + "b").collapseFrom(toCollapse,
-            '-');
+        CodepointMatcher.anyOf("a" + CHEESE_WEDGE + "b").collapseFrom(toCollapse, '-');
     assertEquals(reference, predicted);
     final String toCollapse2 = "a" + CHEESE_WEDGE + "aabbab" + CHEESE_WEDGE + "aaaba";
     final String reference2 = "-";
     final String predicted2 =
-        CodepointMatcher.anyOf("a" + CHEESE_WEDGE + "b").collapseFrom(toCollapse2,
-            '-');
+        CodepointMatcher.anyOf("a" + CHEESE_WEDGE + "b").collapseFrom(toCollapse2, '-');
     assertEquals(reference2, predicted2);
     final String toCollapse3 =
         "a" + CHEESE_WEDGE + "aabbc\uD87E\uDDF3cabc" + CHEESE_WEDGE + "ccaacaba";
     final String reference3 =
         "a" + CHEESE_WEDGE + "aabbc\uD87E\uDDF3cabc" + CHEESE_WEDGE + "ccaacaba";
-    final String predicted3 = CodepointMatcher.anyOf("7").collapseFrom(toCollapse,
-        '-');
+    final String predicted3 = CodepointMatcher.anyOf("7").collapseFrom(toCollapse, '-');
     assertEquals(reference3, predicted3);
   }
 
@@ -82,11 +79,13 @@ public class CodePointMatcherTest {
     final String predicted = CodepointMatcher.is("a").trimAndCollapseFrom(toTrimAndCollapse, '-');
     assertEquals(reference, predicted);
     final String toTrimAndCollapse2 =
-        "\uD87E\uDDF3bc\uD87E\uDDF3bc\uD87E\uDDF3bc" + CHEESE_WEDGE + "dd\uD87E\uDDF3bca"
+        "\uD87E\uDDF3bc\uD87E\uDDF3bc\uD87E\uDDF3bc"
+            + CHEESE_WEDGE
+            + "dd\uD87E\uDDF3bca"
             + "\uD87E\uDDF3\uD87E\uDDF3";
     final String reference2 = "bc-bc-bc" + CHEESE_WEDGE + "dd-bca";
-    final String predicted2 = CodepointMatcher.is("\uD87E\uDDF3").
-        trimAndCollapseFrom(toTrimAndCollapse2, '-');
+    final String predicted2 =
+        CodepointMatcher.is("\uD87E\uDDF3").trimAndCollapseFrom(toTrimAndCollapse2, '-');
     assertEquals(reference2, predicted2);
   }
 }

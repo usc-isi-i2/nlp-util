@@ -2,9 +2,7 @@ package edu.isi.nlp.coreference.measures;
 
 import com.google.common.annotations.Beta;
 
-/**
- * Utility and creation methods associated with BLANC scorers.
- */
+/** Utility and creation methods associated with BLANC scorers. */
 @Beta
 public final class BLANCScorers {
 
@@ -34,7 +32,7 @@ public final class BLANCScorers {
 
   /**
    * Gets a BLANC scorer which handles item mismatches between the predicted and gold clusterings
-   * and which allows items to be members of multiple clusters.  Treats each item as having a coref
+   * and which allows items to be members of multiple clusters. Treats each item as having a coref
    * edge to itself.
    */
   public static BLANCScorer getMultiBLANCScorerWithSelfEdges() {

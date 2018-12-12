@@ -1,24 +1,19 @@
 package edu.isi.nlp.edl;
 
-import edu.isi.nlp.strings.offsets.OffsetRange;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.io.CharSource;
-
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Loads files in the submission format for the TAC KBP Entity Detection and Linking eval.
- */
+/** Loads files in the submission format for the TAC KBP Entity Detection and Linking eval. */
 public final class EDLLoader {
 
-  private EDLLoader() {
-  }
+  private EDLLoader() {}
 
   public static EDLLoader create() {
     return new EDLLoader();
@@ -33,8 +28,8 @@ public final class EDLLoader {
       try {
         ret.add(parseMention(line));
       } catch (IOException ioe) {
-        throw new IOException("Illegal EDL line #" + lineNo + ":\n" + line + "\n"
-            + ioe.getMessage());
+        throw new IOException(
+            "Illegal EDL line #" + lineNo + ":\n" + line + "\n" + ioe.getMessage());
       }
     }
 
@@ -42,10 +37,11 @@ public final class EDLLoader {
   }
 
   /**
-   * Loads EDL mentions, grouped by document. Multimap keys are in alphabetical order
-   * by document ID.
+   * Loads EDL mentions, grouped by document. Multimap keys are in alphabetical order by document
+   * ID.
    */
-  public ImmutableListMultimap<Symbol, EDLMention> loadEDLMentionsByDocFrom(CharSource source) throws IOException {
+  public ImmutableListMultimap<Symbol, EDLMention> loadEDLMentionsByDocFrom(CharSource source)
+      throws IOException {
     final ImmutableList<EDLMention> edlMentions = loadEDLMentionsFrom(source);
     final ImmutableListMultimap.Builder<Symbol, EDLMention> byDocs =
         ImmutableListMultimap.<Symbol, EDLMention>builder()
@@ -85,19 +81,19 @@ public final class EDLLoader {
 
     final String docIdAndOffsets = parts.get(DOC_ID_AND_OFFSETS);
     final int colonIndex = docIdAndOffsets.indexOf(":");
-    if (colonIndex<0 || colonIndex == docIdAndOffsets.length()-1) {
+    if (colonIndex < 0 || colonIndex == docIdAndOffsets.length() - 1) {
       throw new IOException("Illegal doc ID and offsets element " + docIdAndOffsets);
     }
     final String documentId = docIdAndOffsets.substring(0, colonIndex);
     final int dashIdx = docIdAndOffsets.indexOf("-", colonIndex);
-    if (dashIdx < 0 || dashIdx == docIdAndOffsets.length()-1) {
+    if (dashIdx < 0 || dashIdx == docIdAndOffsets.length() - 1) {
       throw new IOException("Illegal doc ID and offsets element " + docIdAndOffsets);
     }
     final int startOffset;
     final int endOffset;
     try {
-      startOffset = Integer.parseInt(docIdAndOffsets.substring(colonIndex+1, dashIdx));
-      endOffset = Integer.parseInt(docIdAndOffsets.substring(dashIdx+1));
+      startOffset = Integer.parseInt(docIdAndOffsets.substring(colonIndex + 1, dashIdx));
+      endOffset = Integer.parseInt(docIdAndOffsets.substring(dashIdx + 1));
     } catch (NumberFormatException ife) {
       throw new IOException("Illegal doc ID and offsets element " + docIdAndOffsets);
     }

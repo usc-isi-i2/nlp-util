@@ -1,19 +1,17 @@
 package edu.isi.nlp.collections;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * This is an {@link Iterable} which provides its data in a random order
- * every time an iterator is requested. Note this must load its entire underlying
- * {@link Iterable} into memory.
+ * This is an {@link Iterable} which provides its data in a random order every time an iterator is
+ * requested. Note this must load its entire underlying {@link Iterable} into memory.
  *
  * @author Ryan Gabbard, Constantine Lignos
  */
@@ -37,9 +35,7 @@ public final class ShufflingIterable<T> implements Iterable<T> {
     return new ShufflingIterable<>(iterable, rng);
   }
 
-  /**
-   * Returns a new iterator that iterates over a new random ordering of the data.
-   */
+  /** Returns a new iterator that iterates over a new random ordering of the data. */
   @Override
   public Iterator<T> iterator() {
     final List<T> shuffledList = Lists.newArrayList(data);
@@ -47,4 +43,3 @@ public final class ShufflingIterable<T> implements Iterable<T> {
     return Collections.unmodifiableList(shuffledList).iterator();
   }
 }
-

@@ -3,13 +3,13 @@ package edu.isi.nlp.gnuplot;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
 /**
  * A standalone key that exists more or less solely for a shared key for LinePlots in Plotgrid
  *
- * General form borrowed from http://stackoverflow.com/questions/14712251/place-key-below-multiplot-graph-in-gnuplot
+ * <p>General form borrowed from
+ * http://stackoverflow.com/questions/14712251/place-key-below-multiplot-graph-in-gnuplot
  */
 @Beta
 public class StandAloneKey implements GnuPlottable {
@@ -33,12 +33,12 @@ public class StandAloneKey implements GnuPlottable {
     b.append("\nset title \" \"\n");
     b.append("\nset yrange [0:1]\n");
 
-    if(key != null) {
+    if (key != null) {
       key.appendPlotCommands(b);
     }
 
     StringBuilder sb = new StringBuilder("plot ");
-    for(String title: titles) {
+    for (String title : titles) {
       sb.append(" 2 t '");
       sb.append(title);
       sb.append("' with lp, \\\n");
@@ -58,9 +58,7 @@ public class StandAloneKey implements GnuPlottable {
     private Key key = null;
     private List<String> titles = Lists.newArrayList();
 
-    private Builder() {
-
-    }
+    private Builder() {}
 
     public Builder setKey(final Key key) {
       this.key = key;

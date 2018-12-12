@@ -1,18 +1,13 @@
 package edu.isi.nlp.collections;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-
-import org.junit.Test;
-
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Ordering;
+import javax.annotation.Nullable;
+import org.junit.Test;
 
 public final class MapUtilsTest {
 
@@ -46,12 +41,14 @@ public final class MapUtilsTest {
   }
 
   private static final Ordering<String> BY_REVERSE_STRING =
-      Ordering.natural().onResultOf(new Function<String, String>() {
-        @Override
-        public String apply(@Nullable final String s) {
-          return new StringBuilder(checkNotNull(s)).reverse().toString();
-        }
-      });
+      Ordering.natural()
+          .onResultOf(
+              new Function<String, String>() {
+                @Override
+                public String apply(@Nullable final String s) {
+                  return new StringBuilder(checkNotNull(s)).reverse().toString();
+                }
+              });
 
   @Test
   public void testBestByComparator() {

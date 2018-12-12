@@ -1,23 +1,21 @@
 package edu.isi.nlp.collections;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 import java.util.Random;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * An unbounded {@link java.util.Iterator} which provides a stream of bootstrap samples
- * from a provided collection of items.  If the "base" collection is of size N, this
- * iterator will yield lists of size N where each element is sampled with replacement
- * from the base collection.
+ * An unbounded {@link java.util.Iterator} which provides a stream of bootstrap samples from a
+ * provided collection of items. If the "base" collection is of size N, this iterator will yield
+ * lists of size N where each element is sampled with replacement from the base collection.
  *
- * See https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29
+ * <p>See https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29
  *
- * {@author Ryan Gabbard}
+ * <p>{@author Ryan Gabbard}
  */
 public final class BootstrapIterator<ItemType> extends AbstractIterator<Collection<ItemType>> {
 
@@ -30,11 +28,11 @@ public final class BootstrapIterator<ItemType> extends AbstractIterator<Collecti
   }
 
   /**
-   * Creates a {@code BootstrapIterator} which samples from the provided {@code data}.  This method
+   * Creates a {@code BootstrapIterator} which samples from the provided {@code data}. This method
    * takes in a {@code Random} to ensure determinism.
    */
-  public static <ItemType> BootstrapIterator<ItemType> forData(Iterable<? extends ItemType> data,
-      Random rng) {
+  public static <ItemType> BootstrapIterator<ItemType> forData(
+      Iterable<? extends ItemType> data, Random rng) {
     return new BootstrapIterator<ItemType>(data, rng);
   }
 

@@ -1,23 +1,18 @@
 package edu.isi.nlp.corpora.lightERE;
 
-
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class ERERelationMention {
-
 
   private final String id;
   private final List<EREArg> args;
   private final Optional<ERETrigger> trigger;
 
-  private ERERelationMention(final String id, final List<EREArg> args,
-      final Optional<ERETrigger> trigger) {
+  private ERERelationMention(
+      final String id, final List<EREArg> args, final Optional<ERETrigger> trigger) {
     this.id = id;
     this.args = args;
     this.trigger = trigger;
@@ -37,11 +32,15 @@ public final class ERERelationMention {
 
   @Override
   public String toString() {
-    return "ERERelationMention{" +
-        "id='" + id + '\'' +
-        ", args=" + args +
-        ", trigger=" + trigger +
-        '}';
+    return "ERERelationMention{"
+        + "id='"
+        + id
+        + '\''
+        + ", args="
+        + args
+        + ", trigger="
+        + trigger
+        + '}';
   }
 
   public static Builder builder(final String id) {
@@ -83,4 +82,3 @@ public final class ERERelationMention {
     }
   }
 }
-

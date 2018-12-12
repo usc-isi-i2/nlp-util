@@ -1,12 +1,9 @@
 package edu.isi.nlp.corpora.lightERE;
 
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class ERERelation {
 
   private final String id;
@@ -15,7 +12,10 @@ public final class ERERelation {
 
   private final List<ERERelationMention> mentions;
 
-  public ERERelation(final String id, final TYPE type, final SUBTYPE subtype,
+  public ERERelation(
+      final String id,
+      final TYPE type,
+      final SUBTYPE subtype,
       final List<ERERelationMention> mentions) {
     this.id = id;
     this.type = type;
@@ -62,12 +62,17 @@ public final class ERERelation {
 
   @Override
   public String toString() {
-    return "ERERelation{" +
-        "id='" + id + '\'' +
-        ", type=" + type +
-        ", subtype=" + subtype +
-        ", mentions=" + mentions +
-        '}';
+    return "ERERelation{"
+        + "id='"
+        + id
+        + '\''
+        + ", type="
+        + type
+        + ", subtype="
+        + subtype
+        + ", mentions="
+        + mentions
+        + '}';
   }
 
   public static Builder builder(String id, String type, String subtype) {
@@ -85,8 +90,7 @@ public final class ERERelation {
     private SUBTYPE subtype;
     private List<ERERelationMention> mentions = Lists.newArrayList();
 
-    public Builder(final String id,
-        final TYPE type, final SUBTYPE subtype) {
+    public Builder(final String id, final TYPE type, final SUBTYPE subtype) {
       this.id = id;
       this.type = type;
       this.subtype = subtype;
@@ -117,4 +121,3 @@ public final class ERERelation {
     }
   }
 }
-

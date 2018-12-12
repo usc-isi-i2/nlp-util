@@ -1,23 +1,18 @@
 package edu.isi.nlp.corpora.ere;
 
-import edu.isi.nlp.StringUtils;
-import edu.isi.nlp.files.FileUtils;
-import edu.isi.nlp.symbols.Symbol;
-
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
-
+import edu.isi.nlp.StringUtils;
+import edu.isi.nlp.files.FileUtils;
+import edu.isi.nlp.symbols.Symbol;
+import java.io.File;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-
-/**
- * Counts the number of occurrences of various structures in LDC ERE data.
- */
+/** Counts the number of occurrences of various structures in LDC ERE data. */
 public final class ERECounter {
   private static final Logger log = LoggerFactory.getLogger(ERECounter.class);
 
@@ -52,7 +47,9 @@ public final class ERECounter {
       }
     }
 
-    log.info("ERE event mention counts by type:\n{}", StringUtils.unixNewlineJoiner().join(
-        Multisets.copyHighestCountFirst(eventMentionCountsByType).entrySet()));
+    log.info(
+        "ERE event mention counts by type:\n{}",
+        StringUtils.unixNewlineJoiner()
+            .join(Multisets.copyHighestCountFirst(eventMentionCountsByType).entrySet()));
   }
 }

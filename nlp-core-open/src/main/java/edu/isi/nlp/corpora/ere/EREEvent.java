@@ -1,13 +1,12 @@
 package edu.isi.nlp.corpora.ere;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import java.util.Iterator;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class EREEvent implements Iterable<EREEventMention> {
   private final String id;
@@ -77,10 +76,6 @@ public final class EREEvent implements Iterable<EREEventMention> {
 
   @Override
   public String toString() {
-    return "EREEvent{" +
-        "id='" + id + '\'' +
-        ", eventMentions=" + eventMentions +
-        '}';
+    return "EREEvent{" + "id='" + id + '\'' + ", eventMentions=" + eventMentions + '}';
   }
 }
-

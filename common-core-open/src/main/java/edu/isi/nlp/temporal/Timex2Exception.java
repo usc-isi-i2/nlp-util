@@ -14,7 +14,6 @@ public final class Timex2Exception extends RuntimeException {
 
   public static Timex2Exception cannotParse(final String unparseable, final Exception e) {
     return new Timex2Exception(
-        String.format("Cannot parse timex expression or part of expression %s", unparseable),
-        e);
+        String.format("Cannot parse timex expression or part of expression %s", unparseable), e);
   }
 }

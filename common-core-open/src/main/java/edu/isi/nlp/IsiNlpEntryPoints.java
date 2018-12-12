@@ -20,8 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Methods for running {@link IsiNlpEntryPoint}. See {@link #runEntryPoint(Class, Class,
- * String[])} for primary documentation.
+ * Methods for running {@link IsiNlpEntryPoint}. See {@link #runEntryPoint(Class, Class, String[])}
+ * for primary documentation.
  *
  * @author Ryan Gabbard
  */
@@ -34,51 +34,55 @@ public final class IsiNlpEntryPoints {
   }
 
   /**
-   * Runs a {@link IsiNlpEntryPoint}.  The entry point class will be injected using a {@link
-   * Injector} configured by two modules: a {@link ParametersModule}
-   * initialized by loading the first (and required-to-be-only) argument in {@code args} and an
-   * instance of {@code configModuleClass} instantiated according to the rules of {@link
-   * ModuleUtils#instantiateModule(Class, Parameters)}.  This method will then call {@link
+   * Runs a {@link IsiNlpEntryPoint}. The entry point class will be injected using a {@link
+   * Injector} configured by two modules: a {@link ParametersModule} initialized by loading the
+   * first (and required-to-be-only) argument in {@code args} and an instance of {@code
+   * configModuleClass} instantiated according to the rules of {@link
+   * ModuleUtils#instantiateModule(Class, Parameters)}. This method will then call {@link
    * IsiNlpEntryPoint#run()} on the injected entry point object.
    *
-   * This method also provides some convenient features for debugging, controlled by parameters:
+   * <p>This method also provides some convenient features for debugging, controlled by parameters:
    *
    * <ul>
-   *
-   * <li>{@code ccom.bbn.bue.common.debug.allowExceptionsToPassUncaught}: (default false) In
-   * production use, we always want to catch exceptions and explicitly exit to ensure a non-zero
-   * exit code (which the JVM does not guarantee).  However, sometimes in debugging it is useful to
-   * suppress this behavior, because it blocks IntelliJ's useful "break on uncaught exceptions only"
-   * option. Therefore we allow the user to disable it with this parameter.</li>
-   *
-   * <li>{@code com.bbn.bue.common.debug.graphGuiceDependenciesTo}: (default absent) If specified, a
-   * {@code dot} file for the Guice dependencies will be written to the specified file. If {@code
-   * com.bbn.bue.common.debug.skipExecution} is specified and true, the normal execution of the
-   * program will be skipped.</li>
-   *
+   *   <li>{@code ccom.bbn.bue.common.debug.allowExceptionsToPassUncaught}: (default false) In
+   *       production use, we always want to catch exceptions and explicitly exit to ensure a
+   *       non-zero exit code (which the JVM does not guarantee). However, sometimes in debugging it
+   *       is useful to suppress this behavior, because it blocks IntelliJ's useful "break on
+   *       uncaught exceptions only" option. Therefore we allow the user to disable it with this
+   *       parameter.
+   *   <li>{@code com.bbn.bue.common.debug.graphGuiceDependenciesTo}: (default absent) If specified,
+   *       a {@code dot} file for the Guice dependencies will be written to the specified file. If
+   *       {@code com.bbn.bue.common.debug.skipExecution} is specified and true, the normal
+   *       execution of the program will be skipped.
    * </ul>
    */
-  public static void runEntryPoint(Class<? extends IsiNlpEntryPoint> entryPointClass,
-      Class<? extends Module> configModuleClass, String[] args) throws Exception {
+  public static void runEntryPoint(
+      Class<? extends IsiNlpEntryPoint> entryPointClass,
+      Class<? extends Module> configModuleClass,
+      String[] args)
+      throws Exception {
     runEntryPointInternal(entryPointClass, args, configModuleClass);
   }
 
   /**
    * Like {@link #runEntryPoint(Class, Class, String[])} but auto-detects the configuration module
-   * by searching {@code entryPointClass} for an inner class named {@code Module} or
-   * {@code FromParametersModule} (or any name supported by
-   * {@link ModuleUtils#classNameToModule(Parameters, Class)}
+   * by searching {@code entryPointClass} for an inner class named {@code Module} or {@code
+   * FromParametersModule} (or any name supported by {@link
+   * ModuleUtils#classNameToModule(Parameters, Class)}
    */
-  public static void runEntryPoint(Class<? extends IsiNlpEntryPoint> entryPointClass,
-      String[] args) throws Exception {
+  public static void runEntryPoint(Class<? extends IsiNlpEntryPoint> entryPointClass, String[] args)
+      throws Exception {
     runEntryPointInternal(entryPointClass, args, null);
   }
 
   private static final String EXCEPTION_PASSTHROUGH_PARAM =
       "com.bbn.bue.common.debug.allowExceptionsToPassUncaught";
 
-  private static void runEntryPointInternal(Class<? extends IsiNlpEntryPoint> entryPointClass,
-      String[] args, @Nullable Class<? extends Module> configModuleClass) throws Exception {
+  private static void runEntryPointInternal(
+      Class<? extends IsiNlpEntryPoint> entryPointClass,
+      String[] args,
+      @Nullable Class<? extends Module> configModuleClass)
+      throws Exception {
     if (args.length != 1) {
       System.err.println(entryPointClass.getName() + " takes a single argument, a parameter file.");
       System.exit(1);
@@ -108,8 +112,10 @@ public final class IsiNlpEntryPoints {
     final boolean allowExceptionsToPassThrough =
         params.getOptionalBoolean(EXCEPTION_PASSTHROUGH_PARAM).or(false);
     if (allowExceptionsToPassThrough) {
-      log.warn("Top-level catching of exceptions suppressed in debugging.  If you see this "
-          + "in production, turn off the {} parameter", EXCEPTION_PASSTHROUGH_PARAM);
+      log.warn(
+          "Top-level catching of exceptions suppressed in debugging.  If you see this "
+              + "in production, turn off the {} parameter",
+          EXCEPTION_PASSTHROUGH_PARAM);
       internalExecute(entryPointClass, configModuleClass, params);
     } else {
       try {
@@ -123,8 +129,10 @@ public final class IsiNlpEntryPoints {
 
   private static final String SKIP_EXECUTION_PARAM = "com.bbn.bue.common.debug.skipExecution";
 
-  private static void internalExecute(final Class<? extends IsiNlpEntryPoint> entryPointClass,
-      @Nullable final Class<? extends Module> configModuleClass, final Parameters params)
+  private static void internalExecute(
+      final Class<? extends IsiNlpEntryPoint> entryPointClass,
+      @Nullable final Class<? extends Module> configModuleClass,
+      final Parameters params)
       throws Exception {
     // the configuration module class can be specified or auto-detected, depending on which
     // public method the user chose
@@ -135,8 +143,8 @@ public final class IsiNlpEntryPoints {
       configModule = ModuleUtils.classNameToModule(params, entryPointClass);
     }
 
-    final Injector injector = Guice.createInjector(ParametersModule.createAndDump(params),
-        configModule);
+    final Injector injector =
+        Guice.createInjector(ParametersModule.createAndDump(params), configModule);
 
     // if requested, produce a GraphViz graph of Guice dependencies before execution
     maybeGraphGuiceDependencies(injector, entryPointClass, params);
@@ -148,8 +156,10 @@ public final class IsiNlpEntryPoints {
       // why would you want to skip execution? Currently, the only reason is to graph Guice
       // dependencies without executing, so for safety we check for that parameter.
       if (!params.isPresent(GRAPH_DEPENDENCIES_PARAM)) {
-        log.warn("Skipping execution due to {}, but {} not specified. Why?",
-            SKIP_EXECUTION_PARAM, GRAPH_DEPENDENCIES_PARAM);
+        log.warn(
+            "Skipping execution due to {}, but {} not specified. Why?",
+            SKIP_EXECUTION_PARAM,
+            GRAPH_DEPENDENCIES_PARAM);
         // we exit explicitly because there is no need for the clutter of a stack trace
         System.exit(1);
       }
@@ -160,8 +170,10 @@ public final class IsiNlpEntryPoints {
   private static final String GRAPH_DEPENDENCIES_PARAM =
       "com.bbn.bue.common.debug.graphGuiceDependenciesTo";
 
-  private static void maybeGraphGuiceDependencies(final Injector injector,
-      final Class<? extends IsiNlpEntryPoint> entryPointClass, final Parameters params)
+  private static void maybeGraphGuiceDependencies(
+      final Injector injector,
+      final Class<? extends IsiNlpEntryPoint> entryPointClass,
+      final Parameters params)
       throws IOException {
 
     final Optional<File> dotFile = params.getOptionalCreatableFile(GRAPH_DEPENDENCIES_PARAM);
@@ -172,10 +184,12 @@ public final class IsiNlpEntryPoints {
       // orient graph vertically
       grapher.setRankdir("TB");
 
-      log.info("Writing Guice configuration graph to {}. To compile it, do dot -T png {}",
-          dotFile.get(), dotFile.get());
-      try (PrintWriter out = new PrintWriter(Files.asCharSink(dotFile.get(), Charsets.UTF_8)
-          .openBufferedStream())) {
+      log.info(
+          "Writing Guice configuration graph to {}. To compile it, do dot -T png {}",
+          dotFile.get(),
+          dotFile.get());
+      try (PrintWriter out =
+          new PrintWriter(Files.asCharSink(dotFile.get(), Charsets.UTF_8).openBufferedStream())) {
         grapher.setOut(out);
         grapher.graph(injector, ImmutableSet.<Key<?>>of(Key.get(entryPointClass)));
       }

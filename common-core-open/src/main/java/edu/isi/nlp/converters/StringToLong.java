@@ -4,8 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StringToLong implements StringConverter<Long> {
 
-  public StringToLong() {
-  }
+  public StringToLong() {}
 
   public Class<Long> getValueClass() {
     return Long.class;

@@ -1,13 +1,12 @@
 package edu.isi.nlp.gnuplot;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public final class LineData {
@@ -33,10 +32,11 @@ public final class LineData {
   private final String title;
   private final List<Point2D> points;
 
-  public static final Function<LineData, Integer> NumPoints = new Function<LineData, Integer>() {
-    @Override
-    public Integer apply(final LineData data) {
-      return data.points().size();
-    }
-  };
+  public static final Function<LineData, Integer> NumPoints =
+      new Function<LineData, Integer>() {
+        @Override
+        public Integer apply(final LineData data) {
+          return data.points().size();
+        }
+      };
 }

@@ -93,7 +93,8 @@ public final class Key {
       public String command() {
         return "inside";
       }
-    }, Outside {
+    },
+    Outside {
       @Override
       public String command() {
         return "outside";
@@ -109,7 +110,8 @@ public final class Key {
       public String command() {
         return "vertical";
       }
-    }, Horizontal {
+    },
+    Horizontal {
       @Override
       public String command() {
         return "horizontal";
@@ -118,5 +120,4 @@ public final class Key {
 
     public abstract String command();
   }
-
 }

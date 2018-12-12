@@ -1,18 +1,19 @@
 package edu.isi.nlp.hppc.permutationProxies;
 
-import edu.isi.nlp.math.permutationProxies.PermutationProxy;
-
-import com.carrotsearch.hppc.DoubleArrayList;
-import com.carrotsearch.hppc.IntArrayList;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.carrotsearch.hppc.DoubleArrayList;
+import com.carrotsearch.hppc.IntArrayList;
+import edu.isi.nlp.math.permutationProxies.PermutationProxy;
+
 public final class PairedIntDoubleArrayListPermutationProxy implements PermutationProxy {
 
-  private PairedIntDoubleArrayListPermutationProxy(final IntArrayList intArr,
+  private PairedIntDoubleArrayListPermutationProxy(
+      final IntArrayList intArr,
       final DoubleArrayList doubleArr,
-      final int startIdxInclusive, final int endIdxExclusive) {
+      final int startIdxInclusive,
+      final int endIdxExclusive) {
     checkArgument(startIdxInclusive >= 0);
     checkArgument(startIdxInclusive <= endIdxExclusive);
     checkArgument(endIdxExclusive <= intArr.size());
@@ -25,16 +26,17 @@ public final class PairedIntDoubleArrayListPermutationProxy implements Permutati
   }
 
   public static PairedIntDoubleArrayListPermutationProxy createForArrayListSlices(
-      final IntArrayList intArr, final DoubleArrayList doubleArr,
-      final int startIdxInclusive, final int endIdxExclusive) {
-    return new PairedIntDoubleArrayListPermutationProxy(intArr, doubleArr,
-        startIdxInclusive, endIdxExclusive);
+      final IntArrayList intArr,
+      final DoubleArrayList doubleArr,
+      final int startIdxInclusive,
+      final int endIdxExclusive) {
+    return new PairedIntDoubleArrayListPermutationProxy(
+        intArr, doubleArr, startIdxInclusive, endIdxExclusive);
   }
 
   public static PairedIntDoubleArrayListPermutationProxy createForArrays(
       final IntArrayList intArr, final DoubleArrayList doubleArr) {
-    return new PairedIntDoubleArrayListPermutationProxy(intArr, doubleArr,
-        0, intArr.size());
+    return new PairedIntDoubleArrayListPermutationProxy(intArr, doubleArr, 0, intArr.size());
   }
 
   @Override

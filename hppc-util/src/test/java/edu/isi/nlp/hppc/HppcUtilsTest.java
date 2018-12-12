@@ -1,11 +1,10 @@
 package edu.isi.nlp.hppc;
 
+import static org.junit.Assert.assertEquals;
+
 import com.carrotsearch.hppc.ObjectIntHashMap;
 import com.google.common.collect.ImmutableSet;
-
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class HppcUtilsTest {
 

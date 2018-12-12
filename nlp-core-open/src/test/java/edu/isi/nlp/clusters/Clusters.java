@@ -1,9 +1,7 @@
 package edu.isi.nlp.clusters;
 
-import edu.isi.nlp.converters.StringToOSFile;
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.serialization.jackson.ImmutableMapProxy;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,10 +12,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.converters.StringToOSFile;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.serialization.jackson.ImmutableMapProxy;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,16 +27,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.inject.Qualifier;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Represents a Brown clustering, such as those used by Serif for name-finding, etc. Generally
- * your code should prefer to refer to {@link HierarchicalWordClustering} instead of to this
- * directly.
+ * Represents a Brown clustering, such as those used by Serif for name-finding, etc. Generally your
+ * code should prefer to refer to {@link HierarchicalWordClustering} instead of to this directly.
  */
 public final class Clusters implements Serializable, HierarchicalWordClustering {
 
@@ -47,8 +42,8 @@ public final class Clusters implements Serializable, HierarchicalWordClustering 
   private static final Logger log = LoggerFactory.getLogger(Clusters.class);
 
   private final ImmutableMap<Symbol, Cluster> clustersByWord;
-  private transient final Multimap<Symbol, Symbol> wordsByCluster = HashMultimap.create();
-  private transient final Set<Integer> cachedBitLevels = Sets.newHashSet();
+  private final transient Multimap<Symbol, Symbol> wordsByCluster = HashMultimap.create();
+  private final transient Set<Integer> cachedBitLevels = Sets.newHashSet();
 
   // cached hashcode
   private int hashCode = 0;
@@ -99,17 +94,13 @@ public final class Clusters implements Serializable, HierarchicalWordClustering 
     return new Clusters(clustsByWord.build());
   }
 
-  /**
-   * Returns a Cluster object for the cluster containing the word, otherwise absent.
-   */
+  /** Returns a Cluster object for the cluster containing the word, otherwise absent. */
   @Override
   public Optional<Cluster> getClusterForWord(final Symbol word) {
     return Optional.fromNullable(clustersByWord.get(word));
   }
 
-  /**
-   * Gets all words in a cluster.
-   */
+  /** Gets all words in a cluster. */
   @Override
   public Collection<Symbol> getWords(final Cluster cluster) {
     return getWordCache(cluster.bits()).get(cluster.asSymbol());
@@ -180,9 +171,5 @@ public final class Clusters implements Serializable, HierarchicalWordClustering 
   @Qualifier
   @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface BrownClustersP {
-
-  }
-
+  public @interface BrownClustersP {}
 }
-

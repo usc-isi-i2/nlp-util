@@ -1,5 +1,9 @@
 package edu.isi.nlp.corpora.gigaword;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 import edu.isi.nlp.files.FileUtils;
 import edu.isi.nlp.io.OffsetIndex;
 import edu.isi.nlp.io.OffsetIndices;
@@ -7,24 +11,17 @@ import edu.isi.nlp.parameters.Parameters;
 import edu.isi.nlp.strings.offsets.ByteOffset;
 import edu.isi.nlp.strings.offsets.OffsetRange;
 import edu.isi.nlp.symbols.Symbol;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Produces document-ID to byte-offset indices for the flat representation of Gigaword (which
- * comes on the CDs). This is often useful because copying the 'exploded' verison of Gigaword with a
- * 12 M separate files is prohibitively expensive.
+ * Produces document-ID to byte-offset indices for the flat representation of Gigaword (which comes
+ * on the CDs). This is often useful because copying the 'exploded' verison of Gigaword with a 12 M
+ * separate files is prohibitively expensive.
  */
 public final class IndexFlatGigaword {
 
@@ -46,19 +43,19 @@ public final class IndexFlatGigaword {
         log.info("Building offset map for {}", chunkFile);
         final OffsetIndex offsetIndex = buildOffsetIndex(Files.asByteSource(chunkFile));
         final File indexFile = new File(outputDir, chunkFile.getName() + ".index");
-        log.info("Writing {} offsets for {} to {}", offsetIndex.keySet().size(), chunkFile,
-            indexFile);
+        log.info(
+            "Writing {} offsets for {} to {}", offsetIndex.keySet().size(), chunkFile, indexFile);
         OffsetIndices.writeBinary(offsetIndex, FileUtils.asCompressedByteSink(indexFile));
       }
     }
   }
 
-  private final static String beginProbeString = "<DOC id=\"";
-  private final static byte[] beginProbe = beginProbeString.getBytes(Charsets.UTF_8);
-  private final static String docIdEndString = "\"";
-  private final static byte[] docIdEnd = docIdEndString.getBytes(Charsets.UTF_8);
-  private final static String endProbeString = "</DOC>";
-  private final static byte[] endProbe = endProbeString.getBytes(Charsets.UTF_8);
+  private static final String beginProbeString = "<DOC id=\"";
+  private static final byte[] beginProbe = beginProbeString.getBytes(Charsets.UTF_8);
+  private static final String docIdEndString = "\"";
+  private static final byte[] docIdEnd = docIdEndString.getBytes(Charsets.UTF_8);
+  private static final String endProbeString = "</DOC>";
+  private static final byte[] endProbe = endProbeString.getBytes(Charsets.UTF_8);
 
   private static final int NOT_FOUND = 1;
 
@@ -75,8 +72,10 @@ public final class IndexFlatGigaword {
     //   (a) all of the characters in our search strings are single-byte, and
     //   (b) for the begin and end probes, they are long enough that the chances of them occurring
     //         accidentally starting at a non-initial character of a multibyte character
-    //         is vanishingly small.  It could be a problem for docIdEnd, being only a single character,
-    //         but this will only be a problem if we have non-ASCII unicode characters in the doc IDs
+    //         is vanishingly small.  It could be a problem for docIdEnd, being only a single
+    // character,
+    //         but this will only be a problem if we have non-ASCII unicode characters in the doc
+    // IDs
     //         which is not the case for Gigaword.
     int startDocInclusive;
     int nextSearchIdx = 0;
@@ -91,7 +90,8 @@ public final class IndexFlatGigaword {
           if (ret.containsKey(Symbol.from(docID))) {
             log.warn("Document ID {} occurs more than once; using latest version", docID);
           }
-          ret.put(Symbol.from(docID),
+          ret.put(
+              Symbol.from(docID),
               OffsetRange.byteOffsetRange(startDocInclusive, endDocIdxInclusive));
           nextSearchIdx = endDocIdxInclusive + 1;
         } else {
@@ -104,10 +104,10 @@ public final class IndexFlatGigaword {
     return OffsetIndices.forMap(ret);
   }
 
-  private static String bytesAsString(final byte[] sourceBytes, final int startInclusive,
-      final int endExclusive) {
-    return new String(Arrays.copyOfRange(sourceBytes, startInclusive, endExclusive),
-        Charsets.UTF_8);
+  private static String bytesAsString(
+      final byte[] sourceBytes, final int startInclusive, final int endExclusive) {
+    return new String(
+        Arrays.copyOfRange(sourceBytes, startInclusive, endExclusive), Charsets.UTF_8);
   }
 
   private static int findBytes(byte[] toSearch, byte[] needle, int startIdx) {

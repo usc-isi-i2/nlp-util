@@ -1,11 +1,10 @@
 package edu.isi.nlp.converters;
 
-import com.google.common.base.Joiner;
-
-import java.util.EnumSet;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.Joiner;
+import java.util.EnumSet;
 
 /**
  * Converts from a {@code String} to an enum value. This conversion is done by invoking {@link
@@ -36,8 +35,8 @@ public class StringToEnum<T extends Enum<T>> implements StringConverter<T> {
    * @param s the string to convert
    * @return an enum value
    * @throws NullPointerException if {@code s} is null
-   * @throws ConversionException  if {@code s} cannot be converted to an enum value after attempting
-   *                              fallback transformations
+   * @throws ConversionException if {@code s} cannot be converted to an enum value after attempting
+   *     fallback transformations
    */
   @Override
   public T decode(final String s) {
@@ -56,7 +55,11 @@ public class StringToEnum<T extends Enum<T>> implements StringConverter<T> {
     }
 
     throw new ConversionException(
-        "Unable to instantiate a " + type + " from value " + s + ". Valid values: " + Joiner
-            .on(", ").join(EnumSet.allOf(type)));
+        "Unable to instantiate a "
+            + type
+            + " from value "
+            + s
+            + ". Valid values: "
+            + Joiner.on(", ").join(EnumSet.allOf(type)));
   }
 }

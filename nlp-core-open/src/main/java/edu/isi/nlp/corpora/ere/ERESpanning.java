@@ -5,5 +5,4 @@ public interface ERESpanning {
   public String getID();
 
   public ERESpan getExtent();
-
 }

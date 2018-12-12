@@ -1,11 +1,10 @@
 package edu.isi.nlp.converters;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import edu.isi.nlp.symbols.Symbol;
 import edu.isi.nlp.symbols.SymbolUtils;
-
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StringToSymbolSet implements StringConverter<Set<Symbol>> {
 

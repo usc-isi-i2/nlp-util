@@ -1,19 +1,17 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.Inspector;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import edu.isi.nlp.Inspector;
 
 /**
  * An inspector tree node which applies some transformation to its input before passing it on to its
- * consumers.  See {@link InspectorTreeDSL}.
+ * consumers. See {@link InspectorTreeDSL}.
  */
 @Beta
-class TransformNode<InT, OutT> extends InspectorTreeNode<OutT> implements
-    Inspector<InT> {
+class TransformNode<InT, OutT> extends InspectorTreeNode<OutT> implements Inspector<InT> {
 
   private final Function<? super InT, ? extends OutT> transform;
 

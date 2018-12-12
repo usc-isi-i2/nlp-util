@@ -1,8 +1,9 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.Inspector;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
 import com.google.common.base.Equivalence;
@@ -13,34 +14,33 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.Inspector;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Observes an {@link Alignment} between system items on the left and gold standard items on the
- * right and creates a confusion matrix between them based on a specified confusion equivalence
- * and labelling.
+ * right and creates a confusion matrix between them based on a specified confusion equivalence and
+ * labelling.
  *
- * To create the confusion matrix, the caller must specify:
+ * <p>To create the confusion matrix, the caller must specify:
+ *
  * <ol>
  *   <li>A confusion labeler, which is a {@link Function} mapping each observation to its row/column
- *   in the confusion matrix. For example, in part of speech tagging, it would return the part of
- *   speech tag itself.</li>
+ *       in the confusion matrix. For example, in part of speech tagging, it would return the part
+ *       of speech tag itself.
  *   <li>A confusion equivalence, which is an {@link Equivalence} that declares two observations to
- *   be equal if they are equal in every relevant way except for the value that would be returned by
- *   the confusion labeler. For example, in part of speech tagging, that equivalence should return
- *   true if two observations refer to the same token in the same document, regardless of whether
- *   the tags assigned to that token match.</li>
- *   </ol>
+ *       be equal if they are equal in every relevant way except for the value that would be
+ *       returned by the confusion labeler. For example, in part of speech tagging, that equivalence
+ *       should return true if two observations refer to the same token in the same document,
+ *       regardless of whether the tags assigned to that token match.
+ * </ol>
  *
  * @param <LeftRightT> the type of both left and right items in the alignment
  */
@@ -74,7 +74,8 @@ public final class TypeConfusionInspector<LeftRightT>
    * and confusion equivalence.
    *
    * @param name a name to be used as a prefix for file output
-   * @param confusionLabeler a function for mapping an observation to its label in the confusion matrix
+   * @param confusionLabeler a function for mapping an observation to its label in the confusion
+   *     matrix
    * @param confusionEquivalence an equivalence between observations that are considered confusable
    * @param outputDir directory for writing output
    * @param <LeftRightT> the type of both left and right items in the alignment
@@ -85,27 +86,27 @@ public final class TypeConfusionInspector<LeftRightT>
       final Function<? super LeftRightT, String> confusionLabeler,
       final Equivalence<LeftRightT> confusionEquivalence,
       final File outputDir) {
-    return new TypeConfusionInspector<LeftRightT>(name, confusionLabeler, confusionEquivalence, outputDir);
+    return new TypeConfusionInspector<LeftRightT>(
+        name, confusionLabeler, confusionEquivalence, outputDir);
   }
 
   @Override
   public void finish() throws IOException {
     final SummaryConfusionMatrix summaryConfusionMatrix = summaryConfusionMatrixB.build();
     // Create an ordering that puts none last
-    final Set<Symbol> notNoneSymbols = Sets.filter(
-        Sets.union(summaryConfusionMatrix.leftLabels(), summaryConfusionMatrix.rightLabels()),
-        not(equalTo(NONE)));
+    final Set<Symbol> notNoneSymbols =
+        Sets.filter(
+            Sets.union(summaryConfusionMatrix.leftLabels(), summaryConfusionMatrix.rightLabels()),
+            not(equalTo(NONE)));
     final ImmutableList.Builder<Symbol> symbolOrder = ImmutableList.builder();
     symbolOrder.addAll(SymbolUtils.byStringOrdering().sortedCopy(notNoneSymbols));
     symbolOrder.add(NONE);
     final Ordering<Symbol> ordering = Ordering.explicit(symbolOrder.build());
 
-    Files.asCharSink(new File(outputDir, name + "TypeConfusion.txt"),
-        Charsets.UTF_8).write(SummaryConfusionMatrices.prettyPrint(summaryConfusionMatrix,
-        ordering));
-    Files.asCharSink(new File(outputDir, name + "TypeConfusion.csv"),
-        Charsets.UTF_8).write(SummaryConfusionMatrices.prettyDelimPrint(summaryConfusionMatrix,
-        ",", ordering));
+    Files.asCharSink(new File(outputDir, name + "TypeConfusion.txt"), Charsets.UTF_8)
+        .write(SummaryConfusionMatrices.prettyPrint(summaryConfusionMatrix, ordering));
+    Files.asCharSink(new File(outputDir, name + "TypeConfusion.csv"), Charsets.UTF_8)
+        .write(SummaryConfusionMatrices.prettyDelimPrint(summaryConfusionMatrix, ",", ordering));
   }
 
   @Override
@@ -138,7 +139,7 @@ public final class TypeConfusionInspector<LeftRightT>
     // Log an warning if the size of the unaligned observations has changed. This shouldn't be fatal
     // because annotation of the same offsets with multiple types often causes issues of this type.
     if (goldEquiv.size() != goldUnaligned.size() || predEquiv.size() != predUnaligned.size()) {
-        log.warn("Confusion equivalence maps multiple observations to the same value");
+      log.warn("Confusion equivalence maps multiple observations to the same value");
     }
 
     // Create confusion entries for unaligned gold
@@ -158,8 +159,10 @@ public final class TypeConfusionInspector<LeftRightT>
     }
   }
 
-  private Symbol getConfusedLabel(final Equivalence.Wrapper<LeftRightT> wrappedObservation,
-      final ImmutableMap<Equivalence.Wrapper<LeftRightT>, ? extends LeftRightT> confusableObservations) {
+  private Symbol getConfusedLabel(
+      final Equivalence.Wrapper<LeftRightT> wrappedObservation,
+      final ImmutableMap<Equivalence.Wrapper<LeftRightT>, ? extends LeftRightT>
+          confusableObservations) {
     if (confusableObservations.containsKey(wrappedObservation)) {
       // Returned the label of the confusable instance if there's a match
       final LeftRightT match = confusableObservations.get(wrappedObservation);
@@ -173,12 +176,15 @@ public final class TypeConfusionInspector<LeftRightT>
   private ImmutableMap<Equivalence.Wrapper<LeftRightT>, LeftRightT> makeEquivalenceWrapperMap(
       final Iterable<? extends LeftRightT> items,
       final Function<LeftRightT, Equivalence.Wrapper<LeftRightT>> wrapperFunction) {
-    // This would normally just be Maps.uniqueIndex,but we need defensive behavior for key collisions
+    // This would normally just be Maps.uniqueIndex,but we need defensive behavior for key
+    // collisions
     final Map<Equivalence.Wrapper<LeftRightT>, LeftRightT> equivalenceMap = Maps.newHashMap();
     for (final LeftRightT item : items) {
       final Equivalence.Wrapper<LeftRightT> wrapped = wrapperFunction.apply(item);
       if (equivalenceMap.containsKey(wrapped)) {
-        log.warn("Multiple values with same key: '{}'(new) and '{}'(existing). Skipping new value.", item,
+        log.warn(
+            "Multiple values with same key: '{}'(new) and '{}'(existing). Skipping new value.",
+            item,
             equivalenceMap.get(wrapped));
       } else {
         equivalenceMap.put(wrapped, item);

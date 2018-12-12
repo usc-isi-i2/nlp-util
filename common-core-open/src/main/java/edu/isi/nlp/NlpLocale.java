@@ -49,7 +49,6 @@ public final class NlpLocale {
     final NlpLocale that = (NlpLocale) o;
 
     return icuLocale != null ? icuLocale.equals(that.icuLocale) : that.icuLocale == null;
-
   }
 
   @Override

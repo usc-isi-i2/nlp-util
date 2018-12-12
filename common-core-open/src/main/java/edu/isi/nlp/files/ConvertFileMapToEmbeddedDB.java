@@ -1,18 +1,15 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
-
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Converts a a key-to-file map to a PalDB-backed database.
@@ -50,14 +47,12 @@ public final class ConvertFileMapToEmbeddedDB {
     log.info("Loading files from {}", inputMap);
     final Stopwatch stopwatch = Stopwatch.createStarted();
     final ImmutableMap<Symbol, File> fileMap = FileUtils.loadSymbolToFileMap(inputMap);
-    final ImmutableKeyValueSource<Symbol, ByteSource> source =
-        KeyValueSources.fromFileMap(fileMap);
+    final ImmutableKeyValueSource<Symbol, ByteSource> source = KeyValueSources.fromFileMap(fileMap);
     readTime += stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
     // To allow us to time the open/close operations, we don't use try-with-resources
     stopwatch.reset().start();
-    final KeyValueSink<Symbol, byte[]> sink =
-        KeyValueSinks.forPalDB(outputFile, useCompression);
+    final KeyValueSink<Symbol, byte[]> sink = KeyValueSinks.forPalDB(outputFile, useCompression);
     writeTime += stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
     // Process files

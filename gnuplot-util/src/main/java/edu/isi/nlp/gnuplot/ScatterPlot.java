@@ -15,9 +15,15 @@ import java.util.List;
 @Beta
 public final class ScatterPlot implements GnuPlottable {
 
-  private ScatterPlot(final String title, final String xLabel, final String yLabel,
-      final Range<Double> xRange, final Range<Double> yRange, final double pointSize,
-      final List<ScatterData> scatterDatas, final List<String> preCommands) {
+  private ScatterPlot(
+      final String title,
+      final String xLabel,
+      final String yLabel,
+      final Range<Double> xRange,
+      final Range<Double> yRange,
+      final double pointSize,
+      final List<ScatterData> scatterDatas,
+      final List<String> preCommands) {
     this.title = checkNotNull(title);
     this.xLabel = checkNotNull(xLabel);
     this.yLabel = checkNotNull(yLabel);
@@ -33,9 +39,10 @@ public final class ScatterPlot implements GnuPlottable {
     return new Builder();
   }
 
-  private String data()  {
+  private String data() {
     final StringBuilder sb = new StringBuilder();
-    final int maxSize = Collections.max(Lists.transform(scatterDatas, ScatterData.numPointsFunction()));
+    final int maxSize =
+        Collections.max(Lists.transform(scatterDatas, ScatterData.numPointsFunction()));
 
     for (int row = 0; row < maxSize; ++row) {
       boolean first = true;
@@ -90,7 +97,7 @@ public final class ScatterPlot implements GnuPlottable {
     pb.append("\n");
     pb.append("set size square\n"); // setting the size/ratio of the graph
 
-    for(String cmd: preCommands) {
+    for (String cmd : preCommands) {
       pb.append(cmd);
     }
 
@@ -110,15 +117,14 @@ public final class ScatterPlot implements GnuPlottable {
       pb.append(" using ");
       pb.append(offset);
       pb.append(":");
-      pb.append(offset+1);
+      pb.append(offset + 1);
       pb.append(" title \"");
       pb.append(scatterData.title().or(" "));
       pb.append("\"");
       pb.append(" with points ");
-      if(scatterData.color().isPresent()) {
+      if (scatterData.color().isPresent()) {
         pb.append("lc rgb " + scatterData.color().get().asQuotedColorString() + " ");
       }
-
 
       offset += 2;
       first = false;
@@ -144,12 +150,11 @@ public final class ScatterPlot implements GnuPlottable {
 
   public static class Builder {
 
-    public Builder() {
-
-    }
+    public Builder() {}
 
     public ScatterPlot build() {
-      return new ScatterPlot(title, xLabel, yLabel, xRange, yRange, pointSize, scatterDatas, preCommands);
+      return new ScatterPlot(
+          title, xLabel, yLabel, xRange, yRange, pointSize, scatterDatas, preCommands);
     }
 
     public Builder setTitle(final String title) {
@@ -203,5 +208,4 @@ public final class ScatterPlot implements GnuPlottable {
     private List<ScatterData> scatterDatas = Lists.newArrayList();
     private ArrayList<String> preCommands = Lists.newArrayList();
   }
-
 }

@@ -1,24 +1,21 @@
 package edu.isi.nlp.parsing;
 
-import edu.isi.nlp.ConstituentNode;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
+import edu.isi.nlp.ConstituentNode;
+import edu.isi.nlp.symbols.Symbol;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A head finder which stores a head finding rule for each parent symbol using a {@link
  * java.util.Map}.
  */
 @Beta
-final class MapHeadFinder<NodeT extends ConstituentNode<NodeT, ?>>
-    implements HeadFinder<NodeT> {
+final class MapHeadFinder<NodeT extends ConstituentNode<NodeT, ?>> implements HeadFinder<NodeT> {
 
   private final ImmutableMap<Symbol, HeadRule<NodeT>> rules;
 
@@ -31,10 +28,8 @@ final class MapHeadFinder<NodeT extends ConstituentNode<NodeT, ?>>
     return new MapHeadFinder<>(parentSymbolsToHeadRules);
   }
 
-
   @Override
-  public Optional<NodeT> findHead(final Symbol tag,
-      final Iterable<NodeT> childNodes) {
+  public Optional<NodeT> findHead(final Symbol tag, final Iterable<NodeT> childNodes) {
     final Optional<HeadRule<NodeT>> rule = productionRule(tag);
     if (rule.isPresent()) {
       return rule.get().matchForChildren(childNodes);

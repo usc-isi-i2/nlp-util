@@ -10,7 +10,5 @@ import com.google.inject.AbstractModule;
 public final class NoOpModule extends AbstractModule {
 
   @Override
-  protected void configure() {
-
-  }
+  protected void configure() {}
 }

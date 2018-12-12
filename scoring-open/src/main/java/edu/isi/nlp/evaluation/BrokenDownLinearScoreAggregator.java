@@ -19,22 +19,26 @@ public abstract class BrokenDownLinearScoreAggregator
     implements BootstrapInspector.SummaryAggregator<Map<String, FMeasureCounts>> {
 
   public abstract double alpha();
+
   public abstract String name();
+
   public abstract File outputDir();
 
-  private final ImmutableListMultimap.Builder<String, Double> linearScoresB = ImmutableListMultimap.builder();
+  private final ImmutableListMultimap.Builder<String, Double> linearScoresB =
+      ImmutableListMultimap.builder();
 
   private static final String LINEAR_SCORE = "LinearScore";
 
-  private final BootstrapWriter writer = new BootstrapWriter.Builder()
-      .measures(ImmutableList.of(LINEAR_SCORE))
-      .percentilesToPrint(ImmutableList.of(0.005, 0.025, 0.05, 0.25, 0.5, 0.75, 0.95, 0.975, 0.995))
-      .percentileComputer(PercentileComputer.nistPercentileComputer())
-      .build();
+  private final BootstrapWriter writer =
+      new BootstrapWriter.Builder()
+          .measures(ImmutableList.of(LINEAR_SCORE))
+          .percentilesToPrint(
+              ImmutableList.of(0.005, 0.025, 0.05, 0.25, 0.5, 0.75, 0.95, 0.975, 0.995))
+          .percentileComputer(PercentileComputer.nistPercentileComputer())
+          .build();
 
   @Override
-  public void observeSample(
-      final Collection<Map<String, FMeasureCounts>> observationSummaries) {
+  public void observeSample(final Collection<Map<String, FMeasureCounts>> observationSummaries) {
     final ImmutableSetMultimap.Builder<String, FMeasureCounts> allCountsB =
         ImmutableSetMultimap.builder();
 
@@ -42,28 +46,27 @@ public abstract class BrokenDownLinearScoreAggregator
       allCountsB.putAll(Multimaps.forMap(observationSummary));
     }
 
-    for (final Map.Entry<String, Collection<FMeasureCounts>> breakdownKeySamples : allCountsB.build().asMap().entrySet()) {
+    for (final Map.Entry<String, Collection<FMeasureCounts>> breakdownKeySamples :
+        allCountsB.build().asMap().entrySet()) {
       double scoreAggregator = 0.0;
       double normalizer = 0.0;
 
       for (final FMeasureCounts fMeasureCounts : breakdownKeySamples.getValue()) {
         // per-doc scores clipped at 0
-        scoreAggregator += Math.max(fMeasureCounts.truePositives()
-            - alpha()*fMeasureCounts.falsePositives(), 0);
+        scoreAggregator +=
+            Math.max(fMeasureCounts.truePositives() - alpha() * fMeasureCounts.falsePositives(), 0);
         normalizer += fMeasureCounts.truePositives() + fMeasureCounts.falseNegatives();
       }
-      double normalizedScore = 100.0*scoreAggregator/normalizer;
+      double normalizedScore = 100.0 * scoreAggregator / normalizer;
       linearScoresB.put(breakdownKeySamples.getKey(), normalizedScore);
     }
   }
 
   @Override
   public void finish() throws IOException {
-    writer.writeBootstrapData(name(),
-        ImmutableMap.of(LINEAR_SCORE, linearScoresB.build()),
-        outputDir());
+    writer.writeBootstrapData(
+        name(), ImmutableMap.of(LINEAR_SCORE, linearScoresB.build()), outputDir());
   }
 
   public static class Builder extends ImmutableBrokenDownLinearScoreAggregator.Builder {}
 }
-

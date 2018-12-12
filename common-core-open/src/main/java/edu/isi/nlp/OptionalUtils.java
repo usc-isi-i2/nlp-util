@@ -3,18 +3,14 @@ package edu.isi.nlp;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
-/**
- * Utilities for working with {@link com.google.common.base.Optional}
- */
+/** Utilities for working with {@link com.google.common.base.Optional} */
 public final class OptionalUtils {
 
   private OptionalUtils() {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * Provides a function to apply {@link Optional#or(Object)} to any input {@code Optional}
-   */
+  /** Provides a function to apply {@link Optional#or(Object)} to any input {@code Optional} */
   public static <T> Function<Optional<T>, T> deoptionalizeFunction(final T replaceAbsentWith) {
     return new Function<Optional<T>, T>() {
       @Override
@@ -38,10 +34,11 @@ public final class OptionalUtils {
   }
 
   /**
-   * Throws an {@link IllegalStateException} if both passed {@link Optional}s are present or neither is.
+   * Throws an {@link IllegalStateException} if both passed {@link Optional}s are present or neither
+   * is.
    */
-  public static void exactlyOnePresentOrIllegalState(final Optional<?> x,
-      final Optional<?> y, final String msg) {
+  public static void exactlyOnePresentOrIllegalState(
+      final Optional<?> x, final Optional<?> y, final String msg) {
     if (x.isPresent() == y.isPresent()) {
       throw new IllegalStateException(msg);
     }
@@ -59,10 +56,11 @@ public final class OptionalUtils {
   }
 
   /**
-   * Throws an {@link IllegalArgumentException} if both passed {@link Optional}s are present or neither is.
+   * Throws an {@link IllegalArgumentException} if both passed {@link Optional}s are present or
+   * neither is.
    */
-  public static void exactlyOnePresentOrIllegalArgument(final Optional<?> x,
-      final Optional<?> y, final String msg) {
+  public static void exactlyOnePresentOrIllegalArgument(
+      final Optional<?> x, final Optional<?> y, final String msg) {
     if (x.isPresent() == y.isPresent()) {
       throw new IllegalArgumentException(msg);
     }
@@ -79,9 +77,7 @@ public final class OptionalUtils {
     }
   }
 
-  /**
-   * Returns the number of provided {@link Optional}s which are {@link Optional#isPresent()}.
-   */
+  /** Returns the number of provided {@link Optional}s which are {@link Optional#isPresent()}. */
   public static <T> int numPresent(Iterable<? extends Optional<? extends T>> optionals) {
     int numPresent = 0;
     for (final Optional<?> optional : optionals) {

@@ -1,24 +1,20 @@
 package edu.isi.nlp.io;
 
-import edu.isi.nlp.files.KeyValueSource;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.files.KeyValueSource;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An implementations of an original text source which loads the text from the filesystem.
  *
- *
- * This should be merged into the newer {@link KeyValueSource}
- * code.
+ * <p>This should be merged into the newer {@link KeyValueSource} code.
  *
  * @author Ryan Gabbard
  */
@@ -44,11 +40,9 @@ public final class OriginalTextFromFiles implements OriginalTextSource {
     return Builder.fromDocIdMap(docidToSerifXML);
   }
 
-
   public static class Builder {
 
-    private Builder() {
-    }
+    private Builder() {}
 
     public OriginalTextSource build() throws IOException {
       return CachingOriginalTextSource.from(new OriginalTextFromFiles(docidMap), maxElements);
@@ -60,9 +54,7 @@ public final class OriginalTextFromFiles implements OriginalTextSource {
       return ret;
     }
 
-    /**
-     * Sets a maximum size for the cache. This is only a suggestion and not strictly enforced.
-     */
+    /** Sets a maximum size for the cache. This is only a suggestion and not strictly enforced. */
     public Builder setMaxSize(final int maxSize) {
       checkArgument(maxSize >= 0);
       maxElements = maxSize;

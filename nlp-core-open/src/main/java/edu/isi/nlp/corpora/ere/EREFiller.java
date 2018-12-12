@@ -1,21 +1,19 @@
 package edu.isi.nlp.corpora.ere;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-
-import javax.annotation.Nullable;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import javax.annotation.Nullable;
 
 public final class EREFiller implements ERESpanning {
   private final String id;
   private final String type;
   private final ERESpan extent;
-  @Nullable
-  private final String nomTime;
+  @Nullable private final String nomTime;
 
-  private EREFiller(final String id, final String type, final ERESpan extent, @Nullable final String nomTime) {
+  private EREFiller(
+      final String id, final String type, final ERESpan extent, @Nullable final String nomTime) {
     this.id = checkNotNull(id);
     this.type = checkNotNull(type);
     this.extent = checkNotNull(extent);
@@ -27,8 +25,8 @@ public final class EREFiller implements ERESpanning {
     return new EREFiller(id, type, extent, null);
   }
 
-  public static EREFiller fromTime(final String id, final String type, String normalizedTime,
-      final ERESpan extent) {
+  public static EREFiller fromTime(
+      final String id, final String type, String normalizedTime, final ERESpan extent) {
     return new EREFiller(id, type, extent, normalizedTime);
   }
 
@@ -69,7 +67,4 @@ public final class EREFiller implements ERESpanning {
     final EREFiller other = (EREFiller) obj;
     return Objects.equal(id, other.id);
   }
-
 }
-
-

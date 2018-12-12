@@ -1,15 +1,11 @@
 package edu.isi.nlp;
 
 import com.google.common.collect.ImmutableList;
-
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
-/**
- * Utilities for working with {@link Finishable}s
- */
+/** Utilities for working with {@link Finishable}s */
 public final class Finishables {
 
   private static final Logger log = LoggerFactory.getLogger(Finishables.class);
@@ -30,11 +26,9 @@ public final class Finishables {
     }
   }
 
-  /**
-   * If the provided object is {@link Finishable}, calls {@link Finishable#finish()}.
-   */
+  /** If the provided object is {@link Finishable}, calls {@link Finishable#finish()}. */
   public static void finishIfApplicable(Object toFinish) throws IOException {
-      finishIfApplicable(ImmutableList.of(toFinish));
+    finishIfApplicable(ImmutableList.of(toFinish));
   }
 
   /**
@@ -58,9 +52,7 @@ public final class Finishables {
     }
   }
 
-  /**
-   * Calls {@link Finishable#finish()} on all objects provided
-   */
+  /** Calls {@link Finishable#finish()} on all objects provided */
   public static void finish(Iterable<? extends Finishable> toFinish) throws IOException {
     finishIfApplicable(toFinish);
   }

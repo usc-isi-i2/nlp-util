@@ -1,8 +1,7 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Functions.compose;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -15,26 +14,24 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.common.math.IntMath;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.base.Functions.compose;
-import static com.google.common.base.Preconditions.checkArgument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Given a file list, a file map, or both, will split it into either a fixed number of chunks or
- * chunks of a fixed size.  This is primarily used by Corpus::split() in Corpus.pm in
+ * chunks of a fixed size. This is primarily used by Corpus::split() in Corpus.pm in
  * buetext/perl-modules for splitting corpora in Runjobs code.
  *
- * The behavior of this program is deterministic.
+ * <p>The behavior of this program is deterministic.
  *
  * @author Constantine Lignos, Ryan Gabbard
  */
@@ -42,20 +39,21 @@ public final class SplitCorpus {
 
   private static final Logger log = LoggerFactory.getLogger(SplitCorpus.class);
 
-  private static final String USAGE = "SplitCorpus paramFile\n"
-      + "Parameters are:\n"
-      + "\tcom.bbn.bue.splitCorpus.inputList: list of files to split. Optional.\n"
-      + "\tcom.bbn.bue.splitCorpus.inputMap: docId to file map of files to split. Optional.\n"
-      + "\tcom.bbn.bue.splitCorpus.outputDir: path to write output\n"
-      + "\tcom.bbn.bue.splitCorpus.numChunks: the number of chunks to split the corpus into. Optional.\n"
-      + "\tcom.bbn.bue.splitCorpus.chunkSize: the number of of files to put in each chunk. Optional.\n"
-      + "\n"
-      + "If inputList is given, output file lists will be written to outputDir/split/fileList.txt\n"
-      + "\tand a list of these lists will be written to outputDir/listOfLists.txt\n"
-      + "If inputMap is given, output file maps will be written to outputDir/split/fileMap.txt\n"
-      + "\tand a list of these maps will be written to outputDir/listOfMaps.txt\n"
-      + "At least one of inputList and inputMap must be specified.\n"
-      + "Exactly one of numChunks and chunkSize may be specified.";
+  private static final String USAGE =
+      "SplitCorpus paramFile\n"
+          + "Parameters are:\n"
+          + "\tcom.bbn.bue.splitCorpus.inputList: list of files to split. Optional.\n"
+          + "\tcom.bbn.bue.splitCorpus.inputMap: docId to file map of files to split. Optional.\n"
+          + "\tcom.bbn.bue.splitCorpus.outputDir: path to write output\n"
+          + "\tcom.bbn.bue.splitCorpus.numChunks: the number of chunks to split the corpus into. Optional.\n"
+          + "\tcom.bbn.bue.splitCorpus.chunkSize: the number of of files to put in each chunk. Optional.\n"
+          + "\n"
+          + "If inputList is given, output file lists will be written to outputDir/split/fileList.txt\n"
+          + "\tand a list of these lists will be written to outputDir/listOfLists.txt\n"
+          + "If inputMap is given, output file maps will be written to outputDir/split/fileMap.txt\n"
+          + "\tand a list of these maps will be written to outputDir/listOfMaps.txt\n"
+          + "At least one of inputList and inputMap must be specified.\n"
+          + "Exactly one of numChunks and chunkSize may be specified.";
 
   public static final String INPUT_LIST_PARAM = "com.bbn.bue.splitCorpus.inputList";
   public static final String INPUT_MAP_PARAM = "com.bbn.bue.splitCorpus.inputMap";
@@ -114,16 +112,15 @@ public final class SplitCorpus {
       mapFiles.add(chunkMapFile);
       if (inputFileMapFile.isPresent()) {
         // maps are only written if a map was given as input
-        FileUtils.writeSymbolToFileMap(chunkDocIdToFileMap,
-            Files.asCharSink(chunkMapFile, Charsets.UTF_8));
+        FileUtils.writeSymbolToFileMap(
+            chunkDocIdToFileMap, Files.asCharSink(chunkMapFile, Charsets.UTF_8));
       }
 
       final File chunkListFile = new File(chunkOutputDir, "fileList.txt");
       listFiles.add(chunkListFile);
       if (inputFileListFile.isPresent()) {
         // lists are only written if a list was given as input
-        FileUtils.writeFileList(chunkFileList,
-            Files.asCharSink(chunkListFile, Charsets.UTF_8));
+        FileUtils.writeFileList(chunkFileList, Files.asCharSink(chunkListFile, Charsets.UTF_8));
       }
       ++chunkIdx;
     }
@@ -135,16 +132,14 @@ public final class SplitCorpus {
       // lists are only written if a list was given as input
       final File listOfListsFile = new File(outputDir, "listOfLists.txt");
       log.info("List of file lists written to {}", listOfListsFile);
-      FileUtils.writeFileList(listFiles,
-          Files.asCharSink(listOfListsFile, Charsets.UTF_8));
+      FileUtils.writeFileList(listFiles, Files.asCharSink(listOfListsFile, Charsets.UTF_8));
     }
 
     if (inputFileMapFile.isPresent()) {
       // maps are only written if a map was given as input
       final File listOfMapsFile = new File(outputDir, "listOfMaps.txt");
       log.info("List of file maps written to {}", listOfMapsFile);
-      FileUtils.writeFileList(mapFiles,
-          Files.asCharSink(listOfMapsFile, Charsets.UTF_8));
+      FileUtils.writeFileList(mapFiles, Files.asCharSink(listOfMapsFile, Charsets.UTF_8));
     }
   }
 
@@ -154,9 +149,7 @@ public final class SplitCorpus {
     return Iterables.partition(inputMap.entrySet(), chunkSize);
   }
 
-  /**
-   * If there are fewer files than chunks, fewer than numChunks will be returned.
-   */
+  /** If there are fewer files than chunks, fewer than numChunks will be returned. */
   private static Iterable<List<Map.Entry<Symbol, File>>> splitToNChunks(
       final ImmutableMap<Symbol, File> inputMap, int numChunks) {
     checkArgument(numChunks > 0);
@@ -185,8 +178,8 @@ public final class SplitCorpus {
    * file list.
    */
   private static ImmutableMap<Symbol, File> loadDocIdToFileMap(
-      final Optional<File> inputFileListFile,
-      final Optional<File> inputFileMapFile) throws IOException {
+      final Optional<File> inputFileListFile, final Optional<File> inputFileMapFile)
+      throws IOException {
     checkArgument(inputFileListFile.isPresent() || inputFileMapFile.isPresent());
 
     final Optional<ImmutableList<File>> fileList;
@@ -217,8 +210,11 @@ public final class SplitCorpus {
     // if both a file map and a file list are given, they must be compatible.
     if (fileList.isPresent() && fileMap.isPresent()) {
       if (fileList.get().size() != fileMap.get().size()) {
-        throw new RuntimeException("Input file list and file map do not match in size ("
-            + fileList.get().size() + " vs " + fileMap.get().size());
+        throw new RuntimeException(
+            "Input file list and file map do not match in size ("
+                + fileList.get().size()
+                + " vs "
+                + fileMap.get().size());
       }
       final boolean haveExactlyTheSameFiles =
           ImmutableSet.copyOf(fileList.get()).equals(ImmutableSet.copyOf(fileMap.get().values()));

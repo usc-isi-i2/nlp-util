@@ -1,15 +1,14 @@
 package edu.isi.nlp.io;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public class GZIPByteSource extends ByteSource {

@@ -1,11 +1,9 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.Finishable;
-import edu.isi.nlp.Inspector;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
-
+import edu.isi.nlp.Finishable;
+import edu.isi.nlp.Inspector;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -14,8 +12,8 @@ import java.util.List;
  * A node in an inspector tree. See {@link InspectorTreeDSL}. While this can't be package-private,
  * users should never sub-class this class.
  *
- * This lacks the usual {@code Abstract} prefix for brevity in use and because it's not meant to be
- * derived from.
+ * <p>This lacks the usual {@code Abstract} prefix for brevity in use and because it's not meant to
+ * be derived from.
  *
  * @param <OutT> The output type of this node.
  */

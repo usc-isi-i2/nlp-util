@@ -6,9 +6,6 @@ package edu.isi.nlp;
  */
 public @interface EvalHack {
 
-  /**
-   * Which eval was this hack for?
-   */
+  /** Which eval was this hack for? */
   String eval() default "";
-
 }

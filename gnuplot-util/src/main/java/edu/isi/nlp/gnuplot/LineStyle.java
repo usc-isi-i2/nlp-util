@@ -11,8 +11,8 @@ public class LineStyle {
   private final PointType pointType;
   private final double pointSize;
 
-  private LineStyle(LineType lineType, PointType pointType, Color color,
-      double width, double pointSize) {
+  private LineStyle(
+      LineType lineType, PointType pointType, Color color, double width, double pointSize) {
     this.lineType = checkNotNull(lineType);
     this.pointType = checkNotNull(pointType);
     this.color = checkNotNull(color);
@@ -27,11 +27,16 @@ public class LineStyle {
   }
 
   public void appendPlotCommands(PlotBundle.Builder sb) {
-    sb.append("lt ").append(lineType.asGnuPlotCommand())
-        .append(" lc ").append(color.asQuotedColorString())
-        .append(" lw ").append(width)
-        .append(" pt ").append(pointType.asGnuPlotCommand())
-        .append(" ps ").append(pointSize);
+    sb.append("lt ")
+        .append(lineType.asGnuPlotCommand())
+        .append(" lc ")
+        .append(color.asQuotedColorString())
+        .append(" lw ")
+        .append(width)
+        .append(" pt ")
+        .append(pointType.asGnuPlotCommand())
+        .append(" ps ")
+        .append(pointSize);
   }
 
   public static class Builder {
@@ -72,17 +77,17 @@ public class LineStyle {
     }
   }
 
-    /*
-     set style line <index> default
-     set style line <index> {{linetype  | lt} <line_type> | <colorspec>}
-                            {{linecolor | lc} <colorspec>}
-                            {{linewidth | lw} <line_width>}
-                            {{pointtype | pt} <point_type>}
-                            {{pointsize | ps} <point_size>}
-                            {palette}
-     unset style line
-     show style line
+  /*
+  set style line <index> default
+  set style line <index> {{linetype  | lt} <line_type> | <colorspec>}
+                         {{linecolor | lc} <colorspec>}
+                         {{linewidth | lw} <line_width>}
+                         {{pointtype | pt} <point_type>}
+                         {{pointsize | ps} <point_size>}
+                         {palette}
+  unset style line
+  show style line
 
-     */
+  */
 
 }

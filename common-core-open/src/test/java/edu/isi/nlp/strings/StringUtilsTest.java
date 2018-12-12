@@ -1,17 +1,13 @@
 package edu.isi.nlp.strings;
 
-import edu.isi.nlp.StringUtils;
-import edu.isi.nlp.strings.offsets.OffsetRange;
-
-import com.google.common.collect.ImmutableList;
-
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
-/**
- * Tests {@link StringUtils}.
- */
+import com.google.common.collect.ImmutableList;
+import edu.isi.nlp.StringUtils;
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import org.junit.Test;
+
+/** Tests {@link StringUtils}. */
 public class StringUtilsTest {
 
   public static final String FOO = "foo";
@@ -40,48 +36,48 @@ public class StringUtilsTest {
 
   @Test
   public void testToCodepoints() {
-    assertEquals(ImmutableList.of(102, 111, 111),
-        StringUtils.toCodepoints(FOO));
-    assertEquals(ImmutableList.of(934, 959, 965),
-        StringUtils.toCodepoints(GREEK_FOO));
-    assertEquals(ImmutableList.of(128514, 128946),
-        StringUtils.toCodepoints(NON_BMP));
+    assertEquals(ImmutableList.of(102, 111, 111), StringUtils.toCodepoints(FOO));
+    assertEquals(ImmutableList.of(934, 959, 965), StringUtils.toCodepoints(GREEK_FOO));
+    assertEquals(ImmutableList.of(128514, 128946), StringUtils.toCodepoints(NON_BMP));
   }
 
   @Test
   public void testToCodepointStrings() {
-    assertEquals(ImmutableList.of("f", "o", "o"),
-        StringUtils.toCodepointStrings(FOO));
-    assertEquals(ImmutableList.of("Φ", "ο", "υ"),
-        StringUtils.toCodepointStrings(GREEK_FOO));
-    assertEquals(ImmutableList.of("\uD83D\uDE02", "\uD83D\uDFB2"),
-        StringUtils.toCodepointStrings(NON_BMP));
+    assertEquals(ImmutableList.of("f", "o", "o"), StringUtils.toCodepointStrings(FOO));
+    assertEquals(ImmutableList.of("Φ", "ο", "υ"), StringUtils.toCodepointStrings(GREEK_FOO));
+    assertEquals(
+        ImmutableList.of("\uD83D\uDE02", "\uD83D\uDFB2"), StringUtils.toCodepointStrings(NON_BMP));
   }
 
   // the two unicode escapes here make up a single codepoint which uses more thsn two bytes
   final String stringWithNonBMPCharacter = "Hello\uD862\uDF4EWorld";
+
   @Test
   public void codepointSubstringTest() {
-    assertEquals("lo\uD862\uDF4EW",
-        StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 3, 7));
-    assertEquals("lo\uD862\uDF4EW",
-        StringUtils.substringByCodepoints(stringWithNonBMPCharacter,
-            OffsetRange.charOffsetRange(3, 6)));
+    assertEquals(
+        "lo\uD862\uDF4EW", StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 3, 7));
+    assertEquals(
+        "lo\uD862\uDF4EW",
+        StringUtils.substringByCodepoints(
+            stringWithNonBMPCharacter, OffsetRange.charOffsetRange(3, 6)));
     // test having astral character as start and end
-    assertEquals("\uD862\uDF4EWo",
-        StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 5, 8));
-    assertEquals("lo\uD862\uDF4E",
-        StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 3, 6));
+    assertEquals(
+        "\uD862\uDF4EWo", StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 5, 8));
+    assertEquals(
+        "lo\uD862\uDF4E", StringUtils.substringByCodepoints(stringWithNonBMPCharacter, 3, 6));
 
-    //test safe substring
-    assertEquals("Hello\uD862\uDF4E",
+    // test safe substring
+    assertEquals(
+        "Hello\uD862\uDF4E",
         StringUtils.laxSubstringByCodepoints(stringWithNonBMPCharacter, -1, 6));
-    assertEquals("lo\uD862\uDF4EWorld",
+    assertEquals(
+        "lo\uD862\uDF4EWorld",
         StringUtils.laxSubstringByCodepoints(stringWithNonBMPCharacter, 3, 100000));
   }
 
   @Test
   public void testStripAccents() {
-    assertEquals("foo", StringUtils.stripAccents(StringUtils.unicodeFriendly("föó")).utf16CodeUnits());
+    assertEquals(
+        "foo", StringUtils.stripAccents(StringUtils.unicodeFriendly("föó")).utf16CodeUnits());
   }
 }

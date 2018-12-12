@@ -7,8 +7,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
-
-
 import java.util.Map;
 
 public final class Scoreds {
@@ -17,16 +15,12 @@ public final class Scoreds {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * Returns a function which maps a scored item to the item itself.
-   */
+  /** Returns a function which maps a scored item to the item itself. */
   public static <X> Function<Scored<X>, X> itemsOnly() {
     return new ItemsOnly<X>();
   }
 
-  /**
-   * Returns a function which maps a scored item to its score.
-   */
+  /** Returns a function which maps a scored item to its score. */
   public static <X> Function<Scored<X>, Double> scoresOnly() {
     return new ScoresOnly<X>();
   }
@@ -52,7 +46,7 @@ public final class Scoreds {
    *
    * @param pred The <code>Predicate</code> to apply to the item
    * @return A <code>Predicate</code> on <code>Scored<X>s</code> which applies the supplied
-   * predicate to the item.
+   *     predicate to the item.
    */
   public static <T> Predicate<Scored<T>> ItemIs(final Predicate<T> pred) {
     return new Predicate<Scored<T>>() {
@@ -63,13 +57,12 @@ public final class Scoreds {
     };
   }
 
-
   /**
    * Easy way to pass a {@link Predicate} through to the score of a <code>Scored<T></code>.
    *
    * @param pred The <code>Predicate</code> to apply to the score
    * @return A <code>Predicate</code> on <code>Scored<X>s</code> which applies the supplied
-   * predicate to the score.
+   *     predicate to the score.
    */
   public static <X> Predicate<Scored<X>> scoreIs(final Predicate<Double> pred) {
     return new Predicate<Scored<X>>() {
@@ -122,9 +115,7 @@ public final class Scoreds {
     return Ordering.compound(ImmutableList.of(byScore, byItem));
   }
 
-  /**
-   * Comparator which compares Scoreds first by score, then by item.
-   */
+  /** Comparator which compares Scoreds first by score, then by item. */
   public static final <T extends Comparable<T>> Ordering<Scored<T>> ByScoreThenByItem() {
     final Ordering<Scored<T>> byItem = Scoreds.<T>ByItemOnly();
     final Ordering<Scored<T>> byScore = Scoreds.<T>ByScoreOnly();
@@ -132,18 +123,14 @@ public final class Scoreds {
     return Ordering.compound(ImmutableList.of(byScore, byItem));
   }
 
-  /**
-   * Ordering of {@code Scored}s by the natural ordering on items.
-   */
+  /** Ordering of {@code Scored}s by the natural ordering on items. */
   public static final <T extends Comparable<T>> Ordering<Scored<T>> ByItemOnly() {
     return Ordering.natural().onResultOf(Scoreds.<T>itemsOnly());
   }
 
-  /**
-   * Ordering of {@code Scored}s using the supplied ordering on items.
-   */
-  public static final <T extends Comparable<T>> Ordering<Scored<T>>
-  ByItemOnly(Ordering<T> itemOrdering) {
+  /** Ordering of {@code Scored}s using the supplied ordering on items. */
+  public static final <T extends Comparable<T>> Ordering<Scored<T>> ByItemOnly(
+      Ordering<T> itemOrdering) {
     return itemOrdering.onResultOf(Scoreds.<T>itemsOnly());
   }
 
@@ -156,10 +143,9 @@ public final class Scoreds {
     return Ordering.natural().onResultOf(Scoreds.<T>scoresOnly());
   }
 
-
   /**
-   * Takes an iterable of scored items and makes a map from items to their scores.  The items should
-   * have properly defined {@code hashCode} and {@code equals}.  If the same item appears multiple
+   * Takes an iterable of scored items and makes a map from items to their scores. The items should
+   * have properly defined {@code hashCode} and {@code equals}. If the same item appears multiple
    * times with different scores, the highest is kept.
    */
   public static <T> ImmutableMap<T, Double> asMapKeepingHigestScore(

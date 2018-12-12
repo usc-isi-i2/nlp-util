@@ -1,8 +1,8 @@
 package edu.isi.nlp.converters;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Tests {@link StringToClassInstance}. Not all error conditions of the decoding method are tested
@@ -16,9 +16,7 @@ public class StringToClassInstanceTest {
     public String getValue();
   }
 
-  public abstract static class AbstractClass implements Interface {
-
-  }
+  public abstract static class AbstractClass implements Interface {}
 
   public static class NoStringConstructorClass implements Interface {
 
@@ -109,7 +107,7 @@ public class StringToClassInstanceTest {
   public void decodingPreservesValue() {
     final StringToClassInstance<? extends Interface> converter =
         new StringToClassInstance<StringConstructorClass>(StringConstructorClass.class);
-    for (final String s : new String[]{"foo", "bar", "", "baz", "quux"}) {
+    for (final String s : new String[] {"foo", "bar", "", "baz", "quux"}) {
       assertEquals(s, converter.decode(s).getValue());
     }
   }
@@ -127,7 +125,8 @@ public class StringToClassInstanceTest {
 
   // @Test(expected = ConversionException.class)
   // public void decodingInaccessibleConstructorThrows() {
-  //     final StringToClassInstance<? extends Interface> converter = new StringToClassInstance<PrivateStringConstructorClass>(PrivateStringConstructorClass.class);
+  //     final StringToClassInstance<? extends Interface> converter = new
+  // StringToClassInstance<PrivateStringConstructorClass>(PrivateStringConstructorClass.class);
   //     converter.decode("foo");
   // }
 
@@ -136,7 +135,8 @@ public class StringToClassInstanceTest {
 
   // @Test(expected = ConversionException.class)
   // public void decodingThrowingClassThrows() {
-  //     final StringToClassInstance<? extends Interface> converter = new StringToClassInstance<ClassLoadingThrowingStringConstructorClass>(ClassLoadingThrowingStringConstructorClass.class);
+  //     final StringToClassInstance<? extends Interface> converter = new
+  // StringToClassInstance<ClassLoadingThrowingStringConstructorClass>(ClassLoadingThrowingStringConstructorClass.class);
   //     converter.decode("foo");
   // }
 }
