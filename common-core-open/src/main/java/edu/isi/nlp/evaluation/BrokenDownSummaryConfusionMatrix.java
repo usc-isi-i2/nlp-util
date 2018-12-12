@@ -1,13 +1,12 @@
 package edu.isi.nlp.evaluation;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
-
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Beta
 public final class BrokenDownSummaryConfusionMatrix<SignatureType> {
@@ -28,9 +27,8 @@ public final class BrokenDownSummaryConfusionMatrix<SignatureType> {
   }
 
   /**
-   * Provides a builder for a {@link BrokenDownSummaryConfusionMatrix}
-   * where the keys of the result will be ordered by {@code ordering}.  We require the ordering to
-   * maintain deterministic output.
+   * Provides a builder for a {@link BrokenDownSummaryConfusionMatrix} where the keys of the result
+   * will be ordered by {@code ordering}. We require the ordering to maintain deterministic output.
    */
   public static <SignatureType> Builder<SignatureType> builder(Ordering<SignatureType> ordering) {
     return new Builder<SignatureType>(ordering);
@@ -47,8 +45,8 @@ public final class BrokenDownSummaryConfusionMatrix<SignatureType> {
 
     public Builder<SignatureType> combine(
         BrokenDownSummaryConfusionMatrix<SignatureType> dataToAdd) {
-      for (final Map.Entry<SignatureType, SummaryConfusionMatrix> entry : dataToAdd.asMap()
-          .entrySet()) {
+      for (final Map.Entry<SignatureType, SummaryConfusionMatrix> entry :
+          dataToAdd.asMap().entrySet()) {
         final SignatureType signature = entry.getKey();
         if (!data.containsKey(signature)) {
           data.put(signature, SummaryConfusionMatrices.builder());

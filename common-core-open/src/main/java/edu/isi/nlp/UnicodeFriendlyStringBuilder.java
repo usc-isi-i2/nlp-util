@@ -14,7 +14,6 @@ public class UnicodeFriendlyStringBuilder {
     this.length = length;
   }
 
-
   public static UnicodeFriendlyStringBuilder create() {
     return new UnicodeFriendlyStringBuilder(new StringBuilder(), 0);
   }
@@ -29,8 +28,8 @@ public class UnicodeFriendlyStringBuilder {
   }
 
   public static UnicodeFriendlyStringBuilder forInitialString(UnicodeFriendlyString ufs) {
-    return new UnicodeFriendlyStringBuilder(new StringBuilder(ufs.utf16CodeUnits()),
-        ufs.lengthInCodePoints());
+    return new UnicodeFriendlyStringBuilder(
+        new StringBuilder(ufs.utf16CodeUnits()), ufs.lengthInCodePoints());
   }
 
   public UnicodeFriendlyStringBuilder append(Object obj) {
@@ -70,13 +69,12 @@ public class UnicodeFriendlyStringBuilder {
     return lengthInCodepoints() == 0;
   }
 
-
   /**
-   * Clears the contents of this {@code UnicodeFriendlyStringBuilder}.  In the usual JDK
+   * Clears the contents of this {@code UnicodeFriendlyStringBuilder}. In the usual JDK
    * implementations this will maintain the underlying buffer so that future use of this string
    * builder should not require buffer re-allocation. However, this is not guaranteed.
    *
-   * {@link StringBuilder} doesn't have a corresponding method, but it is a frequent pattern to
+   * <p>{@link StringBuilder} doesn't have a corresponding method, but it is a frequent pattern to
    * use the less clear {@code sb.setLenth(0)} to achieve the same thing.
    */
   public UnicodeFriendlyStringBuilder clearProbablyMaintainingBuffer() {

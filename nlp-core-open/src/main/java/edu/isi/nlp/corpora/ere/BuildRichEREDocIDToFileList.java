@@ -1,18 +1,15 @@
 package edu.isi.nlp.corpora.ere;
 
-import edu.isi.nlp.files.FileUtils;
-import edu.isi.nlp.symbols.Symbol;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.files.FileUtils;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class BuildRichEREDocIDToFileList {
 

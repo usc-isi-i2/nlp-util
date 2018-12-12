@@ -29,15 +29,15 @@ import org.slf4j.LoggerFactory;
  * Represents a time value according to "TIDES Instruction Manual for the Annotation of Temporal
  * Expressions", Lisa Ferro, 2001. Please refer to that document for details.
  *
- * Beware: full validity checking is not done, so it is possible to construct invalid Timex
+ * <p>Beware: full validity checking is not done, so it is possible to construct invalid Timex
  * expressions.
  *
- * Equality is determined strictly by field equality and not by any comparison of the time periods
- * denoted.
+ * <p>Equality is determined strictly by field equality and not by any comparison of the time
+ * periods denoted.
  *
- * This currently only supports durations of the form \dE, \dC, \DL, or ISO 8601 periods. Durations
- * which mix and match these (which should be incredibly rare) will act as if they have no duration.
- * See TIMEX2 specification section 3.2.4.1.
+ * <p>This currently only supports durations of the form \dE, \dC, \DL, or ISO 8601 periods.
+ * Durations which mix and match these (which should be incredibly rare) will act as if they have no
+ * duration. See TIMEX2 specification section 3.2.4.1.
  *
  * @author Ryan Gabbard, Feb. 2014
  */
@@ -45,20 +45,35 @@ public final class Timex2Time {
 
   private static final Logger log = LoggerFactory.getLogger(Timex2Time.class);
 
-  public static final ImmutableSet<Symbol> nonISOMarkers = SymbolUtils.setFrom("WE", "MO", "MI",
-      "AF", "EV", "NI", "PM", "DT", "FA", "WI", "SP", "SU", "FY", "Q1", "Q2", "Q3", "Q4", "QX",
-      "H1", "H2", "HX", "BC", "KA", "MA", "GA");
-  private static final Pattern nonISOMarkersPattern = Pattern.compile("("
-      + Joiner.on("|").join(nonISOMarkers) + ")");
+  public static final ImmutableSet<Symbol> nonISOMarkers =
+      SymbolUtils.setFrom(
+          "WE", "MO", "MI", "AF", "EV", "NI", "PM", "DT", "FA", "WI", "SP", "SU", "FY", "Q1", "Q2",
+          "Q3", "Q4", "QX", "H1", "H2", "HX", "BC", "KA", "MA", "GA");
+  private static final Pattern nonISOMarkersPattern =
+      Pattern.compile("(" + Joiner.on("|").join(nonISOMarkers) + ")");
 
   public enum Modifier {
-    BEFORE, AFTER, ON_OR_BEFORE, ON_OR_AFTER,
-    LESS_THAN, MORE_THAN, EQUAL_OR_LESS, EQUAL_OR_MORE,
-    START, MID, END, APPROX;
+    BEFORE,
+    AFTER,
+    ON_OR_BEFORE,
+    ON_OR_AFTER,
+    LESS_THAN,
+    MORE_THAN,
+    EQUAL_OR_LESS,
+    EQUAL_OR_MORE,
+    START,
+    MID,
+    END,
+    APPROX;
   }
 
   public enum AnchorDirection {
-    STARTING, ENDING, WITHIN, BEFORE, AFTER, AS_OF;
+    STARTING,
+    ENDING,
+    WITHIN,
+    BEFORE,
+    AFTER,
+    AS_OF;
   }
 
   private static final Symbol PRESENT_REF = Symbol.from("PRESENT_REF");
@@ -149,7 +164,6 @@ public final class Timex2Time {
     return Optional.absent();
   }
 
-
   public static Timex2Time createEmpty() {
     return new Timex2Time(null, null, false, null, null, null, null, false);
   }
@@ -203,19 +217,26 @@ public final class Timex2Time {
   }
 
   private static final ImmutableMap<Pattern, Integer> periodPatternsToYearMultipliers =
-      ImmutableMap.<Pattern, Integer>builder().put(
-          // Decades-2001 specification
-          Pattern.compile("(\\d+)E"), 10).put(
-          // Centuries-2001 specification
-          Pattern.compile("(\\d+)C"), 100).put(
-          // Millenia-2001 specification
-          Pattern.compile("(\\d+)L"), 1000).put(
-          // Decades-2005 specification
-          Pattern.compile("(\\d+)DE"), 10).put(
-          // Centuries-2005 specification
-          Pattern.compile("(\\d+)CE"), 100).put(
-          // Millenia-2005 specification
-          Pattern.compile("(\\d+)ML"), 1000).build();
+      ImmutableMap.<Pattern, Integer>builder()
+          .put(
+              // Decades-2001 specification
+              Pattern.compile("(\\d+)E"), 10)
+          .put(
+              // Centuries-2001 specification
+              Pattern.compile("(\\d+)C"), 100)
+          .put(
+              // Millenia-2001 specification
+              Pattern.compile("(\\d+)L"), 1000)
+          .put(
+              // Decades-2005 specification
+              Pattern.compile("(\\d+)DE"), 10)
+          .put(
+              // Centuries-2005 specification
+              Pattern.compile("(\\d+)CE"), 100)
+          .put(
+              // Millenia-2005 specification
+              Pattern.compile("(\\d+)ML"), 1000)
+          .build();
 
   private static final PeriodFormatter ISO8601_PERIOD_PARSER = ISOPeriodFormat.standard();
 
@@ -231,9 +252,9 @@ public final class Timex2Time {
    *
    * @param periodSym period-value as Symbol
    * @return Optional {@link Period} object (see the description for when Optional.absent will be
-   * returned).
+   *     returned).
    * @throws Timex2Exception if periodSym is not a valid period string (e.g. it doesn't start with
-   *                         P)
+   *     P)
    * @author rgabbard
    */
   private Optional<Period> parseDuration(final Symbol periodSym) throws Timex2Exception {
@@ -244,13 +265,13 @@ public final class Timex2Time {
       return Optional.absent();
     }
 
-    for (final Map.Entry<Pattern, Integer> timexExtension : periodPatternsToYearMultipliers
-        .entrySet()) {
+    for (final Map.Entry<Pattern, Integer> timexExtension :
+        periodPatternsToYearMultipliers.entrySet()) {
       final Matcher m = timexExtension.getKey().matcher(period);
       try {
         if (m.lookingAt()) {
-          return Optional
-              .of(Period.years(timexExtension.getValue() * Integer.parseInt(m.group(1))));
+          return Optional.of(
+              Period.years(timexExtension.getValue() * Integer.parseInt(m.group(1))));
         }
       } catch (final NumberFormatException nfe) {
         log.warn("Failed to parse duration {}, skipping. Due to {}", period, nfe);
@@ -306,9 +327,15 @@ public final class Timex2Time {
     return dashJoiner.join(parts);
   }
 
-  private Timex2Time(final Symbol val, final Modifier mod, final boolean set,
-      final Symbol granularity, final Symbol periodicity, final Symbol anchorVal,
-      final AnchorDirection anchorDir, final boolean nonSpecific) {
+  private Timex2Time(
+      final Symbol val,
+      final Modifier mod,
+      final boolean set,
+      final Symbol granularity,
+      final Symbol periodicity,
+      final Symbol anchorVal,
+      final AnchorDirection anchorDir,
+      final boolean nonSpecific) {
     this.val = val;
     this.mod = mod;
     if (mod != null) {
@@ -338,8 +365,8 @@ public final class Timex2Time {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(val, mod, set, granularity, periodicity, anchorVal, anchorDir,
-        nonSpecific);
+    return Objects.hashCode(
+        val, mod, set, granularity, periodicity, anchorVal, anchorDir, nonSpecific);
   }
 
   @Override
@@ -354,9 +381,13 @@ public final class Timex2Time {
       return false;
     }
     final Timex2Time other = (Timex2Time) obj;
-    return equal(val, other.val) && equal(mod, other.mod) && equal(set, other.set)
-        && equal(granularity, other.granularity) && equal(periodicity, other.periodicity)
-        && equal(anchorVal, other.anchorVal) && equal(anchorDir, other.anchorDir)
+    return equal(val, other.val)
+        && equal(mod, other.mod)
+        && equal(set, other.set)
+        && equal(granularity, other.granularity)
+        && equal(periodicity, other.periodicity)
+        && equal(anchorVal, other.anchorVal)
+        && equal(anchorDir, other.anchorDir)
         && equal(nonSpecific, other.nonSpecific);
   }
 
@@ -369,22 +400,22 @@ public final class Timex2Time {
    * upto which the timex value is specific. For example, 1999-09-08TNI will return the interval for
    * 1999-09-08, and 1999-FA or 1999-WXX will return the interval for 1999. However, we reserve the
    * right to make specific inferences from non-ISO markers in future implementations (e.g. FA could
-   * mean the period from third week of September to third week of December).<br> TIMEX2 values with
-   * omissions, like VAL="199" (meaning the decade of 1990s) or VAL="20" (meaning the 21st century)
-   * will be converted to approriate interval values (10 years or 100 years respectively, for this
-   * example).<br> If no interval can be discerned from the value at all, for example, XXXX-09
-   * (September of unspecified year) or XX63 (63rd year of unspecified year), Optional.absent() will
-   * be returned.
+   * mean the period from third week of September to third week of December).<br>
+   * TIMEX2 values with omissions, like VAL="199" (meaning the decade of 1990s) or VAL="20" (meaning
+   * the 21st century) will be converted to approriate interval values (10 years or 100 years
+   * respectively, for this example).<br>
+   * If no interval can be discerned from the value at all, for example, XXXX-09 (September of
+   * unspecified year) or XX63 (63rd year of unspecified year), Optional.absent() will be returned.
    *
    * @param valSym timex-value as Symbol
    * @return Optional {@link Interval} object (see the description for when Optional.absent will be
-   * returned).
+   *     returned).
    * @author rgabbard, msrivast
    */
   private Optional<Interval> parseValueAsInterval(Symbol valSym) {
     String val = valSym.asString();
 
-    //first see if time of day is fuzzy (TMO, TNI, TXX etc.), and if so, get rid of that
+    // first see if time of day is fuzzy (TMO, TNI, TXX etc.), and if so, get rid of that
     String timePart = "";
     if (val.contains("T")) {
       timePart = val.substring(val.indexOf("T") + 1);
@@ -395,16 +426,16 @@ public final class Timex2Time {
     }
     val = val + (!timePart.equals("") ? "T" + timePart : "");
 
-    //now get rid of unspecified markers (X) or weekend, season, FY etc. markers.
-    //Timex2 standard says that it extends ISO 8601 for vals which means basic ISO 8601 format
-    //may also be allowed. All the examples that I have seen have always had hyphens tho.
-    //Therefore, for simplicity, we will split val on hyphens ~msrivast
+    // now get rid of unspecified markers (X) or weekend, season, FY etc. markers.
+    // Timex2 standard says that it extends ISO 8601 for vals which means basic ISO 8601 format
+    // may also be allowed. All the examples that I have seen have always had hyphens tho.
+    // Therefore, for simplicity, we will split val on hyphens ~msrivast
     String[] valParts = val.split("-");
     ImmutableList.Builder<String> specificValParts = ImmutableList.builder();
     for (int i = 0; i < valParts.length; i++) {
       String part = valParts[i];
-      //if part contains X or is a season, fiscal year, periods of day marker etc. break, since the
-      //timex value can be specific only upto here
+      // if part contains X or is a season, fiscal year, periods of day marker etc. break, since the
+      // timex value can be specific only upto here
       if (part.contains("X") || nonISOMarkers.contains(Symbol.from(part))) {
         break;
       }
@@ -416,40 +447,39 @@ public final class Timex2Time {
     // directly (very common; needs to come after the above because
     // its regex will match week-based dates, too)
     try {
-      return Optional.of(ISODateTimeFormat.yearMonthDay().parseDateTime(val).dayOfMonth()
-          .toInterval());
+      return Optional.of(
+          ISODateTimeFormat.yearMonthDay().parseDateTime(val).dayOfMonth().toInterval());
     } catch (final IllegalArgumentException iae) {
       // pass
     }
 
     // could be YYYY-MM type date
     try {
-      return Optional.of(ISODateTimeFormat.yearMonth()
-          .parseDateTime(val).monthOfYear().toInterval());
+      return Optional.of(
+          ISODateTimeFormat.yearMonth().parseDateTime(val).monthOfYear().toInterval());
     } catch (final IllegalArgumentException iae) {
       // pass
     }
 
     // could be a YYYY type date
     try {
-      return Optional.of(ISODateTimeFormat.year()
-          .parseDateTime(val).year().toInterval());
+      return Optional.of(ISODateTimeFormat.year().parseDateTime(val).year().toInterval());
     } catch (final IllegalArgumentException iae) {
       // pass
     }
 
     // it could be a 2014-W3-01 style week-based date
     try {
-      return Optional.of(ISODateTimeFormat.weekyearWeekDay()
-          .parseDateTime(val).dayOfMonth().toInterval());
+      return Optional.of(
+          ISODateTimeFormat.weekyearWeekDay().parseDateTime(val).dayOfMonth().toInterval());
     } catch (final IllegalArgumentException iae) {
       // it's okay if it's unparseable; just wasn't in this format
     }
 
     // it would be a 2014-W3 style week-based date
     try {
-      return Optional.of(ISODateTimeFormat.weekyearWeek()
-          .parseDateTime(val).weekOfWeekyear().toInterval());
+      return Optional.of(
+          ISODateTimeFormat.weekyearWeek().parseDateTime(val).weekOfWeekyear().toInterval());
     } catch (final IllegalArgumentException iae) {
       // it's okay if it's unparseable; just wasn't in this format
     }
@@ -457,8 +487,8 @@ public final class Timex2Time {
     // this needs to go last or it would short-circuit the week
     // formats
     try {
-      return Optional.of(ISODateTimeFormat.dateTimeParser()
-          .parseDateTime(val).minuteOfDay().toInterval());
+      return Optional.of(
+          ISODateTimeFormat.dateTimeParser().parseDateTime(val).minuteOfDay().toInterval());
     } catch (final IllegalArgumentException iae) {
       // pass
     }
@@ -492,8 +522,7 @@ public final class Timex2Time {
 
   public static class Builder {
 
-    private Builder() {
-    }
+    private Builder() {}
 
     private Symbol val;
     private Modifier mod = null;
@@ -505,8 +534,8 @@ public final class Timex2Time {
     private boolean nonSpecific = false;
 
     public Timex2Time build() {
-      return new Timex2Time(val, mod, isSet, granularity, periodicity, anchorVal, anchorDir,
-          nonSpecific);
+      return new Timex2Time(
+          val, mod, isSet, granularity, periodicity, anchorVal, anchorDir, nonSpecific);
     }
 
     public Builder withVal(Symbol val) {
@@ -548,7 +577,6 @@ public final class Timex2Time {
       return this;
     }
 
-
     public Builder withPeriodicity(Symbol periodicity) {
       this.periodicity = checkNotNull(periodicity);
       return this;
@@ -568,7 +596,6 @@ public final class Timex2Time {
       this.anchorVal = Symbol.from(checkNotNull(anchorValue));
       return this;
     }
-
 
     public Builder withAnchorDirection(Symbol anchorDir) {
       checkNotNull(anchorDir);
@@ -597,5 +624,4 @@ public final class Timex2Time {
       return this;
     }
   }
-
 }

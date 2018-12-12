@@ -1,6 +1,5 @@
 package edu.isi.nlp.corpora.ere;
 
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -46,8 +45,8 @@ public final class ERELoader {
     // The XML parser treats \r\n as a single character. This is problematic
     // when we are using character offsets. To avoid this, we replace
     // \r with an entity reference before parsing
-    final InputSource in = new InputSource(new StringReader(
-        s.replaceAll("\r", "\n")));//"&#xD;")));
+    final InputSource in =
+        new InputSource(new StringReader(s.replaceAll("\r", "\n"))); // "&#xD;")));
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(false);
@@ -86,9 +85,7 @@ public final class ERELoader {
 
     boolean includeDocIDInIDs = false;
 
-    private Builder() {
-
-    }
+    private Builder() {}
 
     /**
      * Do we want to prefix every ERE id with the docid? Generally no, but doing this does allow
@@ -111,8 +108,7 @@ final class ERELoading {
   private final Map<String, String> mentionToCorefId = Maps.newHashMap();
   private final boolean derivedIDsHaveDocID;
 
-  public ERELoading(
-      final boolean derivedIDsHaveDocID) {
+  public ERELoading(final boolean derivedIDsHaveDocID) {
     this.derivedIDsHaveDocID = derivedIDsHaveDocID;
   }
 
@@ -171,7 +167,7 @@ final class ERELoading {
 
     final String type = XMLUtils.requiredAttribute(xml, "type");
     final String specificity =
-        XMLUtils.requiredAttribute(xml, "specificity");  // specific -> SPC , nonspecific -> GEN
+        XMLUtils.requiredAttribute(xml, "specificity"); // specific -> SPC , nonspecific -> GEN
 
     final EREEntity.Builder builder = EREEntity.builder(id, type, specificity);
 
@@ -218,7 +214,7 @@ final class ERELoading {
 
     final EREFiller ereFiller;
     if (xml.hasAttribute(NORMALIZED_TIME_ATTR)) {
-     ereFiller = EREFiller.fromTime(id, type, xml.getAttribute(NORMALIZED_TIME_ATTR), span);
+      ereFiller = EREFiller.fromTime(id, type, xml.getAttribute(NORMALIZED_TIME_ATTR), span);
     } else {
       ereFiller = EREFiller.from(id, type, span);
     }
@@ -237,8 +233,8 @@ final class ERELoading {
     return Optional.absent();
   }
 
-  private static Optional<ERESpan> toSpan(final Element xml, final String name, final int start,
-      final int end) {
+  private static Optional<ERESpan> toSpan(
+      final Element xml, final String name, final int start, final int end) {
     Optional<Element> element = XMLUtils.directChild(xml, name);
     if (element.isPresent()) {
       final String content = element.get().getTextContent();
@@ -246,7 +242,6 @@ final class ERELoading {
     }
     return Optional.absent();
   }
-
 
   // ==== START Relation ====
   private ERERelation toRelation(final Element xml, final String docid) {
@@ -281,8 +276,8 @@ final class ERELoading {
 
     for (Node child = xml.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (child instanceof Element) {
-        if (((Element) child).getTagName().equals("rel_arg1") || ((Element) child).getTagName()
-            .equals("rel_arg2")) {
+        if (((Element) child).getTagName().equals("rel_arg1")
+            || ((Element) child).getTagName().equals("rel_arg2")) {
           final Element e = (Element) child;
           builder.withArgument(e.getTagName(), getArgument(docid, e));
         }
@@ -299,8 +294,8 @@ final class ERELoading {
 
     final String role = XMLUtils.requiredAttribute(e, "role");
     final Optional<String> entityID = XMLUtils.optionalStringAttribute(e, "entity_id");
-    final Optional<String>
-        entityMentionId = XMLUtils.optionalStringAttribute(e, "entity_mention_id");
+    final Optional<String> entityMentionId =
+        XMLUtils.optionalStringAttribute(e, "entity_mention_id");
     final Optional<String> fillerId = XMLUtils.optionalStringAttribute(e, "filler_id");
     // null if relation_mention argument, populated in event_mention arguments
     final LinkRealis realis;
@@ -321,8 +316,8 @@ final class ERELoading {
     } else if (fillerId.isPresent()) {
       mentionId = generateID(fillerId.get(), docid);
     } else {
-      throw EREException
-          .forElement("Element must have either entity_mention_id or filler_id attribute", e);
+      throw EREException.forElement(
+          "Element must have either entity_mention_id or filler_id attribute", e);
     }
 
     Object obj = fetch(mentionId);
@@ -335,8 +330,8 @@ final class ERELoading {
       final EREFiller m = (EREFiller) obj;
       arg = EREFillerArgument.from(role, realis, m);
     } else {
-      throw EREException.forElement("Expected either an EREEntityMention or an EREFiller "
-          + "but got " + obj.getClass(), e);
+      throw EREException.forElement(
+          "Expected either an EREEntityMention or an EREFiller " + "but got " + obj.getClass(), e);
     }
     return arg;
   }
@@ -395,7 +390,6 @@ final class ERELoading {
     }
   }
 
-
   // no way around unchecked cast for heterogeneous container
   @SuppressWarnings({"TypeParameterUnusedInFormals", "unchecked"})
   private <T> T fetch(final String id) {
@@ -408,4 +402,3 @@ final class ERELoading {
     return ret;
   }
 }
-

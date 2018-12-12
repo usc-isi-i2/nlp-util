@@ -1,11 +1,10 @@
 package edu.isi.nlp.corpora.ere;
 
-import edu.isi.nlp.strings.offsets.CharOffset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import edu.isi.nlp.strings.offsets.CharOffset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
 
 public final class ERESpan {
   public final int start;
@@ -61,6 +60,6 @@ public final class ERESpan {
     }
 
     ERESpan other = (ERESpan) obj;
-    return (start==other.start) && (end==other.end) && text.equals(other.text);
+    return (start == other.start) && (end == other.end) && text.equals(other.text);
   }
 }

@@ -8,8 +8,13 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD,
-    ElementType.PACKAGE, ElementType.TYPE})
+@Target({
+  ElementType.CONSTRUCTOR,
+  ElementType.FIELD,
+  ElementType.METHOD,
+  ElementType.PACKAGE,
+  ElementType.TYPE
+})
 public @interface LanguageSpecific {
 
   String[] value();

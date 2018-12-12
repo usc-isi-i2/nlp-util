@@ -4,8 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StringToInteger implements StringConverter<Integer> {
 
-  public StringToInteger() {
-  }
+  public StringToInteger() {}
 
   public Class<Integer> getValueClass() {
     return Integer.class;

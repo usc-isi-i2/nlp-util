@@ -23,10 +23,17 @@ public final class ClusteredBarChart implements GnuPlottable {
   private final Key key;
   private final Grid grid;
 
-  private ClusteredBarChart(final Iterable<ClusteredBar> clusteredBars,
-      final Iterable<String> barClusterNames, final Palette palette,
-      final String title, final Axis xAxis, final Axis yAxis,
-      final double boxWidth, final double clusterGap, final Key key, final Grid grid) {
+  private ClusteredBarChart(
+      final Iterable<ClusteredBar> clusteredBars,
+      final Iterable<String> barClusterNames,
+      final Palette palette,
+      final String title,
+      final Axis xAxis,
+      final Axis yAxis,
+      final double boxWidth,
+      final double clusterGap,
+      final Key key,
+      final Grid grid) {
     this.clusteredBars = ImmutableList.copyOf(clusteredBars);
     this.barClusterNames = ImmutableList.copyOf(barClusterNames);
     this.palette = Optional.fromNullable(palette);
@@ -46,16 +53,16 @@ public final class ClusteredBarChart implements GnuPlottable {
     return new Builder();
   }
 
-
   private void assertBarsAndClustersCompatible() {
     for (final ClusteredBar bar : clusteredBars) {
-      checkArgument(bar.values().size() == barClusterNames.size(),
+      checkArgument(
+          bar.values().size() == barClusterNames.size(),
           "There are %s bar clusters defined, but bar %s has only %s clusters",
-          barClusterNames.size(), bar, bar.values().size());
+          barClusterNames.size(),
+          bar,
+          bar.values().size());
     }
   }
-
-
 
   @Override
   public PlotBundle toPlotBundle() {
@@ -103,8 +110,7 @@ public final class ClusteredBarChart implements GnuPlottable {
     private Key key = Key.visibleKey().build();
     private Grid grid = NormalGrid.builder().build();
 
-    private Builder() {
-    }
+    private Builder() {}
 
     public Builder setTitle(final String title) {
       this.title = checkNotNull(title);
@@ -164,8 +170,17 @@ public final class ClusteredBarChart implements GnuPlottable {
     }
 
     public ClusteredBarChart build() {
-      return new ClusteredBarChart(clusteredBars.build(), barClusterNames.build(), palette, title, xAxis, yAxis,
-          boxWidth, clusterGap, key, grid);
+      return new ClusteredBarChart(
+          clusteredBars.build(),
+          barClusterNames.build(),
+          palette,
+          title,
+          xAxis,
+          yAxis,
+          boxWidth,
+          clusterGap,
+          key,
+          grid);
     }
   }
 
@@ -200,7 +215,9 @@ public final class ClusteredBarChart implements GnuPlottable {
     sb.append("' ");
 
     final Optional<Iterator<Color>> colorList =
-        palette.isPresent()? Optional.of(palette.get().infinitePaletteLoop().iterator()) : Optional.<Iterator<Color>>absent();
+        palette.isPresent()
+            ? Optional.of(palette.get().infinitePaletteLoop().iterator())
+            : Optional.<Iterator<Color>>absent();
 
     boolean first = true;
     for (int clusterIdx = 0; clusterIdx < barClusterNames.size(); ++clusterIdx) {
@@ -210,14 +227,15 @@ public final class ClusteredBarChart implements GnuPlottable {
         first = false;
       }
       final String clusterName = barClusterNames.get(clusterIdx);
-      sb.append(" using ").append(clusterIdx + 2).append(":xtic(1)")
-          .append(" t ").append(GnuPlotUtils.gnuPlotString(clusterName));
+      sb.append(" using ")
+          .append(clusterIdx + 2)
+          .append(":xtic(1)")
+          .append(" t ")
+          .append(GnuPlotUtils.gnuPlotString(clusterName));
 
-      if(colorList.isPresent()) {
+      if (colorList.isPresent()) {
         sb.append(" lc rgb " + colorList.get().next().asQuotedColorString());
       }
     }
   }
-
-
 }

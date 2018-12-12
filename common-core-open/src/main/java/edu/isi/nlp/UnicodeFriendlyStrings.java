@@ -2,9 +2,7 @@ package edu.isi.nlp;
 
 import com.google.common.base.Function;
 
-/**
- * Utiltiy methods for {@link UnicodeFriendlyString}
- */
+/** Utiltiy methods for {@link UnicodeFriendlyString} */
 public class UnicodeFriendlyStrings {
   private UnicodeFriendlyStrings() {
     throw new UnsupportedOperationException();

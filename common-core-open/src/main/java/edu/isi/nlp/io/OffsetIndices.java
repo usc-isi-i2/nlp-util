@@ -1,15 +1,13 @@
 package edu.isi.nlp.io;
 
-import edu.isi.nlp.strings.offsets.ByteOffset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
-import edu.isi.nlp.symbols.Symbol;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Ordering;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Closeables;
-
+import edu.isi.nlp.strings.offsets.ByteOffset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -28,8 +26,8 @@ public final class OffsetIndices {
 
     try {
       for (int i = 0; i < numEntries; ++i) {
-        builder.put(Symbol.from(in.readUTF()),
-            OffsetRange.byteOffsetRange(in.readInt(), in.readInt()));
+        builder.put(
+            Symbol.from(in.readUTF()), OffsetRange.byteOffsetRange(in.readInt(), in.readInt()));
       }
     } finally {
       Closeables.closeQuietly(in);
@@ -58,7 +56,6 @@ public final class OffsetIndices {
     } finally {
       Closeables.close(out, threw);
     }
-
   }
 
   public static OffsetIndex forMap(final Map<Symbol, OffsetRange<ByteOffset>> map) {

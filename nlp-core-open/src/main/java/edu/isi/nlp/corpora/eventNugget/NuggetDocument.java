@@ -5,9 +5,7 @@ import edu.isi.nlp.IsiNlpImmutable;
 import org.immutables.func.Functional;
 import org.immutables.value.Value;
 
-/**
- * @author Yee Seng Chan
- */
+/** @author Yee Seng Chan */
 @Value.Immutable(prehash = true)
 @Functional
 @IsiNlpImmutable
@@ -30,7 +28,5 @@ public abstract class NuggetDocument {
     multi_post
   }
 
-  public static class Builder extends ImmutableNuggetDocument.Builder {
-
-  }
+  public static class Builder extends ImmutableNuggetDocument.Builder {}
 }

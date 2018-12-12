@@ -3,9 +3,7 @@ package edu.isi.nlp.collections;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-/**
- * Utilities related to {@link java.util.Set}s.
- */
+/** Utilities related to {@link java.util.Set}s. */
 public final class SetUtils {
 
   private SetUtils() {
@@ -13,8 +11,8 @@ public final class SetUtils {
   }
 
   /**
-   * Returns all items found in the {@code left} iterable not found in the {@code right}.  If the
-   * iterables are not deterministic, this will reflect a single pass through each.  This is not a
+   * Returns all items found in the {@code left} iterable not found in the {@code right}. If the
+   * iterables are not deterministic, this will reflect a single pass through each. This is not a
    * view.
    */
   public static <T> ImmutableSet<T> differenceAsSets(Iterable<T> left, Iterable<T> right) {

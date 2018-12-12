@@ -1,10 +1,10 @@
 package edu.isi.nlp.gnuplot;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Range;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.Range;
 
 public final class Axis {
 
@@ -26,13 +26,20 @@ public final class Axis {
   public void appendCommands(PlotBundle.Builder pb) {
     final String xy = axisType.letter();
     if (label != null) {
-      pb.append("set ").append(xy).append("label ")
-          .append(GnuPlotUtils.gnuPlotString(label)).append("\n");
+      pb.append("set ")
+          .append(xy)
+          .append("label ")
+          .append(GnuPlotUtils.gnuPlotString(label))
+          .append("\n");
     }
     if (range != null) {
-      pb.append("set ").append(xy).append("range [")
-          .append(range.lowerEndpoint()).append(":")
-          .append(range.upperEndpoint()).append("]\n");
+      pb.append("set ")
+          .append(xy)
+          .append("range [")
+          .append(range.lowerEndpoint())
+          .append(":")
+          .append(range.upperEndpoint())
+          .append("]\n");
     }
     if (rotateLabels) {
       pb.append("set ").append(xy).append("tics rotate\n");

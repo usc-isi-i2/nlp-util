@@ -1,11 +1,10 @@
 package edu.isi.nlp.hppc;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.carrotsearch.hppc.ObjectCollection;
 import com.carrotsearch.hppc.cursors.ObjectCursor;
-
 import java.util.Iterator;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 final class ObjectCollectionAsIterable<T> implements Iterable<T> {
 

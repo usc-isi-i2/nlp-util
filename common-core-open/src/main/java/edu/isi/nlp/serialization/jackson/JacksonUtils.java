@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-
 import java.util.List;
 
 public final class JacksonUtils {
@@ -13,14 +12,14 @@ public final class JacksonUtils {
     throw new UnsupportedOperationException();
   }
 
-  private static final Supplier<List<Module>> discoveredModules = Suppliers.memoize(
-      new Supplier<List<Module>>() {
-        @Override
-        public List<Module> get() {
-          return ObjectMapper.findModules();
-        }
-      }
-  );
+  private static final Supplier<List<Module>> discoveredModules =
+      Suppliers.memoize(
+          new Supplier<List<Module>>() {
+            @Override
+            public List<Module> get() {
+              return ObjectMapper.findModules();
+            }
+          });
 
   /**
    * Caches the results of {@link com.fasterxml.jackson.databind.ObjectMapper#findModules()}. Note

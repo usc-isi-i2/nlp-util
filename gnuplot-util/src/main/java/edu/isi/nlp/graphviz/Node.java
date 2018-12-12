@@ -1,22 +1,18 @@
 package edu.isi.nlp.graphviz;
 
-import edu.isi.nlp.StringUtils;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
+import edu.isi.nlp.StringUtils;
 import java.util.List;
 import java.util.UUID;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-/**
- * Very beta. Do not use for anything but throw-away code.
- */
+/** Very beta. Do not use for anything but throw-away code. */
 @Beta
 public final class Node {
 
@@ -126,7 +122,10 @@ public final class Node {
     };
   }
 
-  public enum Shape { BOX("box"), ELLIPSE("ellipse");
+  public enum Shape {
+    BOX("box"),
+    ELLIPSE("ellipse");
+
     Shape(String nameInDot) {
       this.nameInDot = checkNotNull(nameInDot);
     }

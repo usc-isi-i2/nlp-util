@@ -1,15 +1,20 @@
 package edu.isi.nlp.corpora.eventNugget;
 
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.xml.XMLUtils;
-import edu.isi.nlp.corpora.ere.EREException;
-import edu.isi.nlp.corpora.ere.ERESpan;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.corpora.ere.EREException;
+import edu.isi.nlp.corpora.ere.ERESpan;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.xml.XMLUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -17,27 +22,14 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-/**
- * @author Yee Seng Chan
- */
+/** @author Yee Seng Chan */
 public final class EventNuggetLoader {
 
   private static Logger log = LoggerFactory.getLogger(EventNuggetLoader.class);
 
   private final Map<String, Object> idMap = Maps.newHashMap();
 
-
-  private EventNuggetLoader() {
-  }
+  private EventNuggetLoader() {}
 
   public static EventNuggetLoader from(final Parameters params) {
     return new EventNuggetLoader();
@@ -57,8 +49,8 @@ public final class EventNuggetLoader {
     // The XML parser treats \r\n as a single character. This is problematic
     // when we are using character offsets. To avoid this, we replace
     // \r with an entity reference before parsing
-    final InputSource in = new InputSource(new StringReader(
-        s.replaceAll("\r", "\n")));//"&#xD;")));
+    final InputSource in =
+        new InputSource(new StringReader(s.replaceAll("\r", "\n"))); // "&#xD;")));
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(false);
@@ -90,14 +82,16 @@ public final class EventNuggetLoader {
     }
   }
 
-  private NuggetDocument toDocument(final Element xml, final String docid,
-      final String sourceType) {
+  private NuggetDocument toDocument(
+      final Element xml, final String docid, final String sourceType) {
     idMap.clear();
 
     final String kitId = generateID(XMLUtils.requiredAttribute(xml, "kit_id"), docid);
 
     final NuggetDocument.Builder documentBuilder =
-        new NuggetDocument.Builder().kitId(kitId).docId(docid)
+        new NuggetDocument.Builder()
+            .kitId(kitId)
+            .docId(docid)
             .sourceType(NuggetDocument.SourceType.valueOf(sourceType));
 
     for (Node child = xml.getFirstChild(); child != null; child = child.getNextSibling()) {
@@ -123,7 +117,6 @@ public final class EventNuggetLoader {
 
     return result;
   }
-
 
   private NuggetHopper toHopper(final Element xml, final String docid) {
     final String id = generateID(XMLUtils.requiredAttribute(xml, "id"), docid);
@@ -151,8 +144,12 @@ public final class EventNuggetLoader {
     final String subtype = XMLUtils.requiredAttribute(xml, "subtype");
     final String realis = XMLUtils.requiredAttribute(xml, "realis");
 
-    final NuggetEventMention.Builder emBuilder = new NuggetEventMention.Builder().id(id).type(
-        Symbol.from(type)).subtype(Symbol.from(subtype)).realis(Symbol.from(realis));
+    final NuggetEventMention.Builder emBuilder =
+        new NuggetEventMention.Builder()
+            .id(id)
+            .type(Symbol.from(type))
+            .subtype(Symbol.from(subtype))
+            .realis(Symbol.from(realis));
 
     for (Node child = xml.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (child instanceof Element) {
@@ -168,7 +165,6 @@ public final class EventNuggetLoader {
     return eventMention;
   }
 
-
   private ERESpan extractTrigger(final Element xml, final String docid) {
     final String source = XMLUtils.requiredAttribute(xml, "source");
     final String trigger = xml.getTextContent();
@@ -182,5 +178,4 @@ public final class EventNuggetLoader {
   private String generateID(final String id, final String docid) {
     return docid + "-" + id;
   }
-
 }

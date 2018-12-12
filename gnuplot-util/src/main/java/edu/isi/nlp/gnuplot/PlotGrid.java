@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
 /**
  * Created by jdeyoung on 5/22/15.
  *
- * Each GnuPlottable passed to this needs some rudimentary awareness of its purpose in life, specifically whether or not it should have a title or legend
+ * <p>Each GnuPlottable passed to this needs some rudimentary awareness of its purpose in life,
+ * specifically whether or not it should have a title or legend
  *
- * See http://gnuplot.sourceforge.net/docs_4.2/node203.html for documentation
+ * <p>See http://gnuplot.sourceforge.net/docs_4.2/node203.html for documentation
  *
- * This is a thin wrapper around multi-plot - maybe a less thin wrapper where x,y positions are set
- * could use "blank" plots by default or do the same internal calculations for size/origin that we
- * skip here
+ * <p>This is a thin wrapper around multi-plot - maybe a less thin wrapper where x,y positions are
+ * set could use "blank" plots by default or do the same internal calculations for size/origin that
+ * we skip here
  */
 @Beta
 public final class PlotGrid implements GnuPlottable {
@@ -34,10 +34,18 @@ public final class PlotGrid implements GnuPlottable {
   private final int ypixels;
   private final int xpixels;
 
-
-  private PlotGrid(final int rows, final int columns, final int xpixels, final int ypixels,
-      final String title, final boolean rowsFirst, final boolean downwards, final double xscale,
-      final double yscale, final String sizeString, final List<String> startingCommands,
+  private PlotGrid(
+      final int rows,
+      final int columns,
+      final int xpixels,
+      final int ypixels,
+      final String title,
+      final boolean rowsFirst,
+      final boolean downwards,
+      final double xscale,
+      final double yscale,
+      final String sizeString,
+      final List<String> startingCommands,
       final List<PlotBundle> associatedBundles) {
     this.rows = rows;
     this.columns = columns;
@@ -61,7 +69,7 @@ public final class PlotGrid implements GnuPlottable {
   public PlotBundle toPlotBundle() {
     PlotBundle.Builder pbb = PlotBundle.builder();
 
-    if(xpixels != Integer.MAX_VALUE && ypixels != Integer.MAX_VALUE) {
+    if (xpixels != Integer.MAX_VALUE && ypixels != Integer.MAX_VALUE) {
       pbb.append(String.format("set term png size %d,%d \n", xpixels, ypixels));
     }
     pbb.append(" set multiplot ");
@@ -95,7 +103,7 @@ public final class PlotGrid implements GnuPlottable {
 
     pbb.append("\n");
     for (PlotBundle pb : associatedBundles) {
-      //pbb.append("\nunset ytics\n"); // multiplot gotcha - axis is carried over between plots!
+      // pbb.append("\nunset ytics\n"); // multiplot gotcha - axis is carried over between plots!
       pbb.append(sizeString);
       for (Object command : pb.commandComponents()) {
         if (command instanceof PlotBundle.DatafileReference) {
@@ -103,7 +111,8 @@ public final class PlotGrid implements GnuPlottable {
         } else {
           pbb.append((String) command);
         }
-        // fetching data shouldn't be necessary since plot bundle builder takes data and saves it to commands on appenData
+        // fetching data shouldn't be necessary since plot bundle builder takes data and saves it to
+        // commands on appenData
       }
       pbb.append("\n");
     }
@@ -166,20 +175,20 @@ public final class PlotGrid implements GnuPlottable {
     }
 
     public Builder addGnuPlottable(Collection<GnuPlottable> gps) {
-      for(GnuPlottable gp: gps) {
+      for (GnuPlottable gp : gps) {
         addGnuPlottable(gp);
       }
       return this;
     }
 
-    public Builder addGnuPlottable(GnuPlottable ... gps) {
-      for(GnuPlottable gp : gps) {
+    public Builder addGnuPlottable(GnuPlottable... gps) {
+      for (GnuPlottable gp : gps) {
         addPlotBundle(gp.toPlotBundle());
       }
       return this;
     }
 
-    public Builder addPlotBundle(PlotBundle ... pbs) {
+    public Builder addPlotBundle(PlotBundle... pbs) {
       associatedBundles.addAll(ImmutableList.copyOf(pbs));
       return this;
     }
@@ -209,9 +218,7 @@ public final class PlotGrid implements GnuPlottable {
       return this;
     }
 
-    /**
-     * does the corresponding rowsFirst or columnsFirst grow "up" or "down"? default down.
-     */
+    /** does the corresponding rowsFirst or columnsFirst grow "up" or "down"? default down. */
     public Builder setDownwards(boolean downwards) {
       this.downwards = downwards;
       return this;
@@ -232,9 +239,19 @@ public final class PlotGrid implements GnuPlottable {
       } else {
         sizeString = "";
       }
-      return new PlotGrid(rows, columns, xpixels, ypixels, title, rowsFirst, downwards, xscale,
-          yscale, sizeString,
-          ImmutableList.copyOf(startingCommands), ImmutableList.copyOf(associatedBundles));
+      return new PlotGrid(
+          rows,
+          columns,
+          xpixels,
+          ypixels,
+          title,
+          rowsFirst,
+          downwards,
+          xscale,
+          yscale,
+          sizeString,
+          ImmutableList.copyOf(startingCommands),
+          ImmutableList.copyOf(associatedBundles));
     }
   }
 }

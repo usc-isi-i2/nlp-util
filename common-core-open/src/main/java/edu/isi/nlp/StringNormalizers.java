@@ -23,32 +23,30 @@ public final class StringNormalizers {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * A {@code StringNormalizer} which does nothing.
-   */
+  /** A {@code StringNormalizer} which does nothing. */
   public static StringNormalizer identity() {
     return IdentityNormalizer.INSTANCE;
   }
 
   /**
-   * Applies the NFKC Unicode normalization to the given String.  You should probably do this or
+   * Applies the NFKC Unicode normalization to the given String. You should probably do this or
    * {@link #toNfc()} on any strings from multiple sources being compared in all multilingual code
    * to deal with e.g. differences in composing accents. In particular, you probably want to apply
    * this before applying any other normalizers.
    *
-   * See Unicode Standard Annex #15 section 1.2 http://www.unicode.org/reports/tr15/
+   * <p>See Unicode Standard Annex #15 section 1.2 http://www.unicode.org/reports/tr15/
    */
   public static StringNormalizer toNfkc() {
     return NfkcNormalizer.INSTANCE;
   }
 
   /**
-   * Applies the NFC Unicode normalization to the given String.  You should probably do either this
+   * Applies the NFC Unicode normalization to the given String. You should probably do either this
    * or {@link #toNfkc()} on any strings from multiple sources being compared in all multilingual
    * code to deal with e.g. differences in composing accents. In particular, you probably want to
    * apply this before applying any other normalizers.
    *
-   * See Unicode Standard Annex #15 section 1.2 http://www.unicode.org/reports/tr15/
+   * <p>See Unicode Standard Annex #15 section 1.2 http://www.unicode.org/reports/tr15/
    */
   public static StringNormalizer toNfc() {
     return NfcNormalizer.INSTANCE;
@@ -58,8 +56,8 @@ public final class StringNormalizers {
    * A {@link StringNormalizer} which maps all Unicode codepoints matched by the provided {@link
    * CodepointMatcher} to the specified {@code replacementCharacter}.
    */
-  public static StringNormalizer translate(CodepointMatcher codepointMatcher,
-      char replacementCharacter) {
+  public static StringNormalizer translate(
+      CodepointMatcher codepointMatcher, char replacementCharacter) {
     return CodepointTranslatorStringNormalizer.of(codepointMatcher, replacementCharacter);
   }
 
@@ -94,17 +92,15 @@ public final class StringNormalizers {
   }
 
   /**
-   * A {@link StringNormalizer} which composes a sequence of {@link StringNormalizer}s.  The first
-   * {@code StringNormalizer} in the provided sequence it applied first, then the second is
-   * applied to its output, and so on.
+   * A {@link StringNormalizer} which composes a sequence of {@link StringNormalizer}s. The first
+   * {@code StringNormalizer} in the provided sequence it applied first, then the second is applied
+   * to its output, and so on.
    */
   public static StringNormalizer compose(Iterable<? extends StringNormalizer> stringNormalizers) {
     return CompositeStringNormalizer.of(stringNormalizers);
   }
 
-  /**
-   * A {@link StringNormalizer} which composes a sequence of {@link StringNormalizer}s.
-   */
+  /** A {@link StringNormalizer} which composes a sequence of {@link StringNormalizer}s. */
   public static StringNormalizer compose(StringNormalizer norm1, StringNormalizer... others) {
     final List<StringNormalizer> asList = new ArrayList<>();
     asList.add(norm1);
@@ -131,9 +127,7 @@ enum IdentityNormalizer implements StringNormalizer {
   }
 }
 
-/**
- * See {@link StringNormalizers#translate(CodepointMatcher, char)}
- */
+/** See {@link StringNormalizers#translate(CodepointMatcher, char)} */
 @IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
@@ -151,15 +145,13 @@ abstract class CodepointTranslatorStringNormalizer implements StringNormalizer {
     return codepointMatcher().replaceAll(input, replacementCharacter());
   }
 
-  public static CodepointTranslatorStringNormalizer of(CodepointMatcher matcher,
-      char replacementCharacter) {
+  public static CodepointTranslatorStringNormalizer of(
+      CodepointMatcher matcher, char replacementCharacter) {
     return ImmutableCodepointTranslatorStringNormalizer.of(matcher, replacementCharacter);
   }
 }
 
-/**
- * See {@link StringNormalizers#collapseConsecutive(CodepointMatcher)}
- */
+/** See {@link StringNormalizers#collapseConsecutive(CodepointMatcher)} */
 @IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
@@ -211,10 +203,7 @@ abstract class StripFromEnd implements StringNormalizer {
   }
 }
 
-
-/**
- * See {@link StringNormalizers#compose(Iterable)}
- */
+/** See {@link StringNormalizers#compose(Iterable)} */
 @IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize
@@ -281,10 +270,7 @@ abstract class ToUpperCase implements StringNormalizer {
   }
 }
 
-
-/**
- * See {@link StringNormalizers#toNfkc()}
- */
+/** See {@link StringNormalizers#toNfkc()} */
 enum NfkcNormalizer implements StringNormalizer {
   INSTANCE;
 
@@ -301,10 +287,7 @@ enum NfkcNormalizer implements StringNormalizer {
   }
 }
 
-
-/**
- * See {@link StringNormalizers#toNfc()}
- */
+/** See {@link StringNormalizers#toNfc()} */
 enum NfcNormalizer implements StringNormalizer {
   INSTANCE;
 
@@ -321,9 +304,7 @@ enum NfcNormalizer implements StringNormalizer {
   }
 }
 
-/**
- * See {@link StringNormalizers#asFunction(StringNormalizer)}.
- */
+/** See {@link StringNormalizers#asFunction(StringNormalizer)}. */
 @IsiNlpImmutable
 @Value.Immutable
 @JsonSerialize

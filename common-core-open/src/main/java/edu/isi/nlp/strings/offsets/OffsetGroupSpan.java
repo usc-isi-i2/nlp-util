@@ -1,13 +1,11 @@
 package edu.isi.nlp.strings.offsets;
 
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-
+import edu.isi.nlp.symbols.Symbol;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class OffsetGroupSpan {
 
@@ -27,14 +25,15 @@ public final class OffsetGroupSpan {
     return attributes;
   }
 
+  /*private static final Symbol REGION_SPAN = Symbol.from("RegionSpan");
 
-	/*private static final Symbol REGION_SPAN = Symbol.from("RegionSpan");
+  public static OffsetGroupSpan createRegionSpan(final OffsetGroupRange range) {
+  	return new OffsetGroupSpan(REGION_SPAN, range, ImmutableMap.<String,String>of());
+  }*/
 
-	public static OffsetGroupSpan createRegionSpan(final OffsetGroupRange range) {
-		return new OffsetGroupSpan(REGION_SPAN, range, ImmutableMap.<String,String>of());
-	}*/
-
-  public static OffsetGroupSpan create(final Symbol spanType, final OffsetGroupRange range,
+  public static OffsetGroupSpan create(
+      final Symbol spanType,
+      final OffsetGroupRange range,
       final Map<String, String> otherAttributes) {
     return new OffsetGroupSpan(spanType, range, otherAttributes);
   }
@@ -43,7 +42,9 @@ public final class OffsetGroupSpan {
     return create(spanType, range, ImmutableMap.<String, String>of());
   }
 
-  private OffsetGroupSpan(final Symbol spanType, final OffsetGroupRange range,
+  private OffsetGroupSpan(
+      final Symbol spanType,
+      final OffsetGroupRange range,
       final Map<String, String> otherAttributes) {
     this.range = checkNotNull(range);
     this.type = checkNotNull(spanType);

@@ -3,13 +3,14 @@ package edu.isi.nlp.math.permutationProxies;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * @author Ryan Gabbard
- */
+/** @author Ryan Gabbard */
 public final class PairedIntDoubleArrayPermutationProxy implements PermutationProxy {
 
-  private PairedIntDoubleArrayPermutationProxy(final int[] intArr, final double[] doubleArr,
-      final int startIdxInclusive, final int endIdxExclusive) {
+  private PairedIntDoubleArrayPermutationProxy(
+      final int[] intArr,
+      final double[] doubleArr,
+      final int startIdxInclusive,
+      final int endIdxExclusive) {
     checkArgument(startIdxInclusive >= 0);
     checkArgument(startIdxInclusive <= endIdxExclusive);
     checkArgument(endIdxExclusive <= intArr.length);
@@ -21,17 +22,18 @@ public final class PairedIntDoubleArrayPermutationProxy implements PermutationPr
     this.length = endIdxExclusive;
   }
 
-  public static PairedIntDoubleArrayPermutationProxy createForArraySlices(final int[] intArr,
+  public static PairedIntDoubleArrayPermutationProxy createForArraySlices(
+      final int[] intArr,
       final double[] doubleArr,
-      final int startIdxInclusive, final int endIdxExclusive) {
-    return new PairedIntDoubleArrayPermutationProxy(intArr, doubleArr,
-        startIdxInclusive, endIdxExclusive);
+      final int startIdxInclusive,
+      final int endIdxExclusive) {
+    return new PairedIntDoubleArrayPermutationProxy(
+        intArr, doubleArr, startIdxInclusive, endIdxExclusive);
   }
 
-  public static PairedIntDoubleArrayPermutationProxy createForArrays(final int[] intArr,
-      final double[] doubleArr) {
-    return new PairedIntDoubleArrayPermutationProxy(intArr, doubleArr,
-        0, intArr.length);
+  public static PairedIntDoubleArrayPermutationProxy createForArrays(
+      final int[] intArr, final double[] doubleArr) {
+    return new PairedIntDoubleArrayPermutationProxy(intArr, doubleArr, 0, intArr.length);
   }
 
   @Override

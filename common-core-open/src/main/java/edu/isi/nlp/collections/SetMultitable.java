@@ -1,10 +1,8 @@
 package edu.isi.nlp.collections;
 
 import com.google.common.collect.Multimap;
-
 import java.util.Collection;
 import java.util.Set;
-
 import javax.annotation.Nullable;
 
 /**

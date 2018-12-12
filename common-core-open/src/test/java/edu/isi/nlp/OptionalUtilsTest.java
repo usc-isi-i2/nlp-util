@@ -2,7 +2,6 @@ package edu.isi.nlp;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
 import org.junit.Test;
 
 public class OptionalUtilsTest {

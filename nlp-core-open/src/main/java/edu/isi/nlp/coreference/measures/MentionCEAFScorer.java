@@ -1,15 +1,18 @@
 package edu.isi.nlp.coreference.measures;
 
 /**
- * This implements the Constrained Entity-Alignment F-Measure (CEAF) metric.
- * CEAF treats the gold and system entities as a bipartite graph (with gold vs system entities forming the two sides of the graph).
- * Each gold entity is constrained to align with at most one system entity, and vice-versa.
- * The best alignment is a maximum weight bipartite matching problem, which can be solved in polynomial time by the Kuhn-Munkres algorithm.
+ * This implements the Constrained Entity-Alignment F-Measure (CEAF) metric. CEAF treats the gold
+ * and system entities as a bipartite graph (with gold vs system entities forming the two sides of
+ * the graph). Each gold entity is constrained to align with at most one system entity, and
+ * vice-versa. The best alignment is a maximum weight bipartite matching problem, which can be
+ * solved in polynomial time by the Kuhn-Munkres algorithm.
  *
- * For reference see: On Coreference Resolution Performance Metrics. Xiaoqiang Luo. In HLT-EMNLP 2005. Pages 25-32.
+ * <p>For reference see: On Coreference Resolution Performance Metrics. Xiaoqiang Luo. In HLT-EMNLP
+ * 2005. Pages 25-32.
  *
- * In the above paper, Luo introduced mention-based CEAF and entity-based CEAF.
- * We implement mention-based CEAF here, i.e. using Equation (8) of the paper as the similarity measure between two entities.
+ * <p>In the above paper, Luo introduced mention-based CEAF and entity-based CEAF. We implement
+ * mention-based CEAF here, i.e. using Equation (8) of the paper as the similarity measure between
+ * two entities.
  */
 /*@Beta
 public final class MentionCEAFScorer {

@@ -1,24 +1,22 @@
 package edu.isi.nlp.io;
 
-import edu.isi.nlp.strings.offsets.ByteOffset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
-
 import edu.isi.nlp.files.KeyValueSource;
+import edu.isi.nlp.strings.offsets.ByteOffset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * A file which contains multiple indexed blocks of character data.
  *
- * This should get merged/replaced with the never {@link KeyValueSource} code.
+ * <p>This should get merged/replaced with the never {@link KeyValueSource} code.
  */
 public final class IndexedByteSource implements CharacterChannelSet {
 
@@ -34,21 +32,19 @@ public final class IndexedByteSource implements CharacterChannelSet {
     return new IndexedByteSource(source, offsetIndex);
   }
 
-
   @Override
   public Set<Symbol> channelSet() {
     return offsetIndex.keySet();
   }
 
   public Optional<ByteSource> channelAsByteSource(final Symbol key) throws IOException {
-    final Optional<OffsetRange<ByteOffset>> range =
-        offsetIndex.byteOffsetsOf(checkNotNull(key));
+    final Optional<OffsetRange<ByteOffset>> range = offsetIndex.byteOffsetsOf(checkNotNull(key));
     if (range.isPresent()) {
       final ByteOffset startInclusive = range.get().startInclusive();
       final ByteOffset endInclusive = range.get().endInclusive();
 
-      return Optional.of(source.slice(startInclusive.asInt(),
-          endInclusive.asInt() - startInclusive.asInt() + 1));
+      return Optional.of(
+          source.slice(startInclusive.asInt(), endInclusive.asInt() - startInclusive.asInt() + 1));
     } else {
       return Optional.absent();
     }
@@ -68,5 +64,4 @@ public final class IndexedByteSource implements CharacterChannelSet {
   public ByteSource source() {
     return source;
   }
-
 }

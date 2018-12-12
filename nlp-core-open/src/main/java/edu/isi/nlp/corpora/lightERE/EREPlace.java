@@ -2,9 +2,7 @@ package edu.isi.nlp.corpora.lightERE;
 
 import com.google.common.base.Optional;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class EREPlace {
 
   private final Optional<String> type;
@@ -25,14 +23,10 @@ public final class EREPlace {
 
   @Override
   public String toString() {
-    return "EREPlace{" +
-        "type=" + type +
-        ", entity_mention_id='" + entity_mention_id + '\'' +
-        '}';
+    return "EREPlace{" + "type=" + type + ", entity_mention_id='" + entity_mention_id + '\'' + '}';
   }
 
   public static EREPlace from(final Optional<String> type, final String entity_mention_id) {
     return new EREPlace(type, entity_mention_id);
   }
 }
-

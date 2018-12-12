@@ -1,11 +1,10 @@
 package edu.isi.nlp.converters;
 
-import com.google.common.base.Splitter;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Splitter;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StringToStringList implements StringConverter<List<String>> {
 

@@ -1,21 +1,18 @@
 package edu.isi.nlp.edl;
 
-import edu.isi.nlp.io.StringSink;
-import edu.isi.nlp.strings.offsets.OffsetRange;
-import edu.isi.nlp.symbols.Symbol;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.fail;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
-
-import org.junit.Test;
-
+import edu.isi.nlp.io.StringSink;
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.IOException;
-
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.fail;
+import org.junit.Test;
 
 public class EDLTest {
 
@@ -23,8 +20,9 @@ public class EDLTest {
   public void edlLoadingTest() throws IOException {
     final EDLLoader edlLoader = EDLLoader.create();
     final ImmutableList<EDLMention> edlMentions =
-        edlLoader.loadEDLMentionsFrom(Resources.asCharSource(
-            Resources.getResource(EDLTest.class, "edl-sample.txt"), Charsets.UTF_8));
+        edlLoader.loadEDLMentionsFrom(
+            Resources.asCharSource(
+                Resources.getResource(EDLTest.class, "edl-sample.txt"), Charsets.UTF_8));
     assertEquals(2, edlMentions.size());
     final EDLMention secondMention = edlMentions.get(1);
     assertEquals("BBN1", secondMention.runId().asString());
@@ -44,8 +42,9 @@ public class EDLTest {
     final EDLWriter edlWriter = new EDLWriter.Builder().build();
 
     final ImmutableList<EDLMention> edlMentions =
-        edlLoader.loadEDLMentionsFrom(Resources.asCharSource(
-            Resources.getResource(EDLTest.class, "edl-sample.txt"), Charsets.UTF_8));
+        edlLoader.loadEDLMentionsFrom(
+            Resources.asCharSource(
+                Resources.getResource(EDLTest.class, "edl-sample.txt"), Charsets.UTF_8));
 
     final StringSink tmp = StringSink.createEmpty();
     edlWriter.writeEDLMentions(edlMentions, tmp);
@@ -56,22 +55,23 @@ public class EDLTest {
 
   @Test
   public void edlKbIdTest() {
-    final EDLMention ment = new EDLMention.Builder()
-        .confidence(1.0)
-        .entityType(Symbol.from("ORG"))
-        .mentionType(Symbol.from("NAM"))
-        .documentID(Symbol.from("NW_1234"))
-        .headOffsets(OffsetRange.charOffsetRange(0, 2))
-        .runId(Symbol.from("test"))
-        .mentionId("ment-1")
-        .headString("BBN")
-        .build();
+    final EDLMention ment =
+        new EDLMention.Builder()
+            .confidence(1.0)
+            .entityType(Symbol.from("ORG"))
+            .mentionType(Symbol.from("NAM"))
+            .documentID(Symbol.from("NW_1234"))
+            .headOffsets(OffsetRange.charOffsetRange(0, 2))
+            .runId(Symbol.from("test"))
+            .mentionId("ment-1")
+            .headString("BBN")
+            .build();
 
     assertEquals(Optional.absent(), ment.kbId());
-    assertEquals(Optional.of("123"),
-        new EDLMention.Builder().from(ment).kbId("123").build().kbId());
-    assertEquals(Optional.of("NIL123"),
-        new EDLMention.Builder().from(ment).nilKbId("123").build().kbId());
+    assertEquals(
+        Optional.of("123"), new EDLMention.Builder().from(ment).kbId("123").build().kbId());
+    assertEquals(
+        Optional.of("NIL123"), new EDLMention.Builder().from(ment).nilKbId("123").build().kbId());
     // Verify an empty ID throws an exception
     try {
       new EDLMention.Builder().from(ment).kbId("").build();

@@ -1,26 +1,27 @@
 package edu.isi.nlp.coreference.measures;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.collect.Sets;
 import edu.isi.nlp.collections.CollectionUtils;
 import edu.isi.nlp.evaluation.FMeasureInfo;
 import edu.isi.nlp.evaluation.PrecisionRecallPair;
-
-import com.google.common.collect.Sets;
-
 import java.util.Map;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Implements the B^3 coreference algorithm (Bagga and Baldwin, 1998)
  *
- * Elements being clustered are assumed to have properly defined equality and hashCode methods.
+ * <p>Elements being clustered are assumed to have properly defined equality and hashCode methods.
  *
- * This is unit-tested along with the other coref metrics in BBN-internal code.
+ * <p>This is unit-tested along with the other coref metrics in BBN-internal code.
  */
 public final class B3Scorer {
 
-  private enum B3Method {ByCluster, ByElement}
+  private enum B3Method {
+    ByCluster,
+    ByElement
+  }
 
   private B3Scorer(final B3Method method) {
     this.method = checkNotNull(method);
@@ -30,8 +31,8 @@ public final class B3Scorer {
     return new B3Scorer(B3Method.ByElement);
   }
 
-  public FMeasureInfo score(final Iterable<? extends Iterable<?>> predicted,
-      final Iterable<? extends Iterable<?>> gold) {
+  public FMeasureInfo score(
+      final Iterable<? extends Iterable<?>> predicted, final Iterable<? extends Iterable<?>> gold) {
     final Iterable<Set<Object>> predictedAsSets = CorefScorerUtils.toSets(predicted);
     final Iterable<Set<Object>> goldAsSets = CorefScorerUtils.toSets(gold);
 
@@ -42,15 +43,15 @@ public final class B3Scorer {
     }
   }
 
-  private FMeasureInfo scoreSets(final Iterable<Set<Object>> predicted,
-      final Iterable<Set<Object>> gold) {
+  private FMeasureInfo scoreSets(
+      final Iterable<Set<Object>> predicted, final Iterable<Set<Object>> gold) {
     final Map<Object, Set<Object>> predictedItemToGroup =
         CollectionUtils.makeElementsToContainersMap(predicted);
     final Map<Object, Set<Object>> goldItemToGroup =
         CollectionUtils.makeElementsToContainersMap(gold);
 
-    CorefScorerUtils.checkPartitionsOverSameElements(predictedItemToGroup.keySet(),
-        goldItemToGroup.keySet());
+    CorefScorerUtils.checkPartitionsOverSameElements(
+        predictedItemToGroup.keySet(), goldItemToGroup.keySet());
 
     // if this is empty, we know the other is too,
     // by the above
@@ -76,4 +77,3 @@ public final class B3Scorer {
 
   private final B3Method method;
 }
-

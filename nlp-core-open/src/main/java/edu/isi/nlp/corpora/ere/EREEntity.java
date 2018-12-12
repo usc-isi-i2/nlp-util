@@ -1,12 +1,11 @@
 package edu.isi.nlp.corpora.ere;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class EREEntity {
   private final String id;
@@ -14,7 +13,11 @@ public final class EREEntity {
   private final String specificity;
   private final ImmutableList<EREEntityMention> mentions;
 
-  private EREEntity(final String id, final String type, final String specificity, final List<EREEntityMention> mentions) {
+  private EREEntity(
+      final String id,
+      final String type,
+      final String specificity,
+      final List<EREEntityMention> mentions) {
     this.id = checkNotNull(id);
     this.type = checkNotNull(type);
     this.specificity = checkNotNull(specificity);
@@ -86,11 +89,18 @@ public final class EREEntity {
 
   @Override
   public String toString() {
-    return "EREEntity{" +
-        "id='" + id + '\'' +
-        ", type='" + type + '\'' +
-        ", specificity='" + specificity + '\'' +
-        ", mentions=" + mentions +
-        '}';
+    return "EREEntity{"
+        + "id='"
+        + id
+        + '\''
+        + ", type='"
+        + type
+        + '\''
+        + ", specificity='"
+        + specificity
+        + '\''
+        + ", mentions="
+        + mentions
+        + '}';
   }
 }

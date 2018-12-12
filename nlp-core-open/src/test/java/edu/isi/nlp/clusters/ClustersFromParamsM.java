@@ -1,32 +1,27 @@
 package edu.isi.nlp.clusters;
 
-import edu.isi.nlp.AbstractParameterizedModule;
-import edu.isi.nlp.ModuleFromParameter;
-import edu.isi.nlp.StringNormalizer;
-import edu.isi.nlp.parameters.Parameters;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.AbstractParameterizedModule;
+import edu.isi.nlp.ModuleFromParameter;
+import edu.isi.nlp.StringNormalizer;
+import edu.isi.nlp.parameters.Parameters;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Provides Brown {@link Clusters}. For backward compatability, {@link Clusters} itself is
- * bound to the Brown clusters specified by the {@code cluster_file} parameter.
+ * Provides Brown {@link Clusters}. For backward compatability, {@link Clusters} itself is bound to
+ * the Brown clusters specified by the {@code cluster_file} parameter.
  *
- * For newer code, we expose a map of Brown cluster keys to {@link Cluster} by looking for
+ * <p>For newer code, we expose a map of Brown cluster keys to {@link Cluster} by looking for
  * namespaces of the form {@code com.bbn.serif.brownClusters.<key>}. Under that namespace we look
- * for a {@code cluster_file} parameter.
- * Loads Brown clusters from the "cluster file" parameter.
+ * for a {@code cluster_file} parameter. Loads Brown clusters from the "cluster file" parameter.
  */
 @Beta
 public final class ClustersFromParamsM extends AbstractParameterizedModule {
@@ -41,9 +36,7 @@ public final class ClustersFromParamsM extends AbstractParameterizedModule {
     super(parameters);
   }
 
-  /**
-   * Old way of binding Brown clusters, provided for backwards compatibility
-   */
+  /** Old way of binding Brown clusters, provided for backwards compatibility */
   @Provides
   @Singleton
   public Clusters getClusters(Parameters params) throws IOException {
@@ -56,8 +49,7 @@ public final class ClustersFromParamsM extends AbstractParameterizedModule {
   }
 
   @Override
-  public void configure() {
-  }
+  public void configure() {}
 
   @Provides
   @Singleton
@@ -68,18 +60,21 @@ public final class ClustersFromParamsM extends AbstractParameterizedModule {
     for (final String key : brownClustersNamespace.getStringList("activeKeys")) {
       try {
         final File clusterFile =
-            params().getExistingFile(Parameters.joinNamespace(BASE_NAMESPACE, key,
-                "clusterFile"));
+            params().getExistingFile(Parameters.joinNamespace(BASE_NAMESPACE, key, "clusterFile"));
         log.info("Loading Brown clusters {} from {}", key, clusterFile);
 
         final Clusters baseClusters = Clusters.from(clusterFile);
         final String normalizerParam = Parameters.joinNamespace(BASE_NAMESPACE, key, "normalizer");
         if (params().isPresent(normalizerParam)) {
-          log.info("Normalizing Brown clusters {} with normalizer {}", key,
+          log.info(
+              "Normalizing Brown clusters {} with normalizer {}",
+              key,
               params().getString(normalizerParam));
           final StringNormalizer normalizer =
-              injector.createChildInjector(ModuleFromParameter.forParameter(
-                  normalizerParam).extractFrom(params())).getInstance(StringNormalizer.class);
+              injector
+                  .createChildInjector(
+                      ModuleFromParameter.forParameter(normalizerParam).extractFrom(params()))
+                  .getInstance(StringNormalizer.class);
           ret.put(key, HierarchicalWordClusterings.normalizeClustering(baseClusters, normalizer));
         } else {
           ret.put(key, baseClusters);
@@ -91,5 +86,3 @@ public final class ClustersFromParamsM extends AbstractParameterizedModule {
     return ret.build();
   }
 }
-
-

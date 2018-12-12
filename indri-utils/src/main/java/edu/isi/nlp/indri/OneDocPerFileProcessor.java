@@ -1,9 +1,7 @@
 package edu.isi.nlp.indri;
 
-import edu.isi.nlp.parameters.Parameters;
-
 import com.google.common.base.Charsets;
-
+import edu.isi.nlp.parameters.Parameters;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,13 +9,12 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * An {@link IndriFileProcessor} for text files where each file is a
- * single document and there is no special formatting.
+ * An {@link IndriFileProcessor} for text files where each file is a single document and there is no
+ * special formatting.
  */
 public final class OneDocPerFileProcessor implements IndriFileProcessor {
 
-  private OneDocPerFileProcessor() {
-  }
+  private OneDocPerFileProcessor() {}
 
   public static OneDocPerFileProcessor create() {
     return new OneDocPerFileProcessor();

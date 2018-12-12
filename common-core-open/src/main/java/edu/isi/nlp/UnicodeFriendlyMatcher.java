@@ -1,26 +1,22 @@
 package edu.isi.nlp;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.Optional;
 import edu.isi.nlp.strings.offsets.CharOffset;
 import edu.isi.nlp.strings.offsets.OffsetRange;
 import edu.isi.nlp.strings.offsets.UTF16Offset;
-
-import com.google.common.base.Optional;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-/**
- * Created by rgabbard on 7/7/17.
- */
+/** Created by rgabbard on 7/7/17. */
 public final class UnicodeFriendlyMatcher {
 
   private final Matcher wrappedMatcher;
   private final UnicodeFriendlyString matchedString;
 
-  private UnicodeFriendlyMatcher(final Matcher wrappedMatcher,
-      UnicodeFriendlyString matchedString) {
+  private UnicodeFriendlyMatcher(
+      final Matcher wrappedMatcher, UnicodeFriendlyString matchedString) {
     this.wrappedMatcher = checkNotNull(wrappedMatcher);
     this.matchedString = checkNotNull(matchedString);
   }
@@ -53,8 +49,9 @@ public final class UnicodeFriendlyMatcher {
     final Optional<CharOffset> endGroupCodepointExclusive = endExclusive(group);
 
     if (startGroupCodepoint.isPresent() && endGroupCodepointExclusive.isPresent()) {
-      return Optional.of(OffsetRange.fromInclusiveEndpoints(startGroupCodepoint.get(),
-          endGroupCodepointExclusive.get().shiftedCopy(-1)));
+      return Optional.of(
+          OffsetRange.fromInclusiveEndpoints(
+              startGroupCodepoint.get(), endGroupCodepointExclusive.get().shiftedCopy(-1)));
     } else {
       return Optional.absent();
     }
@@ -72,7 +69,6 @@ public final class UnicodeFriendlyMatcher {
       return Optional.absent();
     }
   }
-
 
   public CharOffset endExclusive() {
     return endMatchedCodepointForCodeUnit(wrappedMatcher.end());
@@ -119,5 +115,4 @@ public final class UnicodeFriendlyMatcher {
     // the resulting codepoint by one to return an exclusive end offset
     return matchedString.codepointIndex(UTF16Offset.of(codeunit - 1)).shiftedCopy(1);
   }
-
 }

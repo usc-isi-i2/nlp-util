@@ -1,24 +1,23 @@
 package edu.isi.nlp.math;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
-
 import java.util.Arrays;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * Computes percentiles.  There are multiple ways of computing them, so you will need to choose a
+ * Computes percentiles. There are multiple ways of computing them, so you will need to choose a
  * {@link #nistPercentileComputer()} or {@link #excelPercentileComputer()}.
  *
- * This may be at least partially superseded by Guava's {@code Quantiles} when we update to
- * Guava 21.
+ * <p>This may be at least partially superseded by Guava's {@code Quantiles} when we update to Guava
+ * 21.
  */
 @Beta
 public final class PercentileComputer {
@@ -33,10 +32,19 @@ public final class PercentileComputer {
    * Creates a {@code PercentileComputer} which uses the algorithm given in NIST's Engineering
    * Statistics Handbook. The relevant section is copied below:
    *
-   * <blockquote> Percentiles can be estimated from {@code N} measurements as follows: for the pth
-   * percentile, set p(N+1) equal to k + d for k an integer, and d, a fraction greater than or equal
-   * to 0 and less than 1. <ul> <li>For 0 < k < N,  Y(p) = Y[k] + d(Y[k+1] - Y[k])</li> <li>For k =
-   * 0,  Y(p) = Y[1]</li> <li>For k = N,  Y(p) = Y[N]</li> </ul> </blockquote>
+   * <blockquote>
+   *
+   * Percentiles can be estimated from {@code N} measurements as follows: for the pth percentile,
+   * set p(N+1) equal to k + d for k an integer, and d, a fraction greater than or equal to 0 and
+   * less than 1.
+   *
+   * <ul>
+   *   <li>For 0 < k < N, Y(p) = Y[k] + d(Y[k+1] - Y[k])
+   *   <li>For k = 0, Y(p) = Y[1]
+   *   <li>For k = N, Y(p) = Y[N]
+   * </ul>
+   *
+   * </blockquote>
    *
    * Note NIST is using 1-based indexing.
    */
@@ -46,23 +54,19 @@ public final class PercentileComputer {
 
   /**
    * Creates a {@code PercentileComputer} which uses the "Excel" alternative algorithm given in
-   * NIST's Engineering Statistics Handbook.  It is the same as the base NIST algorithm, except it
+   * NIST's Engineering Statistics Handbook. It is the same as the base NIST algorithm, except it
    * assigns (k,d) to the integral and fractional parts of p(N-1)+1 instead of p(N+1).
    */
   public static PercentileComputer excelPercentileComputer() {
     return new PercentileComputer(Algorithm.EXCEL);
   }
 
-  /**
-   * Computes percentiles for {@code data}, assuming it will not be externally modified.
-   */
+  /** Computes percentiles for {@code data}, assuming it will not be externally modified. */
   public Percentiles calculatePercentilesAdoptingData(double[] data) {
     return new Percentiles(algorithm, data);
   }
 
-  /**
-   * Computes percentiles for {@code data}, making a copy in case it is modified externally.
-   */
+  /** Computes percentiles for {@code data}, making a copy in case it is modified externally. */
   public Percentiles calculatePercentilesCopyingData(double[] data) {
     return new Percentiles(algorithm, data.clone());
   }
@@ -114,10 +118,10 @@ public final class PercentileComputer {
   }
 
   /**
-   * This represents the computation of percentiles on a data set.  It can be queried for various
+   * This represents the computation of percentiles on a data set. It can be queried for various
    * percentile-related information.
    *
-   * Most things returned are {@link Optional} to force the user to deal with the case of empty
+   * <p>Most things returned are {@link Optional} to force the user to deal with the case of empty
    * data.
    */
   public static final class Percentiles {
@@ -129,7 +133,8 @@ public final class PercentileComputer {
     final double[] data;
 
     @JsonCreator
-    Percentiles(@JsonProperty("algorithm") Algorithm algorithm, @JsonProperty("data") double[] data) {
+    Percentiles(
+        @JsonProperty("algorithm") Algorithm algorithm, @JsonProperty("data") double[] data) {
       this.algorithm = checkNotNull(algorithm);
       this.data = data;
       Arrays.sort(data);
@@ -171,7 +176,7 @@ public final class PercentileComputer {
     }
 
     /**
-     * Calculates the p-th percentile of the observed data.  The algorithm used varies depending on
+     * Calculates the p-th percentile of the observed data. The algorithm used varies depending on
      * what {@link PercentileComputer} generated this data. If no data was observed, this will throw
      * a {@link java.util.NoSuchElementException}. This method takes time linear in the number of
      * observed values.

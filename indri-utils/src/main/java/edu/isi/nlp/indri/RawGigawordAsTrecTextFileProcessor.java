@@ -1,33 +1,30 @@
 package edu.isi.nlp.indri;
 
-import edu.isi.nlp.files.FileUtils;
-import edu.isi.nlp.parameters.Parameters;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.files.FileUtils;
+import edu.isi.nlp.parameters.Parameters;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
 /**
- * An {@link IndriFileProcessor} for the 'raw' files from Gigaword which
- * concatenate many files together. This is the preferred way of indexing GW because it is much much
- * faster.
+ * An {@link IndriFileProcessor} for the 'raw' files from Gigaword which concatenate many files
+ * together. This is the preferred way of indexing GW because it is much much faster.
  */
 public final class RawGigawordAsTrecTextFileProcessor extends AbstractIndriFileProcessor {
 
   // this param exists because not all Chinese gigaword documents are processed into serifxml.
   // Rather than solve the hard problem and attempt to fix CSerif
-  private final static String OPTIONAL_DOCID_WHITE_LIST_PARAM = "optionalDocIdWhiteList";
+  private static final String OPTIONAL_DOCID_WHITE_LIST_PARAM = "optionalDocIdWhiteList";
   private final Optional<? extends Set<String>> optionalDocIdWhiteList;
 
   private RawGigawordAsTrecTextFileProcessor(
@@ -39,10 +36,13 @@ public final class RawGigawordAsTrecTextFileProcessor extends AbstractIndriFileP
       throws IOException {
     final Optional<? extends Set<String>> docIdsToProcess;
     if (params.isPresent(OPTIONAL_DOCID_WHITE_LIST_PARAM)) {
-      docIdsToProcess = Optional.of(ImmutableSet
-          .copyOf(FileUtils.loadStringList(Files
-              .asCharSource(params.getExistingFile(OPTIONAL_DOCID_WHITE_LIST_PARAM),
-                  Charsets.UTF_8))));
+      docIdsToProcess =
+          Optional.of(
+              ImmutableSet.copyOf(
+                  FileUtils.loadStringList(
+                      Files.asCharSource(
+                          params.getExistingFile(OPTIONAL_DOCID_WHITE_LIST_PARAM),
+                          Charsets.UTF_8))));
     } else {
       docIdsToProcess = Optional.absent();
     }
@@ -54,9 +54,7 @@ public final class RawGigawordAsTrecTextFileProcessor extends AbstractIndriFileP
     return new RawGigawordAsTrecTextIterator(s);
   }
 
-
-  private final class RawGigawordAsTrecTextIterator
-      extends AbstractIterator<String> {
+  private final class RawGigawordAsTrecTextIterator extends AbstractIterator<String> {
 
     private final String fullText;
     private int startNextSearchAt = 0;
@@ -80,8 +78,9 @@ public final class RawGigawordAsTrecTextFileProcessor extends AbstractIndriFileP
         final String docString = fullText.substring(startNextSearchAt, endOfDoc);
         startNextSearchAt = endOfDoc + 1;
         // do not search the entire document ...
-        final Matcher m = GIGAWORD_DOC_ELEMENT_PATTERN
-            .matcher(docString.substring(0, Math.min(100, docString.length())));
+        final Matcher m =
+            GIGAWORD_DOC_ELEMENT_PATTERN.matcher(
+                docString.substring(0, Math.min(100, docString.length())));
         checkState(m.find());
         final String docId = m.group(1);
         // if our whitelist doesn't contain this docid
@@ -96,13 +95,12 @@ public final class RawGigawordAsTrecTextFileProcessor extends AbstractIndriFileP
 
     // Gigaword does not fit the trectext format because it puts the document ID in an
     // attribute rather than a <DOCNO> element as required. This function fixes this.
-    private final Pattern GIGAWORD_DOC_ELEMENT_PATTERN = Pattern.compile(
-        "<DOC id=\"(.*?)\".*>");
+    private final Pattern GIGAWORD_DOC_ELEMENT_PATTERN = Pattern.compile("<DOC id=\"(.*?)\".*>");
 
     private String gigawordToTrecText(String gigawordDoc) {
-      return GIGAWORD_DOC_ELEMENT_PATTERN.matcher(gigawordDoc)
+      return GIGAWORD_DOC_ELEMENT_PATTERN
+          .matcher(gigawordDoc)
           .replaceFirst("<DOC>\n\t<DOCNO>$1</DOCNO>\n");
     }
   }
-
 }

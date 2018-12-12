@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Convenience object to build Jackson serializers the way we usually use them.
  *
- * If you want to use Guice-bound values during deserialization,
- * see {@code JacksonSerializationM}.
+ * <p>If you want to use Guice-bound values during deserialization, see {@code
+ * JacksonSerializationM}.
  */
 public final class JacksonSerializer {
 
@@ -46,16 +46,13 @@ public final class JacksonSerializer {
     return builder().build();
   }
 
-
   public static JacksonSerializer forSmile() {
     return builder().forSmile().build();
   }
 
-
   public static Builder builder() {
     return new Builder();
   }
-
 
   public void serializeTo(final Object o, final ByteSink out) throws IOException {
     final RootObject rootObj = RootObject.forObject(o);
@@ -85,11 +82,11 @@ public final class JacksonSerializer {
   }
 
   /**
-   * Builder for {@link JacksonSerializer}s.  Every method on this which returns a {@code Builder}
-   * returns a new copy.  This allows use to inject builders which already have Guice bindings done
+   * Builder for {@link JacksonSerializer}s. Every method on this which returns a {@code Builder}
+   * returns a new copy. This allows use to inject builders which already have Guice bindings done
    * and which can be further customized by users.
    *
-   * The Builder defaults to using plain, non-pretty-printed JSON output with no injected values
+   * <p>The Builder defaults to using plain, non-pretty-printed JSON output with no injected values
    * and with properties for storing type information.
    */
   public static final class Builder {
@@ -103,8 +100,9 @@ public final class JacksonSerializer {
     private AnnotationIntrospector annotationIntrospector = null;
     private InjectableValues injectableValues = null;
     // we order modules by name for determinism
-    private ImmutableSet.Builder<Module> modules = ImmutableSortedSet.<Module>orderedBy(
-        Ordering.natural().onResultOf(ModuleNameFunction.INSTANCE));
+    private ImmutableSet.Builder<Module> modules =
+        ImmutableSortedSet.<Module>orderedBy(
+            Ordering.natural().onResultOf(ModuleNameFunction.INSTANCE));
     private final ImmutableSet.Builder<String> blockedModuleClassNamesB = ImmutableSet.builder();
 
     private Builder copy() {
@@ -151,9 +149,9 @@ public final class JacksonSerializer {
 
     /**
      * Specifies to use arrays rather than properties to encode type information. You will need to
-     * enable this to read any serialized objects from before 28 Oct 2015 / bue-common-open 2.23.2 .  The newer default method
-     * of using JSON properties to encode type information avoids certain bad interactions of
-     * Jackson and generics.
+     * enable this to read any serialized objects from before 28 Oct 2015 / bue-common-open 2.23.2 .
+     * The newer default method of using JSON properties to encode type information avoids certain
+     * bad interactions of Jackson and generics.
      */
     public Builder useArraysToEncodeTypeInformation() {
       final Builder ret = copy();
@@ -161,11 +159,9 @@ public final class JacksonSerializer {
       return ret;
     }
 
-    /**
-     * This exists only for use by {@link JacksonSerializationM}
-     */
-    /* package-private */ Builder withInjectionBindings(AnnotationIntrospector annotationIntrospector,
-        InjectableValues injectableValues) {
+    /** This exists only for use by {@link JacksonSerializationM} */
+    /* package-private */ Builder withInjectionBindings(
+        AnnotationIntrospector annotationIntrospector, InjectableValues injectableValues) {
       final Builder ret = copy();
       ret.annotationIntrospector = checkNotNull(annotationIntrospector);
       ret.injectableValues = checkNotNull(injectableValues);
@@ -193,18 +189,16 @@ public final class JacksonSerializer {
 
       if (injectableValues != null) {
         // this is from jackson-module-guice's ObjectMapperModule.get()
-        // we do this in a separate method because we do not currently want to inject the ObjectMapper
+        // we do this in a separate method because we do not currently want to inject the
+        // ObjectMapper
         objectMapper.setInjectableValues(injectableValues);
         objectMapper.setAnnotationIntrospectors(
             new AnnotationIntrospectorPair(
                 annotationIntrospector,
-                objectMapper.getSerializationConfig().getAnnotationIntrospector()
-            ),
+                objectMapper.getSerializationConfig().getAnnotationIntrospector()),
             new AnnotationIntrospectorPair(
                 annotationIntrospector,
-                objectMapper.getDeserializationConfig().getAnnotationIntrospector()
-            )
-        );
+                objectMapper.getDeserializationConfig().getAnnotationIntrospector()));
       }
 
       return new JacksonSerializer(objectMapper);
@@ -262,4 +256,3 @@ enum ModuleNameFunction implements Function<Module, String> {
     return input.getModuleName();
   }
 }
-

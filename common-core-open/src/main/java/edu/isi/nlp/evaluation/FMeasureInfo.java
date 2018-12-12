@@ -1,12 +1,10 @@
 package edu.isi.nlp.evaluation;
 
-import java.util.List;
-
 import static com.google.common.base.Preconditions.checkArgument;
 
-/**
- * The information needed to calculate precision, recall, and F-measure.
- */
+import java.util.List;
+
+/** The information needed to calculate precision, recall, and F-measure. */
 public abstract class FMeasureInfo {
 
   public abstract double precision();
@@ -23,16 +21,13 @@ public abstract class FMeasureInfo {
     final double precision = precision();
 
     if (precision + recall > 0.0) {
-      return (1.0 + beta * beta)
-          * precision * recall
-          / (beta * beta * precision + recall);
+      return (1.0 + beta * beta) * precision * recall / (beta * beta * precision + recall);
     } else {
       return 0.0;
     }
   }
 
-  public static FMeasureInfo aggregateByMacroPR(
-      List<FMeasureInfo> corefAgreementsLR) {
+  public static FMeasureInfo aggregateByMacroPR(List<FMeasureInfo> corefAgreementsLR) {
     float precisionTotal = 0.0f;
     float recallTotal = 0.0f;
 
@@ -48,5 +43,4 @@ public abstract class FMeasureInfo {
       return new PrecisionRecallPair(precisionTotal / count, recallTotal / count);
     }
   }
-
 }

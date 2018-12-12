@@ -1,18 +1,15 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.parameters.Parameters;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.parameters.Parameters;
 import java.io.File;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Given two lists of files, produces a new list of all files present in the first list but not
@@ -59,12 +56,17 @@ public final class SubtractFileLists {
     final ImmutableSet<File> outputFileList =
         Sets.difference(inputFiles, filesToSubtract).immutableCopy();
 
-    log.info("Subtracting {}'s {} files from {}'s {} files and writing {} files to to {}",
-        toSubtractFileListFile, filesToSubtract.size(),
-        inputFileListFile, inputFiles.size(),
-        outputFileList.size(), outputFile);
+    log.info(
+        "Subtracting {}'s {} files from {}'s {} files and writing {} files to to {}",
+        toSubtractFileListFile,
+        filesToSubtract.size(),
+        inputFileListFile,
+        inputFiles.size(),
+        outputFileList.size(),
+        outputFile);
 
-    FileUtils.writeFileList(ORDER_BY_ABSOLUTE_PATH.sortedCopy(outputFileList),
+    FileUtils.writeFileList(
+        ORDER_BY_ABSOLUTE_PATH.sortedCopy(outputFileList),
         Files.asCharSink(outputFile, Charsets.UTF_8));
   }
 }

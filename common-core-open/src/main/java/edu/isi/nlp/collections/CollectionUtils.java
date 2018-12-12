@@ -57,14 +57,15 @@ public final class CollectionUtils {
 
   /**
    * Takes some collections and creates a {@link com.google.common.collect.ListMultimap} from their
-   * elements to which collections contain them.  Unlike {@link #makeElementsToContainersMap(Iterable)},
-   * the same element may appear in multiple collections. However, {@code null} may not appear in
-   * any of the collections.  The returned multimap is a {@link com.google.common.collect.ListMultimap}
-   * to avoid having to do potentially expensive comparisons between the sets; we know there will be
-   * no duplicates because the input collections are sets.
+   * elements to which collections contain them. Unlike {@link
+   * #makeElementsToContainersMap(Iterable)}, the same element may appear in multiple collections.
+   * However, {@code null} may not appear in any of the collections. The returned multimap is a
+   * {@link com.google.common.collect.ListMultimap} to avoid having to do potentially expensive
+   * comparisons between the sets; we know there will be no duplicates because the input collections
+   * are sets.
    */
-  public static <V, C extends Set<? extends V>> ImmutableListMultimap<V, C> makeSetElementsToContainersMultimap(
-      final Iterable<C> sets) {
+  public static <V, C extends Set<? extends V>>
+      ImmutableListMultimap<V, C> makeSetElementsToContainersMultimap(final Iterable<C> sets) {
     // because these are sets we can safely use a list multimap without having to worry
     // about duplicates
     final ImmutableListMultimap.Builder<V, C> ret = ImmutableListMultimap.builder();
@@ -78,14 +79,12 @@ public final class CollectionUtils {
     return ret.build();
   }
 
-
   /**
    * Returns a new Multiset resulting from transforming each element of the input Multiset by a
    * function. If two or more elements are mapped to the same value by the function, their counts
    * will be summed in the new Multiset.
    */
-  public static <A, B> ImmutableMultiset<B> transformedCopy(Multiset<A> ms,
-      Function<A, B> func) {
+  public static <A, B> ImmutableMultiset<B> transformedCopy(Multiset<A> ms, Function<A, B> func) {
     final ImmutableMultiset.Builder<B> ret = ImmutableMultiset.builder();
 
     for (final Multiset.Entry<A> entry : ms.entrySet()) {
@@ -96,11 +95,8 @@ public final class CollectionUtils {
     return ret.build();
   }
 
-  /**
-   * Same as transformedCopy, except the returned Multiset is mutable.
-   */
-  public static <A, B> Multiset<B> mutableTransformedCopy(Multiset<A> ms,
-      Function<A, B> func) {
+  /** Same as transformedCopy, except the returned Multiset is mutable. */
+  public static <A, B> Multiset<B> mutableTransformedCopy(Multiset<A> ms, Function<A, B> func) {
     final Multiset<B> ret = HashMultiset.create();
 
     for (final Multiset.Entry<A> entry : ms.entrySet()) {
@@ -116,7 +112,7 @@ public final class CollectionUtils {
    * This behaves exactly like List.subList, including all notes in its Javadoc concerning
    * structural modification of the backing List, etc. with one difference: if the end index is
    * beyond the end of the list, instead of throwing an exception, the sublist simply stops at the
-   * end of the list.  After the fifth or so time writing this idiom, it seems worth having a
+   * end of the list. After the fifth or so time writing this idiom, it seems worth having a
    * function for. :-)
    */
   public static <T> List<T> truncatedSubList(List<T> inList, int start, int end) {
@@ -142,9 +138,7 @@ public final class CollectionUtils {
     return true;
   }
 
-  /**
-   * Guava function to get the value of a {@link com.google.common.collect.Table} cell.
-   */
+  /** Guava function to get the value of a {@link com.google.common.collect.Table} cell. */
   public static <V> Function<Table.Cell<?, ?, V>, V> TableCellValue() {
     return new Function<Table.Cell<?, ?, V>, V>() {
       @Override
@@ -162,9 +156,7 @@ public final class CollectionUtils {
         }
       };
 
-  /**
-   * Guava function to map a collection to its size.
-   */
+  /** Guava function to map a collection to its size. */
   public static Function<Collection<?>, Integer> sizeFunction() {
     return SIZE;
   }
@@ -215,16 +207,12 @@ public final class CollectionUtils {
     return ImmutableSet.copyOf(items).asList();
   }
 
-  /**
-   * Turns null into an empty list and leaves other inputs untouched.
-   */
+  /** Turns null into an empty list and leaves other inputs untouched. */
   public static <T> List<T> coerceNullToEmpty(List<T> list) {
     return MoreObjects.firstNonNull(list, ImmutableList.<T>of());
   }
 
-  /**
-   * A Guava {@link Predicate} which calls {@link Collection#isEmpty()} on provided collections.
-   */
+  /** A Guava {@link Predicate} which calls {@link Collection#isEmpty()} on provided collections. */
   public static Predicate<Collection<?>> isEmptyPredicate() {
     return new Predicate<Collection<?>>() {
       @Override
@@ -237,20 +225,19 @@ public final class CollectionUtils {
   /**
    * Partitions a list into the specified number of partitions as evenly as is possible. The final
    * "extra" elements that cannot be evenly distributed are distributed starting with the first
-   * partitions. For example, three partitions of (1, 2, 3, 4) results in ((1, 4), (2), (3)).
-   * Unlike {@link Lists#partition(List, int)}, this returns {@link ImmutableList}s, not list views,
-   * and computations are computed eagerly.
+   * partitions. For example, three partitions of (1, 2, 3, 4) results in ((1, 4), (2), (3)). Unlike
+   * {@link Lists#partition(List, int)}, this returns {@link ImmutableList}s, not list views, and
+   * computations are computed eagerly.
    *
    * @param partitions the number of partitions to divide the list into
    * @return a list of the partitions, which are themselves lists
    */
-  public static <E> ImmutableList<ImmutableList<E>> partitionAlmostEvenly(final List<E> list,
-      final int partitions) {
+  public static <E> ImmutableList<ImmutableList<E>> partitionAlmostEvenly(
+      final List<E> list, final int partitions) {
     checkNotNull(list);
-    checkArgument(partitions > 0,
-        "Number of partitions must be positive");
-    checkArgument(partitions <= list.size(),
-        "Cannot request more partitions than there are list items");
+    checkArgument(partitions > 0, "Number of partitions must be positive");
+    checkArgument(
+        partitions <= list.size(), "Cannot request more partitions than there are list items");
 
     // Divide into partitions, with the remainder falling into the extra partitions
     final List<List<E>> prelimPartitions =
@@ -298,9 +285,13 @@ public final class CollectionUtils {
     }
 
     final ImmutableList<ImmutableList<E>> finalPartitions = ret.build();
-    checkState(finalPartitions.size() == partitions,
-        "Partitioning failed: number of output partitions (" + finalPartitions.size()
-            + ") does not match requested number (" + partitions + ")");
+    checkState(
+        finalPartitions.size() == partitions,
+        "Partitioning failed: number of output partitions ("
+            + finalPartitions.size()
+            + ") does not match requested number ("
+            + partitions
+            + ")");
 
     return finalPartitions;
   }
@@ -312,14 +303,19 @@ public final class CollectionUtils {
    * msgIntroduction} and {@code leftNamePlural} and {@code rightNamePlural} will be used to
    * describe the left and right element types.
    *
-   * Example: <pre>
+   * <p>Example:
+   *
+   * <pre>
    *  assertSameElementsOrIllegalState(mySet1, mySet2, "Document IDs do not match: " ,
    *       "gold docIDs", "test docIDs");
    * </pre>
    */
-  public static void assertSameElementsOrIllegalState(Iterable<?> left, Iterable<?> right,
+  public static void assertSameElementsOrIllegalState(
+      Iterable<?> left,
+      Iterable<?> right,
       String msgIntroduction,
-      String leftName, String rightName) {
+      String leftName,
+      String rightName) {
     final Optional<String> exceptionMessage =
         assertSameElementsCommon(left, right, msgIntroduction, leftName, rightName);
 
@@ -328,9 +324,12 @@ public final class CollectionUtils {
     }
   }
 
-  public static void assertSameElementsOrIllegalArgument(Iterable<?> left, Iterable<?> right,
+  public static void assertSameElementsOrIllegalArgument(
+      Iterable<?> left,
+      Iterable<?> right,
       String msgIntroduction,
-      String leftName, String rightName) {
+      String leftName,
+      String rightName) {
     final Optional<String> exceptionMessage =
         assertSameElementsCommon(left, right, msgIntroduction, leftName, rightName);
 
@@ -339,9 +338,12 @@ public final class CollectionUtils {
     }
   }
 
-
-  private static Optional<String> assertSameElementsCommon(final Iterable<?> left, final Iterable<?> right,
-      final String msgIntroduction, final String leftName, final String rightName) {
+  private static Optional<String> assertSameElementsCommon(
+      final Iterable<?> left,
+      final Iterable<?> right,
+      final String msgIntroduction,
+      final String leftName,
+      final String rightName) {
     final Optional<String> exceptionMessage;
 
     final ImmutableSet<?> leftSet = ImmutableSet.copyOf(left);
@@ -355,13 +357,25 @@ public final class CollectionUtils {
       exceptionMsg.append(msgIntroduction);
 
       if (!leftOnly.isEmpty()) {
-        exceptionMsg.append(" ").append(leftOnly.size()).append("  ").append(leftName)
-            .append(" only: ").append(leftOnly).append(". ");
+        exceptionMsg
+            .append(" ")
+            .append(leftOnly.size())
+            .append("  ")
+            .append(leftName)
+            .append(" only: ")
+            .append(leftOnly)
+            .append(". ");
       }
 
       if (!rightOnly.isEmpty()) {
-        exceptionMsg.append(" ").append(rightOnly.size()).append(" ").append(rightName)
-            .append(" only: ").append(rightOnly).append(". ");
+        exceptionMsg
+            .append(" ")
+            .append(rightOnly.size())
+            .append(" ")
+            .append(rightName)
+            .append(" only: ")
+            .append(rightOnly)
+            .append(". ");
       }
 
       exceptionMessage = Optional.of(exceptionMsg.toString());
@@ -380,7 +394,10 @@ public final class CollectionUtils {
     if (items.size() <= limit) {
       return items.toString();
     } else {
-      return items.asList().subList(0, limit).toString() + "... (" + (items.size() - limit) + " more)";
+      return items.asList().subList(0, limit).toString()
+          + "... ("
+          + (items.size() - limit)
+          + " more)";
     }
   }
 }

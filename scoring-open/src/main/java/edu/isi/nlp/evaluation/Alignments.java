@@ -5,12 +5,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.Map;
 
-/**
- * Utility methods for dealing with {@link Alignment}s.
- */
+/** Utility methods for dealing with {@link Alignment}s. */
 @Beta
 public final class Alignments {
 
@@ -20,16 +17,14 @@ public final class Alignments {
 
   /**
    * Splits an alignment into many alignments based on a function mapping aligned items to some set
-   * of keys.  Returns a map where the keys are all observed outputs of the key function on items in
+   * of keys. Returns a map where the keys are all observed outputs of the key function on items in
    * the alignment and the values are new alignments containing only elements which yield that
-   * output when the key function is applied.  For example, if you had an alignment of
-   * EventMentions, you could use an "event type" key function to produce one alignment per event
-   * type.
+   * output when the key function is applied. For example, if you had an alignment of EventMentions,
+   * you could use an "event type" key function to produce one alignment per event type.
    */
   @SuppressWarnings("unchecked")
   public static <T, V> ImmutableMap<V, Alignment<T, T>> splitAlignmentByKeyFunction(
-      Alignment<? extends T, ? extends T> alignment,
-      Function<? super T, ? extends V> keyFunction) {
+      Alignment<? extends T, ? extends T> alignment, Function<? super T, ? extends V> keyFunction) {
     // we first determine all keys we could ever encounter to ensure we can construct our map
     // deterministically
     // Java will complain about this cast but it is safe because ImmutableSet if covariant in its
@@ -37,7 +32,8 @@ public final class Alignments {
     final ImmutableSet<? extends V> allKeys =
         FluentIterable.from((ImmutableSet<T>) alignment.allLeftItems())
             .append(alignment.allRightItems())
-            .transform(keyFunction).toSet();
+            .transform(keyFunction)
+            .toSet();
 
     final ImmutableMap.Builder<V, MultimapAlignment.Builder<T, T>> keysToAlignmentsB =
         ImmutableMap.builder();

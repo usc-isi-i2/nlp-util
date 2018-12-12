@@ -1,8 +1,8 @@
 package edu.isi.nlp;
 
 /**
- * Provides a sequence of integers.  The first value returned is guaranteed to be the provided
- * starting value. Each subsequent call will return a value never returned before.  If we run out of
+ * Provides a sequence of integers. The first value returned is guaranteed to be the provided
+ * starting value. Each subsequent call will return a value never returned before. If we run out of
  * unique values, a {@link RuntimeException} will be thrown.
  */
 public final class IntIDSequence {

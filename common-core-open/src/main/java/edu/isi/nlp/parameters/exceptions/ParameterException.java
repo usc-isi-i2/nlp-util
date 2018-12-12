@@ -2,7 +2,6 @@ package edu.isi.nlp.parameters.exceptions;
 
 import com.google.common.annotations.Beta;
 
-
 @Beta
 public class ParameterException extends RuntimeException {
 

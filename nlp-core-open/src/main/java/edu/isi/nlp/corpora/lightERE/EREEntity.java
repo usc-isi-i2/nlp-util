@@ -1,12 +1,9 @@
 package edu.isi.nlp.corpora.lightERE;
 
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class EREEntity {
 
   // xml entities
@@ -17,8 +14,8 @@ public final class EREEntity {
   private final String id;
   private final String name;
 
-  public EREEntity(final List<EREEntityMention> mentions, final TYPE type, final String id,
-      final String name) {
+  public EREEntity(
+      final List<EREEntityMention> mentions, final TYPE type, final String id, final String name) {
     this.mentions = mentions;
     this.type = type;
     this.id = id;
@@ -51,12 +48,18 @@ public final class EREEntity {
 
   @Override
   public String toString() {
-    return "EREEntity{" +
-        "mentions=" + mentions +
-        ", type=" + type +
-        ", id='" + id + '\'' +
-        ", name='" + name + '\'' +
-        '}';
+    return "EREEntity{"
+        + "mentions="
+        + mentions
+        + ", type="
+        + type
+        + ", id='"
+        + id
+        + '\''
+        + ", name='"
+        + name
+        + '\''
+        + '}';
   }
 
   public static Builder builder(final String id, final String type) {
@@ -109,4 +112,3 @@ public final class EREEntity {
     }
   }
 }
-

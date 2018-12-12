@@ -15,9 +15,15 @@ import java.util.List;
 @Beta
 public final class LinePlot implements GnuPlottable {
 
-  private LinePlot(final String title, final String xLabel, final String yLabel,
-      final Range<Double> xRange, final Range<Double> yRange, final double pointSize,
-      final List<LineData> lineDatas, final List<String> preCommands) {
+  private LinePlot(
+      final String title,
+      final String xLabel,
+      final String yLabel,
+      final Range<Double> xRange,
+      final Range<Double> yRange,
+      final double pointSize,
+      final List<LineData> lineDatas,
+      final List<String> preCommands) {
     this.title = title;
     this.xLabel = xLabel;
     this.yLabel = yLabel;
@@ -33,7 +39,7 @@ public final class LinePlot implements GnuPlottable {
     return new Builder();
   }
 
-  private String data()  {
+  private String data() {
     final StringBuilder sb = new StringBuilder();
     final int maxSize = Collections.max(Lists.transform(lineDatas, LineData.NumPoints));
 
@@ -90,7 +96,7 @@ public final class LinePlot implements GnuPlottable {
     pb.append("\n");
     pb.append("set size square\n");
 
-    for(String cmd: preCommands) {
+    for (String cmd : preCommands) {
       pb.append(cmd);
     }
 
@@ -110,12 +116,11 @@ public final class LinePlot implements GnuPlottable {
       pb.append(" using ");
       pb.append(offset);
       pb.append(":");
-      pb.append(offset+1);
+      pb.append(offset + 1);
       pb.append(" title \"");
       pb.append(lineData.title());
       pb.append("\"");
       pb.append(" with lp ");
-
 
       offset += 2;
       first = false;
@@ -141,9 +146,7 @@ public final class LinePlot implements GnuPlottable {
 
   public static class Builder {
 
-    public Builder() {
-
-    }
+    public Builder() {}
 
     public LinePlot build() {
       return new LinePlot(title, xLabel, yLabel, xRange, yRange, pointSize, lineDatas, preCommands);
@@ -200,5 +203,4 @@ public final class LinePlot implements GnuPlottable {
     private List<LineData> lineDatas = Lists.newArrayList();
     private ArrayList<String> preCommands = Lists.newArrayList();
   }
-
 }

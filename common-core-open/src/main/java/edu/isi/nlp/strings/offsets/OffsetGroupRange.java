@@ -1,14 +1,14 @@
 package edu.isi.nlp.strings.offsets;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+
 /**
- * A range between two points in text, defined by the full offsets groups of its
- * two inclusive end points.
+ * A range between two points in text, defined by the full offsets groups of its two inclusive end
+ * points.
  */
 public final class OffsetGroupRange {
 
@@ -23,11 +23,10 @@ public final class OffsetGroupRange {
     return endInclusive;
   }
 
-  public static OffsetGroupRange from(final OffsetGroup startInclusive,
-      final OffsetGroup endInclusive) {
+  public static OffsetGroupRange from(
+      final OffsetGroup startInclusive, final OffsetGroup endInclusive) {
     return new OffsetGroupRange(startInclusive, endInclusive);
   }
-
 
   // these are so frequent it makes sense to make convenience accessors for them
   public CharOffset startCharOffsetInclusive() {
@@ -46,16 +45,19 @@ public final class OffsetGroupRange {
     return endInclusive().edtOffset();
   }
 
-
   private OffsetGroupRange(final OffsetGroup startInclusive, final OffsetGroup endInclusive) {
     this.startInclusive = checkNotNull(startInclusive);
     this.endInclusive = checkNotNull(endInclusive);
-    checkArgument(startInclusive.charOffset().asInt() <= endInclusive.charOffset().asInt(),
+    checkArgument(
+        startInclusive.charOffset().asInt() <= endInclusive.charOffset().asInt(),
         "Starting char offset %s of OffsetGroupRange exceeds ending char offset %s",
-        startInclusive.charOffset().asInt(), endInclusive.charOffset().asInt());
-    checkArgument(startInclusive.edtOffset().asInt() <= endInclusive.edtOffset().asInt(),
+        startInclusive.charOffset().asInt(),
+        endInclusive.charOffset().asInt());
+    checkArgument(
+        startInclusive.edtOffset().asInt() <= endInclusive.edtOffset().asInt(),
         "Starting EDT offset %s of OffsetGroupRange exceeds ending EDT offset %s",
-        startInclusive.edtOffset().asInt(), endInclusive.edtOffset().asInt());
+        startInclusive.edtOffset().asInt(),
+        endInclusive.edtOffset().asInt());
   }
 
   @Override
@@ -77,24 +79,25 @@ public final class OffsetGroupRange {
       return false;
     }
     final OffsetGroupRange other = (OffsetGroupRange) obj;
-    return Objects.equal(this.startInclusive, other.startInclusive) && Objects
-        .equal(this.endInclusive, other.endInclusive);
+    return Objects.equal(this.startInclusive, other.startInclusive)
+        && Objects.equal(this.endInclusive, other.endInclusive);
   }
 
   public OffsetRange<CharOffset> asCharOffsetRange() {
-    return OffsetRange
-        .fromInclusiveEndpoints(startInclusive().charOffset(), endInclusive().charOffset());
+    return OffsetRange.fromInclusiveEndpoints(
+        startInclusive().charOffset(), endInclusive().charOffset());
   }
 
   public OffsetRange<EDTOffset> asEdtOffsetRange() {
-    return OffsetRange
-        .fromInclusiveEndpoints(startInclusive().edtOffset(), endInclusive().edtOffset());
+    return OffsetRange.fromInclusiveEndpoints(
+        startInclusive().edtOffset(), endInclusive().edtOffset());
   }
 
   public Optional<OffsetRange<ByteOffset>> asByteOffsetRange() {
     if (startInclusive().byteOffset().isPresent() && endInclusive().byteOffset().isPresent()) {
-      return Optional.of(OffsetRange.fromInclusiveEndpoints(startInclusive().byteOffset().get(),
-          endInclusive().byteOffset().get()));
+      return Optional.of(
+          OffsetRange.fromInclusiveEndpoints(
+              startInclusive().byteOffset().get(), endInclusive().byteOffset().get()));
     } else {
       return Optional.absent();
     }
@@ -102,8 +105,9 @@ public final class OffsetGroupRange {
 
   public Optional<OffsetRange<ASRTime>> asAsrTimeRange() {
     if (startInclusive().asrTime().isPresent() && endInclusive().asrTime().isPresent()) {
-      return Optional.of(OffsetRange.fromInclusiveEndpoints(startInclusive().asrTime().get(),
-          endInclusive().asrTime().get()));
+      return Optional.of(
+          OffsetRange.fromInclusiveEndpoints(
+              startInclusive().asrTime().get(), endInclusive().asrTime().get()));
     } else {
       return Optional.absent();
     }

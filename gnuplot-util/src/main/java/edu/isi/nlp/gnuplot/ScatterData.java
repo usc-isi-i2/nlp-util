@@ -1,14 +1,13 @@
 package edu.isi.nlp.gnuplot;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
 public final class ScatterData {

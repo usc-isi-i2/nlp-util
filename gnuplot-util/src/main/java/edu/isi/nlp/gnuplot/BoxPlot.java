@@ -6,11 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Range;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Random;
 
 @Beta
 public final class BoxPlot implements GnuPlottable {
@@ -25,9 +21,15 @@ public final class BoxPlot implements GnuPlottable {
   private final boolean showKey;
   private final Grid grid;
 
-  private BoxPlot(final String title, final Axis xAxis, final Axis yAxis,
-      final Iterable<Dataset> datasets, final Whiskers whiskers,
-      final double boxWidth, final double pointSize, final boolean showKey,
+  private BoxPlot(
+      final String title,
+      final Axis xAxis,
+      final Axis yAxis,
+      final Iterable<Dataset> datasets,
+      final Whiskers whiskers,
+      final double boxWidth,
+      final double pointSize,
+      final boolean showKey,
       final Grid grid) {
     this.title = checkNotNull(title);
     this.xAxis = checkNotNull(xAxis);
@@ -85,7 +87,6 @@ public final class BoxPlot implements GnuPlottable {
     }
   }
 
-
   private void plotCommands(final PlotBundle.Builder pbBuilder) {
     pbBuilder.append("set style fill solid 0.25 border 0\n");
     pbBuilder.append("set title\"").append(title).append("\"\n");
@@ -106,7 +107,7 @@ public final class BoxPlot implements GnuPlottable {
     if (!showKey) {
       pbBuilder.append("unset key\n");
     }
-    //sb.append("set grid ytics lc rgb \"#bbbbbb\" lw 1 lt 0\n");
+    // sb.append("set grid ytics lc rgb \"#bbbbbb\" lw 1 lt 0\n");
     grid.appendPlotCommands(pbBuilder);
     addXticsCommand(pbBuilder);
     addPlotCommand(pbBuilder);
@@ -118,8 +119,7 @@ public final class BoxPlot implements GnuPlottable {
       if (i != 0) {
         pbBuilder.append(", ");
       }
-      pbBuilder.append("\"").append(datasets.get(i).name())
-          .append("\" ").append(i);
+      pbBuilder.append("\"").append(datasets.get(i).name()).append("\" ").append(i);
     }
     pbBuilder.append(") scale 0.0\n");
   }
@@ -167,7 +167,6 @@ public final class BoxPlot implements GnuPlottable {
     }
   }
 
-
   public static final class Builder {
 
     private String title = "";
@@ -181,8 +180,8 @@ public final class BoxPlot implements GnuPlottable {
     private Grid grid = NormalGrid.builder().build();
 
     public BoxPlot build() {
-      return new BoxPlot(title, xAxis, yAxis, datasets.build(), whiskers,
-          boxWidth, pointSize, showKey, grid);
+      return new BoxPlot(
+          title, xAxis, yAxis, datasets.build(), whiskers, boxWidth, pointSize, showKey, grid);
     }
 
     public Builder addDataset(Dataset dataset) {
@@ -312,8 +311,7 @@ public final class BoxPlot implements GnuPlottable {
       private ExtentMode extentMode = InterquartileRange.of(1.5);
       private boolean showOutliers = true;
 
-      private Builder() {
-      }
+      private Builder() {}
 
       public Builder hideOutliers() {
         showOutliers = false;
@@ -330,5 +328,4 @@ public final class BoxPlot implements GnuPlottable {
       }
     }
   }
-
 }

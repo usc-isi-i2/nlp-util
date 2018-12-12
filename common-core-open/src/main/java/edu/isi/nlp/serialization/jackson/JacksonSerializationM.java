@@ -9,19 +9,16 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.Multibinder;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Set;
-
 import javax.inject.Qualifier;
 
 /**
- * Provides a {@link JacksonSerializer.Builder}
- * whose resulting {@link JacksonSerializer} knows about Guice bindings.  The resulting
- * {@code Builder} may be safely modified.
+ * Provides a {@link JacksonSerializer.Builder} whose resulting {@link JacksonSerializer} knows
+ * about Guice bindings. The resulting {@code Builder} may be safely modified.
  */
 public final class JacksonSerializationM extends AbstractModule {
   @Override
@@ -34,7 +31,8 @@ public final class JacksonSerializationM extends AbstractModule {
     jacksonModulesBinder.addBinding().toInstance(new GuavaModule());
   }
 
-  private static final Key<Module> JACKSON_MODULES_KEY = Key.get(Module.class, JacksonModulesP.class);
+  private static final Key<Module> JACKSON_MODULES_KEY =
+      Key.get(Module.class, JacksonModulesP.class);
 
   /**
    * Users can bind to this key with a {@link Multibinder} to guarantee Jackson modules are added.
@@ -44,11 +42,12 @@ public final class JacksonSerializationM extends AbstractModule {
   }
 
   @Provides
-  public JacksonSerializer.Builder getJacksonSerializer(Injector injector,
-      @JacksonModulesP Set<Module> jacksonModules) {
+  public JacksonSerializer.Builder getJacksonSerializer(
+      Injector injector, @JacksonModulesP Set<Module> jacksonModules) {
     final JacksonSerializer.Builder ret =
-        JacksonSerializer.builder().withInjectionBindings(new GuiceAnnotationIntrospector(),
-            new GuiceInjectableValues(injector));
+        JacksonSerializer.builder()
+            .withInjectionBindings(
+                new GuiceAnnotationIntrospector(), new GuiceInjectableValues(injector));
     for (final Module jacksonModule : jacksonModules) {
       ret.registerModule(jacksonModule);
     }
@@ -78,12 +77,11 @@ public final class JacksonSerializationM extends AbstractModule {
   }
 
   /**
-   * Bind to this with a multibinder to specify Jackson modules which should be installed
-   * into injected serialziers and deserializers
+   * Bind to this with a multibinder to specify Jackson modules which should be installed into
+   * injected serialziers and deserializers
    */
   @Qualifier
   @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
   @Retention(RetentionPolicy.RUNTIME)
   @interface JacksonModulesP {}
-
 }

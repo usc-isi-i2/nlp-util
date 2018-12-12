@@ -1,13 +1,15 @@
 package edu.isi.nlp.converters;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class StringToEnumTest {
 
   public static enum TotallyAnEnum {
-    VALUE_1, VALUE_2, value_3
+    VALUE_1,
+    VALUE_2,
+    value_3
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -35,7 +37,7 @@ public class StringToEnumTest {
   public void basicDecoding() {
     final StringToEnum<TotallyAnEnum> converter =
         new StringToEnum<TotallyAnEnum>(TotallyAnEnum.class);
-    for (final String s : new String[]{"VALUE_1", "VALUE_2", "value_3"}) {
+    for (final String s : new String[] {"VALUE_1", "VALUE_2", "value_3"}) {
       assertEquals(s, converter.decode(s).toString());
     }
   }
@@ -44,15 +46,15 @@ public class StringToEnumTest {
   public void fallbackDecoding() {
     final StringToEnum<TotallyAnEnum> converter =
         new StringToEnum<TotallyAnEnum>(TotallyAnEnum.class);
-    for (final String s : new String[]{"value_1", "VaLuE_1"}) {
+    for (final String s : new String[] {"value_1", "VaLuE_1"}) {
       assertEquals("VALUE_1", converter.decode(s).toString());
     }
 
-    for (final String s : new String[]{"value_2", "vALUE_2"}) {
+    for (final String s : new String[] {"value_2", "vALUE_2"}) {
       assertEquals("VALUE_2", converter.decode(s).toString());
     }
 
-    for (final String s : new String[]{"VALUE_3", "vAlUE_3"}) {
+    for (final String s : new String[] {"VALUE_3", "vAlUE_3"}) {
       assertEquals("value_3", converter.decode(s).toString());
     }
   }

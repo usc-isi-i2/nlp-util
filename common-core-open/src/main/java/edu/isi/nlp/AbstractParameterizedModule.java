@@ -1,15 +1,13 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.parameters.Parameters;
-
-import com.google.inject.AbstractModule;
-
-import java.util.Objects;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.inject.AbstractModule;
+import edu.isi.nlp.parameters.Parameters;
+import java.util.Objects;
+
 /**
- * A module which configured things from a parameter file.  By default, the identity of this module
+ * A module which configured things from a parameter file. By default, the identity of this module
  * (its hashCode and equals which are used to recognize duplicate modules in Guice) are determined
  * entirely by the parameters. If you desire other behavior, you must override hashCode and equals.
  *
@@ -26,9 +24,7 @@ public abstract class AbstractParameterizedModule extends AbstractModule {
   // frequently these modules don't need to do any configuration,
   // so providing a default implementation reduces boilerplate
   @Override
-  protected void configure() {
-
-  }
+  protected void configure() {}
 
   protected final Parameters params() {
     return parameters;
@@ -51,4 +47,3 @@ public abstract class AbstractParameterizedModule extends AbstractModule {
     return Objects.equals(this.parameters, other.parameters);
   }
 }
-

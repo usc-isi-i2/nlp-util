@@ -1,14 +1,11 @@
 package edu.isi.nlp.corpora.ere;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 
 public final class EREEventMention {
   private final String id;
@@ -18,8 +15,13 @@ public final class EREEventMention {
   private final ERESpan trigger;
   private final ImmutableList<EREArgument> arguments;
 
-  private EREEventMention(final String id, final String type, final String subtype, final String realis,
-      final ERESpan trigger, final List<EREArgument> arguments) {
+  private EREEventMention(
+      final String id,
+      final String type,
+      final String subtype,
+      final String realis,
+      final ERESpan trigger,
+      final List<EREArgument> arguments) {
     this.id = checkNotNull(id);
     this.type = checkNotNull(type);
     this.subtype = checkNotNull(subtype);
@@ -52,7 +54,12 @@ public final class EREEventMention {
     return arguments;
   }
 
-  public static Builder builder(final String id, final String type, final String subtype, final String realis, final ERESpan trigger) {
+  public static Builder builder(
+      final String id,
+      final String type,
+      final String subtype,
+      final String realis,
+      final ERESpan trigger) {
     return new Builder(id, type, subtype, realis, trigger);
   }
 
@@ -64,7 +71,12 @@ public final class EREEventMention {
     private final ERESpan trigger;
     private final List<EREArgument> arguments;
 
-    private Builder(final String id, final String type, final String subtype, final String realis, final ERESpan trigger) {
+    private Builder(
+        final String id,
+        final String type,
+        final String subtype,
+        final String realis,
+        final ERESpan trigger) {
       this.id = checkNotNull(id);
       this.type = checkNotNull(type);
       this.subtype = checkNotNull(subtype);
@@ -106,14 +118,23 @@ public final class EREEventMention {
 
   @Override
   public String toString() {
-    return "EREEventMention{" +
-        "id='" + id + '\'' +
-        ", type='" + type + '\'' +
-        ", subtype='" + subtype + '\'' +
-        ", realis='" + realis + '\'' +
-        ", trigger=" + trigger +
-        ", arguments=" + arguments +
-        '}';
+    return "EREEventMention{"
+        + "id='"
+        + id
+        + '\''
+        + ", type='"
+        + type
+        + '\''
+        + ", subtype='"
+        + subtype
+        + '\''
+        + ", realis='"
+        + realis
+        + '\''
+        + ", trigger="
+        + trigger
+        + ", arguments="
+        + arguments
+        + '}';
   }
 }
-

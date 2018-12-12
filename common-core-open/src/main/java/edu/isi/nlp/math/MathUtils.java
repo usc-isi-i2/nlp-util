@@ -16,9 +16,7 @@ public final class MathUtils {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * Returns the sum of all elements in the given non-null array {@code arr}.
-   */
+  /** Returns the sum of all elements in the given non-null array {@code arr}. */
   public static int sum(int[] arr) {
     int ret = 0;
     for (final int x : arr) {
@@ -29,7 +27,7 @@ public final class MathUtils {
 
   public static Optional<Double> medianOfIntegers(Iterable<Integer> sizes) {
     final ImmutableList<Integer> sorted = Ordering.natural().immutableSortedCopy(sizes);
-    if(sorted.size() == 0) {
+    if (sorted.size() == 0) {
       return Optional.absent();
     }
     if (sorted.size() % 2 == 0) {
@@ -41,7 +39,7 @@ public final class MathUtils {
 
   public static Optional<Double> medianOfDoubles(Iterable<Double> sizes) {
     final ImmutableList<Double> sorted = Ordering.natural().immutableSortedCopy(sizes);
-    if(sorted.size() == 0) {
+    if (sorted.size() == 0) {
       return Optional.absent();
     }
     if (sorted.size() % 2 == 0) {
@@ -60,10 +58,7 @@ public final class MathUtils {
     };
   }
 
-
-  /**
-   * {@code x * log(x)} when x is non-zero, zero otherwise.
-   */
+  /** {@code x * log(x)} when x is non-zero, zero otherwise. */
   public static double xLogX(double d) {
     if (d == 0.0) {
       return 0.0;
@@ -71,5 +66,4 @@ public final class MathUtils {
       return d * Math.log(d);
     }
   }
-
 }

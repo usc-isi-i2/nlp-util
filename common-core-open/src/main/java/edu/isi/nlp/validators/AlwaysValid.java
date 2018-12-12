@@ -2,13 +2,9 @@ package edu.isi.nlp.validators;
 
 public final class AlwaysValid<T> implements Validator<T> {
 
-  public AlwaysValid() {
-  }
+  public AlwaysValid() {}
 
-  /**
-   * This is a no-op. It will never throw an exception.
-   */
+  /** This is a no-op. It will never throw an exception. */
   @Override
-  public void validate(T arg) {
-  }
+  public void validate(T arg) {}
 }

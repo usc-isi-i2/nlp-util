@@ -29,9 +29,7 @@ import java.util.List;
 import java.util.Map;
 import org.immutables.value.Value;
 
-/**
- * Writes files describing some scoring metric which has been bootstrapped.
- */
+/** Writes files describing some scoring metric which has been bootstrapped. */
 @IsiNlpImmutable
 @Value.Immutable
 public abstract class BootstrapWriter {
@@ -42,17 +40,15 @@ public abstract class BootstrapWriter {
   @Value.Parameter
   public abstract ImmutableList<String> measures();
 
-  /**
-   * What percentiles of the bootstrapped scores to print.
-   */
+  /** What percentiles of the bootstrapped scores to print. */
   @Value.Default
   public ImmutableList<Double> percentilesToPrint() {
     return ImmutableList.of(0.025, 0.05, 0.25, 0.5, 0.75, 0.95, 0.975);
   }
 
   /**
-   * Which of the multiple ways of calculating percentiles to use. Defaults to
-   * {@link PercentileComputer#nistPercentileComputer()}
+   * Which of the multiple ways of calculating percentiles to use. Defaults to {@link
+   * PercentileComputer#nistPercentileComputer()}
    */
   @Value.Default
   public PercentileComputer percentileComputer() {
@@ -62,32 +58,35 @@ public abstract class BootstrapWriter {
   @Value.Check
   protected void check() {
     for (final Double percentileToPrint : percentilesToPrint()) {
-      checkArgument(percentileToPrint > 0.0 && percentileToPrint < 1.0,
-          "Invalid percentile %s", percentileToPrint);
+      checkArgument(
+          percentileToPrint > 0.0 && percentileToPrint < 1.0,
+          "Invalid percentile %s",
+          percentileToPrint);
     }
   }
 
   /**
    * Given bootstrapping samples, writes the scores to multiple files in {@code outputDir}.
-   * @param name The name to give to this score output. E.g. "ByType" for bootstrapped scores
-   *             broken down by event type
-   * @param measuresToBreakdownsToStats The bootstrap samples for scores.  The outermost key
-   *                                    is the scoring measure. These keys must be a subset of
-   *                                    those in {@link #measures()}.  The inner key should be the
-   *                                    different groups for whatever score breakdown we are doing
-   *                                    (e.g. event types). If no score breakdown is being used,
-   *                                    use some dummy key, like "Aggregate".  The innermost values
-   *                                    should be a list of bootstrap samples for that measure/
-   *                                    breakdown key combination.
-   * @param outputDir The directory to write the output to.  Human readable bootstrap confidence
-   *                  intervals will be written to {@code outputDir/name.bootstrapped.txt}. Raw
-   *                  samples will be written to {@code outputDir/name.bootstrapped.raw}. Medians
-   *                  will be written as a {@code .csv} to {@code outputDir/name.bootstrapped.csv}.
+   *
+   * @param name The name to give to this score output. E.g. "ByType" for bootstrapped scores broken
+   *     down by event type
+   * @param measuresToBreakdownsToStats The bootstrap samples for scores. The outermost key is the
+   *     scoring measure. These keys must be a subset of those in {@link #measures()}. The inner key
+   *     should be the different groups for whatever score breakdown we are doing (e.g. event
+   *     types). If no score breakdown is being used, use some dummy key, like "Aggregate". The
+   *     innermost values should be a list of bootstrap samples for that measure/ breakdown key
+   *     combination.
+   * @param outputDir The directory to write the output to. Human readable bootstrap confidence
+   *     intervals will be written to {@code outputDir/name.bootstrapped.txt}. Raw samples will be
+   *     written to {@code outputDir/name.bootstrapped.raw}. Medians will be written as a {@code
+   *     .csv} to {@code outputDir/name.bootstrapped.csv}.
    * @throws IOException
    */
-  public void writeBootstrapData(String name,
+  public void writeBootstrapData(
+      String name,
       ImmutableMap<String, ImmutableListMultimap<String, Double>> measuresToBreakdownsToStats,
-      File outputDir) throws IOException {
+      File outputDir)
+      throws IOException {
     final StringBuilder chart = new StringBuilder();
     final StringBuilder delim = new StringBuilder();
     final StringBuilder mediansDelim = new StringBuilder();
@@ -108,20 +107,20 @@ public abstract class BootstrapWriter {
 
     // all four multimaps have the same keyset
     for (final String breakdownKey : breakdownKeys) {
-      final ImmutableMap.Builder<String, Double> mediansMapBuilder =
+      final ImmutableMap.Builder<String, Double> mediansMapBuilder = ImmutableMap.builder();
+
+      final ImmutableMap.Builder<String, PercentileComputer.Percentiles> percentileMapB =
           ImmutableMap.builder();
+      final ImmutableListMultimap.Builder<String, Double> keySamples =
+          ImmutableListMultimap.builder();
 
-      final ImmutableMap.Builder<String, PercentileComputer.Percentiles> percentileMapB = ImmutableMap.builder();
-      final ImmutableListMultimap.Builder<String, Double> keySamples = ImmutableListMultimap
-          .builder();
-
-      for (final Map.Entry<String, ImmutableListMultimap<String, Double>> e : measuresToBreakdownsToStats
-          .entrySet()) {
+      for (final Map.Entry<String, ImmutableListMultimap<String, Double>> e :
+          measuresToBreakdownsToStats.entrySet()) {
         final String measureName = e.getKey();
         final ImmutableList<Double> samplesForBreakdownKey = e.getValue().get(breakdownKey);
         final PercentileComputer.Percentiles percentiles =
-            percentileComputer().calculatePercentilesAdoptingData(
-                Doubles.toArray(samplesForBreakdownKey));
+            percentileComputer()
+                .calculatePercentilesAdoptingData(Doubles.toArray(samplesForBreakdownKey));
         percentileMapB.put(measureName, percentiles);
 
         // Raw samples
@@ -132,16 +131,19 @@ public abstract class BootstrapWriter {
       }
 
       // Write to chart
-      final ImmutableMap<String, PercentileComputer.Percentiles> percentilesMap = percentileMapB.build();
+      final ImmutableMap<String, PercentileComputer.Percentiles> percentilesMap =
+          percentileMapB.build();
       dumpPercentilesForMetric(breakdownKey, percentilesMap, chart);
       chart.append("\n");
 
-      final JacksonSerializer serializer = JacksonSerializer.builder().forJson().prettyOutput().build();
-      serializer.serializeTo(new SerializedBootstrapResults.Builder()
-          .percentilesMap(percentilesMap)
-          .rawSamples(keySamples.build())
-          .build(), Files.asByteSink(new File(bootstrapDataDir,
-          breakdownKey + ".percentile.json")));
+      final JacksonSerializer serializer =
+          JacksonSerializer.builder().forJson().prettyOutput().build();
+      serializer.serializeTo(
+          new SerializedBootstrapResults.Builder()
+              .percentilesMap(percentilesMap)
+              .rawSamples(keySamples.build())
+              .build(),
+          Files.asByteSink(new File(bootstrapDataDir, breakdownKey + ".percentile.json")));
 
       // Write to delim
       addDelimPercentilesForMetric(breakdownKey, percentilesMap, delim);
@@ -152,17 +154,18 @@ public abstract class BootstrapWriter {
     outputDir.mkdir();
 
     // Write chart
-    Files.asCharSink(new File(outputDir, name + ".bootstrapped.txt"),
-        Charsets.UTF_8).write(chart.toString());
+    Files.asCharSink(new File(outputDir, name + ".bootstrapped.txt"), Charsets.UTF_8)
+        .write(chart.toString());
     // Write delim
-    Files.asCharSink(new File(outputDir, name + ".bootstrapped.csv"),
-        Charsets.UTF_8).write(delim.toString());
+    Files.asCharSink(new File(outputDir, name + ".bootstrapped.csv"), Charsets.UTF_8)
+        .write(delim.toString());
     // Write means-only delimited
-    Files.asCharSink(new File(outputDir, name + ".bootstrapped.medians.csv"),
-        Charsets.UTF_8).write(mediansDelim.toString());
+    Files.asCharSink(new File(outputDir, name + ".bootstrapped.medians.csv"), Charsets.UTF_8)
+        .write(mediansDelim.toString());
   }
 
-  private void dumpPercentilesForMetric(String chartTitle,
+  private void dumpPercentilesForMetric(
+      String chartTitle,
       ImmutableMap<String, PercentileComputer.Percentiles> percentilesByRow,
       StringBuilder output) {
     output.append(chartTitle).append("\n");
@@ -170,25 +173,28 @@ public abstract class BootstrapWriter {
     output.append(header);
     // Offset length by one since it include a newline
     output.append(Strings.repeat("*", header.length() - 1)).append("\n");
-    for (final Map.Entry<String, PercentileComputer.Percentiles> percentileEntry : percentilesByRow
-        .entrySet()) {
-      output.append(renderLine(percentileEntry.getKey(),
-          Lists.transform(percentileEntry.getValue().percentiles(percentilesToPrint()),
-              OptionalUtils.deoptionalizeFunction(Double.NaN))));
+    for (final Map.Entry<String, PercentileComputer.Percentiles> percentileEntry :
+        percentilesByRow.entrySet()) {
+      output.append(
+          renderLine(
+              percentileEntry.getKey(),
+              Lists.transform(
+                  percentileEntry.getValue().percentiles(percentilesToPrint()),
+                  OptionalUtils.deoptionalizeFunction(Double.NaN))));
     }
     output.append("\n");
   }
 
-  private void addDelimMediansHeader(final String name, final List<String> measures,
-      final StringBuilder output) {
+  private void addDelimMediansHeader(
+      final String name, final List<String> measures, final StringBuilder output) {
     final ImmutableList.Builder<String> header = ImmutableList.builder();
     header.add(name);
     header.addAll(measures);
     renderCells(header.build(), output);
   }
 
-  private void addMediansRow(final String name, Map<String, Double> measures,
-      final StringBuilder output) {
+  private void addMediansRow(
+      final String name, Map<String, Double> measures, final StringBuilder output) {
     final ImmutableList.Builder<String> row = ImmutableList.builder();
     row.add(name);
     final ImmutableList.Builder<Double> scores = ImmutableList.builder();
@@ -212,14 +218,16 @@ public abstract class BootstrapWriter {
       final ImmutableMap<String, PercentileComputer.Percentiles> percentilesByRow,
       final StringBuilder output) {
     // Add entries for each row to the builder
-    for (final Map.Entry<String, PercentileComputer.Percentiles> percentileEntry : percentilesByRow
-        .entrySet()) {
+    for (final Map.Entry<String, PercentileComputer.Percentiles> percentileEntry :
+        percentilesByRow.entrySet()) {
       final ImmutableList.Builder<String> row = ImmutableList.builder();
       row.add(key);
       row.add(percentileEntry.getKey());
-      row.addAll(renderDoubles(Lists.transform(
-          percentileEntry.getValue().percentiles(percentilesToPrint()),
-          OptionalUtils.deoptionalizeFunction(Double.NaN))));
+      row.addAll(
+          renderDoubles(
+              Lists.transform(
+                  percentileEntry.getValue().percentiles(percentilesToPrint()),
+                  OptionalUtils.deoptionalizeFunction(Double.NaN))));
       renderCells(row.build(), output);
     }
   }
@@ -255,12 +263,12 @@ public abstract class BootstrapWriter {
         samples.entrySet()) {
       final String key = entry.getKey();
       final ImmutableMap<String, ImmutableList<Double>> keySamples = entry.getValue();
-      for (final Map.Entry<String, ImmutableList<Double>> innerEntry: keySamples.entrySet()) {
+      for (final Map.Entry<String, ImmutableList<Double>> innerEntry : keySamples.entrySet()) {
         final ImmutableList.Builder<String> row = ImmutableList.builder();
         row.add(key);
         row.add(innerEntry.getKey());
         row.addAll(Iterables.transform(innerEntry.getValue(), Functions.toStringFunction()));
-        renderCells(row.build(),ret);
+        renderCells(row.build(), ret);
       }
     }
     return ret.toString();
@@ -270,9 +278,9 @@ public abstract class BootstrapWriter {
 
   @IsiNlpImmutable
   @Value.Immutable
-  @JsonSerialize(as=ImmutableSerializedBootstrapResults.class)
-  @JsonDeserialize(as=ImmutableSerializedBootstrapResults.class)
-  public static abstract class SerializedBootstrapResults {
+  @JsonSerialize(as = ImmutableSerializedBootstrapResults.class)
+  @JsonDeserialize(as = ImmutableSerializedBootstrapResults.class)
+  public abstract static class SerializedBootstrapResults {
     public abstract ImmutableMap<String, PercentileComputer.Percentiles> percentilesMap();
 
     // these should not be necessary and are inefficient, but serialization fails
@@ -284,4 +292,3 @@ public abstract class BootstrapWriter {
     public static class Builder extends ImmutableSerializedBootstrapResults.Builder {}
   }
 }
-

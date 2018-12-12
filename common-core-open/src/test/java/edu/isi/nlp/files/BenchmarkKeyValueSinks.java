@@ -1,20 +1,17 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class BenchmarkKeyValueSinks {
 

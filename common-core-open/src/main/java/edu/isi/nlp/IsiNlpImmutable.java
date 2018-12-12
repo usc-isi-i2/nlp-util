@@ -30,5 +30,4 @@ import org.immutables.value.Value;
     // the template
     visibility = Value.Style.ImplementationVisibility.PACKAGE,
     overshadowImplementation = true)
-public @interface IsiNlpImmutable {
-}
+public @interface IsiNlpImmutable {}

@@ -1,18 +1,17 @@
 package edu.isi.nlp.parameters;
 
-import com.google.inject.AbstractModule;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.inject.AbstractModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * Guice module to bind a {@link Parameters} instance.  It will be bound without annotation.
+ * Guice module to bind a {@link Parameters} instance. It will be bound without annotation.
  *
- * If the optional parameter {@code com.bbn.logParameterAccesses} is set to true, the stack traces
- * of all parameter accesses will be logged upon program termination. See
- * {@link ParameterAccessListener} for details.
+ * <p>If the optional parameter {@code com.bbn.logParameterAccesses} is set to true, the stack
+ * traces of all parameter accesses will be logged upon program termination. See {@link
+ * ParameterAccessListener} for details.
  */
 public final class ParametersModule extends AbstractModule {
 
@@ -48,12 +47,14 @@ public final class ParametersModule extends AbstractModule {
     if (parameters.getOptionalBoolean("com.bbn.logParameterAccesses").or(false)) {
       final ParameterAccessListener listener = ParameterAccessListener.create();
       parameters.registerListener(listener);
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-        @Override
-        public void run() {
-          listener.logParameterAccesses();
-        }
-      });
+      Runtime.getRuntime()
+          .addShutdownHook(
+              new Thread() {
+                @Override
+                public void run() {
+                  listener.logParameterAccesses();
+                }
+              });
     }
   }
 }

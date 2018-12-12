@@ -1,13 +1,12 @@
 package edu.isi.nlp.math;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import edu.isi.nlp.math.permutationProxies.PairedIntDoubleArrayPermutationProxy;
 import edu.isi.nlp.math.permutationProxies.PermutationProxy;
 import edu.isi.nlp.primitives.IntUtils;
-
 import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Represents a permutation of elements of some sequence
@@ -21,22 +20,18 @@ public final class Permutation {
     this.destinations = destinationsFromSources(sources);
   }
 
-  /**
-   * For *post-permutation* index {@code idx}, what *pre-permutation* index did it come from?
-   */
+  /** For *post-permutation* index {@code idx}, what *pre-permutation* index did it come from? */
   public int sourceOfIndex(final int idx) {
     return sources[idx];
   }
 
-  /**
-   * For *pre-permutation* index {@code idx}, what index will it end up at *post-permutation*?
-   */
+  /** For *pre-permutation* index {@code idx}, what index will it end up at *post-permutation*? */
   public int destinationOfIndex(final int index) {
     return destinations[index];
   }
 
   /**
-   * Creates a random permutation of n elements using the supplied random number generator.  Note
+   * Creates a random permutation of n elements using the supplied random number generator. Note
    * that for all but small numbers of elements most possible permutations will not be sampled by
    * this because the random generator's space is much smaller than the number of possible
    * permutations.
@@ -48,13 +43,13 @@ public final class Permutation {
   }
 
   /**
-   * Creates a Permutation from sort indices returned by HPPC's IndirectSort.  No validity checking
+   * Creates a Permutation from sort indices returned by HPPC's IndirectSort. No validity checking
    * is done, so this *must* be called with the sort indices from an HPPC indirect sort using the
-   * same start index passed to that sort.  If you do otherwise, you will end up with a invalid
+   * same start index passed to that sort. If you do otherwise, you will end up with a invalid
    * permutation with undefined behavior.
    */
-  public static Permutation fromSortIndicesUnchecked(final int[] sortIndices,
-      final int startIndex) {
+  public static Permutation fromSortIndicesUnchecked(
+      final int[] sortIndices, final int startIndex) {
     final int[] sources = sortIndices.clone();
     for (int i = 0; i < sources.length; ++i) {
       sources[i] -= startIndex;
@@ -62,9 +57,7 @@ public final class Permutation {
     return new Permutation(sources);
   }
 
-  /**
-   * Applies this permutation in-place to the elements of an integer array
-   */
+  /** Applies this permutation in-place to the elements of an integer array */
   public void permute(final int[] arr) {
     checkArgument(arr.length == sources.length);
     final int[] tmp = new int[arr.length];
@@ -74,9 +67,7 @@ public final class Permutation {
     System.arraycopy(tmp, 0, arr, 0, arr.length);
   }
 
-  /**
-   * Applies this permutation in-place to a paired integer and double array.
-   */
+  /** Applies this permutation in-place to a paired integer and double array. */
   public void permutePaired(final int[] intArr, final double[] doubleArr) {
     permute(PairedIntDoubleArrayPermutationProxy.createForArrays(intArr, doubleArr));
   }
@@ -118,9 +109,7 @@ public final class Permutation {
     }
   }
 
-  /**
-   * The number of elements this permutation applies to.
-   */
+  /** The number of elements this permutation applies to. */
   public int numElements() {
     return sources.length;
   }

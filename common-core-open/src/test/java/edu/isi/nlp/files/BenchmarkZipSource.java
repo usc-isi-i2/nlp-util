@@ -1,21 +1,16 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.symbols.Symbol;
-
 import com.google.common.base.Stopwatch;
 import com.google.common.io.ByteSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Test program for timing loading an Zip-backed key-value store.
- */
+/** Test program for timing loading an Zip-backed key-value store. */
 public final class BenchmarkZipSource {
 
   private static Logger log = LoggerFactory.getLogger(BenchmarkZipSource.class);
@@ -41,8 +36,8 @@ public final class BenchmarkZipSource {
     final Stopwatch stopwatch = Stopwatch.createStarted();
     final ImmutableKeyValueSource<Symbol, ByteSource> source =
         KeyValueSources.fromZip(new ZipFile(inputFile));
-    log.info("Opened zip at {} in {} milliseconds", inputFile,
-        stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    log.info(
+        "Opened zip at {} in {} milliseconds", inputFile, stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
     // Read everything
     int documents = 0;

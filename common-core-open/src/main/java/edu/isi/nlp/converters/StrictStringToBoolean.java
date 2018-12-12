@@ -1,8 +1,8 @@
 package edu.isi.nlp.converters;
 
-import com.google.common.annotations.Beta;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.annotations.Beta;
 
 /**
  * Decodes "true" and "false" values and disallows others.

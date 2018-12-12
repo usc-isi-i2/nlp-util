@@ -1,13 +1,11 @@
 package edu.isi.nlp.coreference.measures;
 
-import edu.isi.nlp.collections.CollectionUtils;
-import edu.isi.nlp.evaluation.FMeasureInfo;
-import edu.isi.nlp.evaluation.PrecisionRecallPair;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
-
+import edu.isi.nlp.collections.CollectionUtils;
+import edu.isi.nlp.evaluation.FMeasureInfo;
+import edu.isi.nlp.evaluation.PrecisionRecallPair;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,25 +13,22 @@ import java.util.Set;
 /**
  * Produces coreference scores according to the MUC metric.
  *
- * See Marc Vilain, John Burger, John Aberdeen, Dennis Connolly, and Lynette Hirschman. 1995. A
+ * <p>See Marc Vilain, John Burger, John Aberdeen, Dennis Connolly, and Lynette Hirschman. 1995. A
  * model-theoretic coreference scoring scheme. In Proceedings fo the 6th Message Understanding
  * Conference (MUC6).
  */
 @Beta
 public final class MUCScorer {
 
-  private MUCScorer() {
-  }
+  private MUCScorer() {}
 
   public static MUCScorer create() {
     return new MUCScorer();
   }
 
-  /**
-   * Returns absent if the score is undefined (e.g. one side is all singletons).
-   */
-  public Optional<FMeasureInfo> score(final Iterable<? extends Iterable<?>> predicted,
-      final Iterable<? extends Iterable<?>> gold) {
+  /** Returns absent if the score is undefined (e.g. one side is all singletons). */
+  public Optional<FMeasureInfo> score(
+      final Iterable<? extends Iterable<?>> predicted, final Iterable<? extends Iterable<?>> gold) {
     final List<Set<Object>> predictedAsSets = CorefScorerUtils.toSets(predicted);
     final List<Set<Object>> goldAsSets = CorefScorerUtils.toSets(gold);
 
@@ -42,8 +37,8 @@ public final class MUCScorer {
     final Map<Object, Set<Object>> goldItemToGroup =
         CollectionUtils.makeElementsToContainersMap(goldAsSets);
 
-    CorefScorerUtils.checkPartitionsOverSameElements(predictedItemToGroup.keySet(),
-        goldItemToGroup.keySet());
+    CorefScorerUtils.checkPartitionsOverSameElements(
+        predictedItemToGroup.keySet(), goldItemToGroup.keySet());
 
     final Optional<Float> recall =
         mucScoreComponent(goldAsSets, predictedAsSets, predictedItemToGroup);
@@ -58,7 +53,8 @@ public final class MUCScorer {
     }
   }
 
-  private Optional<Float> mucScoreComponent(List<Set<Object>> leftClustering,
+  private Optional<Float> mucScoreComponent(
+      List<Set<Object>> leftClustering,
       List<Set<Object>> rightClustering,
       Map<Object, Set<Object>> rightItemToGroup) {
     int numerator = 0;

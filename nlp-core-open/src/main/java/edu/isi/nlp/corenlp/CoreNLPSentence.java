@@ -1,13 +1,12 @@
 package edu.isi.nlp.corenlp;
 
-import edu.isi.nlp.strings.offsets.CharOffset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import edu.isi.nlp.strings.offsets.CharOffset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
 
 @Beta
 public final class CoreNLPSentence {
@@ -15,8 +14,8 @@ public final class CoreNLPSentence {
   private final ImmutableList<CoreNLPToken> tokens;
   private final Optional<CoreNLPConstituencyParse> parse;
 
-  private CoreNLPSentence(final Iterable<CoreNLPToken> tokens,
-      final Optional<CoreNLPConstituencyParse> parse) {
+  private CoreNLPSentence(
+      final Iterable<CoreNLPToken> tokens, final Optional<CoreNLPConstituencyParse> parse) {
     this.tokens = ImmutableList.copyOf(tokens);
     this.parse = checkNotNull(parse);
   }
@@ -29,9 +28,7 @@ public final class CoreNLPSentence {
     return parse;
   }
 
-  /**
-   * Span from the start of the first token to the end of the last.
-   */
+  /** Span from the start of the first token to the end of the last. */
   public OffsetRange<CharOffset> offsets() {
     final CharOffset start = tokens.get(0).offsets().startInclusive();
     final CharOffset end = tokens.reverse().get(0).offsets().endInclusive();
@@ -42,12 +39,11 @@ public final class CoreNLPSentence {
    * Finds the smallest {@code ConstituentNode} containing these offsets. {@code CoreNLPParseNode}s
    * will not generally contain whitespace.
    */
-  public Optional<CoreNLPParseNode> nodeForOffsets(
-      final OffsetRange<CharOffset> offsets) {
+  public Optional<CoreNLPParseNode> nodeForOffsets(final OffsetRange<CharOffset> offsets) {
     // we use the reverse of the preorder traversal because it will iterate over smaller nodes
     // before any of their parents, preferring the smallest node that contains these offsets.
-    for (final CoreNLPParseNode n : ImmutableList.copyOf(parse.get().root().preorderDFSTraversal())
-        .reverse()) {
+    for (final CoreNLPParseNode n :
+        ImmutableList.copyOf(parse.get().root().preorderDFSTraversal()).reverse()) {
       if (n.span().isPresent() && n.span().get().contains(offsets)) {
         return Optional.of(n);
       }
@@ -64,8 +60,7 @@ public final class CoreNLPSentence {
     private Iterable<CoreNLPToken> tokens;
     private Optional<CoreNLPConstituencyParse> parse;
 
-    private StanfordSentenceBuilder() {
-    }
+    private StanfordSentenceBuilder() {}
 
     public StanfordSentenceBuilder withTokens(Iterable<CoreNLPToken> tokens) {
       this.tokens = tokens;

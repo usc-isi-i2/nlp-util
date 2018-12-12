@@ -2,9 +2,7 @@ package edu.isi.nlp.collections;
 
 import java.util.Iterator;
 
-/**
- * Utilities for working with {@link java.util.Iterator}s.
- */
+/** Utilities for working with {@link java.util.Iterator}s. */
 public final class IteratorUtils {
 
   private IteratorUtils() {
@@ -15,8 +13,12 @@ public final class IteratorUtils {
    * Asserts that that either (a) both provided iterators have more elements or (b) neither does. If
    * not, throws na {@link IllegalStateException}.
    */
-  public static void assertStatesMatch(Iterator<?> left, String leftName,
-      Iterator<?> right, String rightName, String itemTypePlural) {
+  public static void assertStatesMatch(
+      Iterator<?> left,
+      String leftName,
+      Iterator<?> right,
+      String rightName,
+      String itemTypePlural) {
     if (left.hasNext() != right.hasNext()) {
       if (left.hasNext()) {
         throw new IllegalStateException(

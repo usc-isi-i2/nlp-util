@@ -1,14 +1,13 @@
 package edu.isi.nlp.io;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.io.ByteSink;
 import com.google.common.io.Files;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class GZIPByteSink extends ByteSink {
 

@@ -12,9 +12,14 @@ public final class NormalGrid implements Grid {
   private final boolean showYMajor;
   private final boolean showYMinor;
 
-  private NormalGrid(ZIndex zIndex, LineStyle majorLineStyle, LineStyle minorLineStyle,
+  private NormalGrid(
+      ZIndex zIndex,
+      LineStyle majorLineStyle,
+      LineStyle minorLineStyle,
       boolean showXMajor,
-      boolean showXMinor, boolean showYMajor, boolean showYMinor) {
+      boolean showXMinor,
+      boolean showYMajor,
+      boolean showYMinor) {
     this.zIndex = checkNotNull(zIndex);
     this.majorLineStyle = checkNotNull(majorLineStyle);
     this.minorLineStyle = checkNotNull(minorLineStyle);
@@ -28,19 +33,19 @@ public final class NormalGrid implements Grid {
     return new Builder();
   }
 
-    /*    set grid {{no}{m}xtics} {{no}{m}ytics} {{no}{m}ztics}
-    {{no}{m}x2tics} {{no}{m}y2tics}
-    {{no}{m}cbtics}
-    {polar {<angle>}}
-    {layerdefault | front | back}
-    { {linestyle <major_linestyle>}
-        | {linetype | lt <major_linetype>}
-        {linewidth | lw <major_linewidth>}
-        { , {linestyle | ls <minor_linestyle>}
-            | {linetype | lt <minor_linetype>}
-            {linewidth | lw <minor_linewidth>} } }
-    unset grid
-    show grid*/
+  /*    set grid {{no}{m}xtics} {{no}{m}ytics} {{no}{m}ztics}
+  {{no}{m}x2tics} {{no}{m}y2tics}
+  {{no}{m}cbtics}
+  {polar {<angle>}}
+  {layerdefault | front | back}
+  { {linestyle <major_linestyle>}
+      | {linetype | lt <major_linetype>}
+      {linewidth | lw <major_linewidth>}
+      { , {linestyle | ls <minor_linestyle>}
+          | {linetype | lt <minor_linetype>}
+          {linewidth | lw <minor_linewidth>} } }
+  unset grid
+  show grid*/
 
   @Override
   public void appendPlotCommands(PlotBundle.Builder sb) {
@@ -117,8 +122,8 @@ public final class NormalGrid implements Grid {
     }
 
     public Grid build() {
-      return new NormalGrid(zIndex, majorLineStyle, minorLineStyle, showXMajor, showXMinor,
-          showYMajor, showYMinor);
+      return new NormalGrid(
+          zIndex, majorLineStyle, minorLineStyle, showXMajor, showXMinor, showYMajor, showYMinor);
     }
   }
 }

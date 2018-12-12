@@ -1,12 +1,10 @@
 package edu.isi.nlp.collections;
 
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
-
 import java.util.Collection;
 import java.util.Set;
 
@@ -91,7 +89,8 @@ public final class ImmutableOverlappingRangeSet<T extends Comparable<T>>
   }
 
   private static <T extends Comparable<T>> Ordering<Range<T>> rangeOrdering() {
-    return Ordering.natural().onResultOf(RangeUtils.<T>lowerEndPointFunction())
+    return Ordering.natural()
+        .onResultOf(RangeUtils.<T>lowerEndPointFunction())
         .compound(Ordering.natural().onResultOf(RangeUtils.<T>upperEndPointFunction()))
         .compound(Ordering.usingToString());
   }

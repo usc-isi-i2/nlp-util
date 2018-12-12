@@ -1,20 +1,17 @@
 package edu.isi.nlp.gnuplot.outputformats;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.inject.Provides;
 import edu.isi.nlp.AbstractParameterizedModule;
 import edu.isi.nlp.gnuplot.OutputFormat;
 import edu.isi.nlp.parameters.Parameters;
-
-import com.google.inject.Provides;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import javax.inject.Inject;
 import javax.inject.Qualifier;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 public final class Png implements OutputFormat {
 
@@ -22,8 +19,7 @@ public final class Png implements OutputFormat {
   private final int yResolution;
 
   @Inject
-  private Png(@XResolutionP int xResolution,
-      @YResolutionP int yResolution) {
+  private Png(@XResolutionP int xResolution, @YResolutionP int yResolution) {
     checkArgument(xResolution > 0);
     this.xResolution = xResolution;
     checkArgument(yResolution > 0);
@@ -39,11 +35,12 @@ public final class Png implements OutputFormat {
     // dashed enables dashed lines, but other code is putting
     // dashed lines in places we don't want, so I've disabled
     // it for now ~ rgabbard
-//    sb.append("set terminal pngcairo dashed size ")
+    //    sb.append("set terminal pngcairo dashed size ")
     sb.append("set terminal pngcairo dashed size ")
-        .append(xResolution).append(",")
-        .append(yResolution).append("\n");
-
+        .append(xResolution)
+        .append(",")
+        .append(yResolution)
+        .append("\n");
   }
 
   public static class Builder {
@@ -51,8 +48,7 @@ public final class Png implements OutputFormat {
     private int xResolution = 1024;
     private int yResolution = 768;
 
-    private Builder() {
-    }
+    private Builder() {}
 
     public Builder setResolution(int x, int y) {
       xResolution = x;
@@ -97,15 +93,13 @@ public final class Png implements OutputFormat {
     @Provides
     @XResolutionP
     int xResolution() {
-      return params().getOptionalInteger(XResolutionP.param)
-          .or(XResolutionP.defaultVal);
+      return params().getOptionalInteger(XResolutionP.param).or(XResolutionP.defaultVal);
     }
 
     @Provides
     @YResolutionP
     int yResolution() {
-      return params().getOptionalInteger(YResolutionP.param)
-          .or(YResolutionP.defaultVal);
+      return params().getOptionalInteger(YResolutionP.param).or(YResolutionP.defaultVal);
     }
   }
 }

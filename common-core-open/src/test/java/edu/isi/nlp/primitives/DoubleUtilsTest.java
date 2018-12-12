@@ -1,13 +1,11 @@
 package edu.isi.nlp.primitives;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by rgabbard on 1/25/16.
- */
+import org.junit.Test;
+
+/** Created by rgabbard on 1/25/16. */
 public class DoubleUtilsTest {
 
   private static final double EPSILON = 1e-6;
@@ -26,5 +24,4 @@ public class DoubleUtilsTest {
     assertEquals(2.0, DoubleUtils.clip(Double.POSITIVE_INFINITY, 2.0), EPSILON);
     assertTrue(Double.isNaN(DoubleUtils.clip(Double.NaN, 2.0)));
   }
-
 }

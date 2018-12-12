@@ -1,15 +1,14 @@
 package edu.isi.nlp.evaluation;
 
 import com.google.common.annotations.Beta;
-
 import java.util.Collection;
 
 /**
  * An {@link Alignment} which also tracks "provenances" (which can be arbitrary metadata) for the
  * items being aligned.
  *
- * @param <LeftT>      This class is covariant on this parameter.
- * @param <LeftProvT>  This class is covariant on this parameter.
+ * @param <LeftT> This class is covariant on this parameter.
+ * @param <LeftProvT> This class is covariant on this parameter.
  * @param <RightProvT> This class is covariant on this parameter.
  */
 @Beta

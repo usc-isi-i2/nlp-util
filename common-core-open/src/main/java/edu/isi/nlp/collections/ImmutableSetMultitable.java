@@ -17,12 +17,11 @@ import javax.annotation.Nullable;
 import org.immutables.value.Value;
 
 /**
- * A Multitable that cannot hold duplicate key-key-value triples. Adding a key-key-value triple
- * that is already in the multitable has no effect.
+ * A Multitable that cannot hold duplicate key-key-value triples. Adding a key-key-value triple that
+ * is already in the multitable has no effect.
  *
  * @see Multitable
  * @see ImmutableMultitable
- *
  * @author Chester Palen-Michel, Constantine Lignos, Ryan Gabbard
  */
 public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R, C, V>
@@ -35,14 +34,17 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
   private final ImmutableSet<Multicell<R, C, V>> cellSet;
   private final ImmutableMultiset<V> allValues;
 
-  private ImmutableSetMultitable(final ImmutableTable<R, C, Collection<V>> table,
-      final int size, ImmutableSet<R> rowIterationOrder, ImmutableSet<C> columnIterationOrder) {
+  private ImmutableSetMultitable(
+      final ImmutableTable<R, C, Collection<V>> table,
+      final int size,
+      ImmutableSet<R> rowIterationOrder,
+      ImmutableSet<C> columnIterationOrder) {
 
     this.table = checkNotNull(table);
-    this.size = size;     //all available construction methods ensure size matches table
+    this.size = size; // all available construction methods ensure size matches table
 
-    //This is more than we generally want in constructor, but we are only caching to return views.
-    //cache rowMap
+    // This is more than we generally want in constructor, but we are only caching to return views.
+    // cache rowMap
     final ImmutableMap.Builder<R, Multimap<C, V>> rowMapBuilder = ImmutableMap.builder();
     for (final R rowKey : rowIterationOrder) {
       final ImmutableSetMultimap.Builder<C, V> colMultiBuilder = ImmutableSetMultimap.builder();
@@ -55,7 +57,7 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
       rowMapBuilder.put(rowKey, colMultiBuilder.build());
     }
     this.rowMap = rowMapBuilder.build();
-    //cache columnMap
+    // cache columnMap
     final ImmutableMap.Builder<C, Multimap<R, V>> columnMapBuilder = ImmutableMap.builder();
     for (final C columnKey : columnIterationOrder) {
       final ImmutableSetMultimap.Builder<R, V> rowMultiBuilder = ImmutableSetMultimap.builder();
@@ -69,17 +71,17 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
     }
     this.columnMap = columnMapBuilder.build();
 
-    //cache cellSet and allValues
+    // cache cellSet and allValues
     final ImmutableMultiset.Builder<V> valuesBuilder = ImmutableMultiset.builder();
     final ImmutableSet.Builder<Multicell<R, C, V>> cellSetBuilder = ImmutableSet.builder();
     for (final R rowKey : rowIterationOrder) {
       for (final C columnKey : columnIterationOrder) {
         final Collection<V> values = table.get(rowKey, columnKey);
         if (values != null) {
-        final ImmutableSetMulticell.Builder<R, C, V> multicellBuilder =
-            new ImmutableSetMultitable.SetMulticell.Builder<R, C, V>()
-                .rowKey(rowKey)
-                .columnKey(columnKey);
+          final ImmutableSetMulticell.Builder<R, C, V> multicellBuilder =
+              new ImmutableSetMultitable.SetMulticell.Builder<R, C, V>()
+                  .rowKey(rowKey)
+                  .columnKey(columnKey);
           multicellBuilder.values(values);
           valuesBuilder.addAll(values);
           cellSetBuilder.add(multicellBuilder.build());
@@ -90,18 +92,17 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
     this.allValues = valuesBuilder.build();
   }
 
-
   @Override
   protected Table<R, C, Collection<V>> table() {
     return table;
   }
 
   /**
-   * Returns the set of values corresponding to the given row and column keys, or
-   * an empty set if no such mapping exists. This exists in addition to {@code get} as a type-safe
-   * way of returning a set of values at a specified cell.
+   * Returns the set of values corresponding to the given row and column keys, or an empty set if no
+   * such mapping exists. This exists in addition to {@code get} as a type-safe way of returning a
+   * set of values at a specified cell.
    *
-   * @param rowKey    key of row to search for
+   * @param rowKey key of row to search for
    * @param columnKey key of column to search for
    */
   @Override
@@ -109,7 +110,7 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
   public ImmutableSet<V> getAsSet(@Nullable final Object rowKey, @Nullable final Object columnKey) {
     final Collection<V> ret = table.get(rowKey, columnKey);
     if (ret != null) {
-      return (ImmutableSet<V>) ret; //cast guaranteed to succeed because table made of sets
+      return (ImmutableSet<V>) ret; // cast guaranteed to succeed because table made of sets
     } else {
       return ImmutableSet.of();
     }
@@ -131,8 +132,9 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
   }
 
   /**
-   * Returns {@code true} if the table contains a mapping with the specified
-   * value. Runs in O(1) time.
+   * Returns {@code true} if the table contains a mapping with the specified value. Runs in O(1)
+   * time.
+   *
    * @param value value to search for
    */
   @Override
@@ -164,7 +166,7 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
     return new Builder<>();
   }
 
-  public static class Builder<R, C, V> implements ImmutableMultitable.Builder<R,C,V> {
+  public static class Builder<R, C, V> implements ImmutableMultitable.Builder<R, C, V> {
 
     // we use the two tables because we both need to maintain insertion order and
     // be able to do lookups during building. The values of both sets are
@@ -174,8 +176,7 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
     private final ImmutableSet.Builder<RowKeyColumnKeyPair<R, C>> rowInsertionOrder =
         ImmutableSet.builder();
 
-    private Builder() {
-    }
+    private Builder() {}
 
     private ImmutableSet.Builder<V> setForKey(final R rowKey, final C columnKey) {
       ImmutableSet.Builder<V> values = tableWeCanLookUpIn.get(rowKey, columnKey);
@@ -194,15 +195,14 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
     }
 
     @Override
-    public Builder<R, C, V> putAll(final R rowKey, final C columnKey,
-        final Iterable<? extends V> values) {
+    public Builder<R, C, V> putAll(
+        final R rowKey, final C columnKey, final Iterable<? extends V> values) {
       setForKey(rowKey, columnKey).addAll(values);
       return this;
     }
 
     public ImmutableSetMultitable<R, C, V> build() {
-      final ImmutableTable.Builder<R, C, Collection<V>> immutableTable =
-          ImmutableTable.builder();
+      final ImmutableTable.Builder<R, C, Collection<V>> immutableTable = ImmutableTable.builder();
 
       int size = 0;
       ImmutableSet.Builder<R> rowIterationBuilder = ImmutableSet.builder();
@@ -212,21 +212,22 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
         final ImmutableSet<V> valuesForPair =
             tableWeCanLookUpIn.get(rowKeyColKey.row(), rowKeyColKey.column()).build();
         size += valuesForPair.size();
-        immutableTable.put(rowKeyColKey.row(), rowKeyColKey.column(),
-            valuesForPair);
+        immutableTable.put(rowKeyColKey.row(), rowKeyColKey.column(), valuesForPair);
         rowIterationBuilder.add(rowKeyColKey.row());
         columnIterationBuilder.add(rowKeyColKey.column());
       }
 
-      return new ImmutableSetMultitable<>(immutableTable.build(), size, rowIterationBuilder.build(),
+      return new ImmutableSetMultitable<>(
+          immutableTable.build(),
+          size,
+          rowIterationBuilder.build(),
           columnIterationBuilder.build());
     }
   }
 
   @IsiNlpImmutable
   @Value.Immutable
-  static abstract class SetMulticell<R, C, V>
-      implements SetMultitable.SetMulticell<R, C, V> {
+  abstract static class SetMulticell<R, C, V> implements SetMultitable.SetMulticell<R, C, V> {
 
     @Override
     public abstract R getRowKey();
@@ -237,8 +238,6 @@ public final class ImmutableSetMultitable<R, C, V> extends ImmutableMultitable<R
     @Override
     public abstract Set<V> getValues();
 
-    public static class Builder<R, C, V> extends ImmutableSetMulticell.Builder<R, C, V> {
-
-    }
+    public static class Builder<R, C, V> extends ImmutableSetMulticell.Builder<R, C, V> {}
   }
 }

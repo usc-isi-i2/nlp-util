@@ -1,10 +1,9 @@
 package edu.isi.nlp.converters;
 
-import com.google.common.collect.Sets;
-
-import java.util.Set;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.collect.Sets;
+import java.util.Set;
 
 public class StringToStringSet implements StringConverter<Set<String>> {
 

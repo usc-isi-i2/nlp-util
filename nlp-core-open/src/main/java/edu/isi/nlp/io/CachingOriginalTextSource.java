@@ -1,21 +1,18 @@
 package edu.isi.nlp.io;
 
-import edu.isi.nlp.files.KeyValueSource;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
+import edu.isi.nlp.files.KeyValueSource;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * This should be merged into the newer {@link KeyValueSource}
- * code.
+ * This should be merged into the newer {@link KeyValueSource} code.
  *
  * @author Ryan Gabbard
  */
@@ -23,8 +20,7 @@ public final class CachingOriginalTextSource implements OriginalTextSource {
 
   private final LoadingCache<Symbol, String> cache;
 
-  private CachingOriginalTextSource(
-      final LoadingCache<Symbol, String> cache) {
+  private CachingOriginalTextSource(final LoadingCache<Symbol, String> cache) {
     this.cache = checkNotNull(cache);
   }
 
@@ -32,17 +28,18 @@ public final class CachingOriginalTextSource implements OriginalTextSource {
     return new CachingOriginalTextSource(
         CacheBuilder.newBuilder()
             .maximumSize(maxToCache)
-            .<Symbol, String>build(new CacheLoader<Symbol, String>() {
-              @Override
-              public String load(final Symbol key) throws Exception {
-                final Optional<String> baseRet = baseSource.getOriginalText(key);
-                if (baseRet.isPresent()) {
-                  return baseRet.get();
-                } else {
-                  return null;
-                }
-              }
-            }));
+            .<Symbol, String>build(
+                new CacheLoader<Symbol, String>() {
+                  @Override
+                  public String load(final Symbol key) throws Exception {
+                    final Optional<String> baseRet = baseSource.getOriginalText(key);
+                    if (baseRet.isPresent()) {
+                      return baseRet.get();
+                    } else {
+                      return null;
+                    }
+                  }
+                }));
   }
 
   @Override

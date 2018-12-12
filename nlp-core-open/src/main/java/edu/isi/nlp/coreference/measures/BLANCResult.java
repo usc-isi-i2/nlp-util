@@ -5,11 +5,10 @@ import com.google.common.base.Optional;
 import edu.isi.nlp.evaluation.FMeasureInfo;
 
 /**
- * A BLANC score. This is not represented using {@link FMeasureInfo}
- * because, although the terms precision, recall, and F-measure are used, each results from
- * averaging other P, R, and Fs, so they don't have the same relationship between themselves you
- * would normally expect. The BLANC score itself it always defined, but various sub-scores may be
- * {@code NaN}.
+ * A BLANC score. This is not represented using {@link FMeasureInfo} because, although the terms
+ * precision, recall, and F-measure are used, each results from averaging other P, R, and Fs, so
+ * they don't have the same relationship between themselves you would normally expect. The BLANC
+ * score itself it always defined, but various sub-scores may be {@code NaN}.
  */
 @Beta
 public final class BLANCResult {
@@ -29,14 +28,19 @@ public final class BLANCResult {
 
   private final double blancScore;
 
-  /**
-   * cached computations derived from the data above
-   */
+  /** cached computations derived from the data above */
   private final double blancP;
+
   private final double blancR;
 
-  private BLANCResult(final double p_C, final double p_N, final double r_C, final double r_N,
-      final double F_C, final double F_N, final double blancScore) {
+  private BLANCResult(
+      final double p_C,
+      final double p_N,
+      final double r_C,
+      final double r_N,
+      final double F_C,
+      final double F_N,
+      final double blancScore) {
     this.P_C = p_C;
     this.P_N = p_N;
     this.R_C = r_C;
@@ -51,10 +55,14 @@ public final class BLANCResult {
   }
 
   /* package-private */
-  static BLANCResult fromSetCounts(boolean itemSetsMatch, double corefLinksInBoth,
-      double corefLinksInKey, double corefLinksInResponse, double nonCorefLinksInBoth,
-      double nonCorefLinksInKey, double nonCorefLinksInResponse)
-  {
+  static BLANCResult fromSetCounts(
+      boolean itemSetsMatch,
+      double corefLinksInBoth,
+      double corefLinksInKey,
+      double corefLinksInResponse,
+      double nonCorefLinksInBoth,
+      double nonCorefLinksInKey,
+      double nonCorefLinksInResponse) {
     final double R_C = corefLinksInBoth / ((double) corefLinksInKey);
     final double P_C = corefLinksInBoth / ((double) corefLinksInResponse);
     final double R_N = nonCorefLinksInBoth / ((double) nonCorefLinksInKey);
@@ -63,8 +71,8 @@ public final class BLANCResult {
     double blancScore;
 
     // this way of computing handles certain edge cases the P and R way does not
-    final double F_C = 2*corefLinksInBoth/(corefLinksInKey+corefLinksInResponse);
-    final double F_N = 2*nonCorefLinksInBoth/(nonCorefLinksInKey+nonCorefLinksInResponse);
+    final double F_C = 2 * corefLinksInBoth / (corefLinksInKey + corefLinksInResponse);
+    final double F_N = 2 * nonCorefLinksInBoth / (nonCorefLinksInKey + nonCorefLinksInResponse);
 
     // handle special cases - section 4.1 of Luo et al.
     final boolean noCorefLinksOnEitherSide = corefLinksInKey == 0.0 && corefLinksInResponse == 0.0;
@@ -85,7 +93,7 @@ public final class BLANCResult {
       // both sides have one big cluster
       blancScore = F_C;
     } else {
-      blancScore = 0.5*(F_N+F_C);
+      blancScore = 0.5 * (F_N + F_C);
     }
 
     return new BLANCResult(P_C, P_N, R_C, R_N, F_C, F_N, blancScore);
@@ -124,8 +132,9 @@ public final class BLANCResult {
   }
 
   /**
-   * The final BLANC score. This is always defined (see Luo et. al, ACL 2014, sec 4.1 for edge cases).
-   * If both documents are empty, we return 1.0.
+   * The final BLANC score. This is always defined (see Luo et. al, ACL 2014, sec 4.1 for edge
+   * cases). If both documents are empty, we return 1.0.
+   *
    * @return
    */
   public double blancScore() {

@@ -1,16 +1,15 @@
 package edu.isi.nlp.evaluation;
 
+import static com.google.common.collect.Sets.difference;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
 import java.util.Collection;
 import java.util.Set;
-
-import static com.google.common.collect.Sets.difference;
 
 /**
  * A {@link ProvenancedAlignment} based on grouping items into equivalence classes. The items
@@ -26,16 +25,20 @@ public final class EquivalenceBasedProvenancedAlignment<EqClassT, LeftT, RightT>
   private EquivalenceBasedProvenancedAlignment(
       final Multimap<? extends EqClassT, ? extends LeftT> leftEquivalenceClassesToProvenances,
       final Multimap<? extends EqClassT, ? extends RightT> rightEquivalenceClassesToProvenances) {
-    this.leftEquivalenceClassesToProvenances = ImmutableSetMultimap
-        .copyOf(leftEquivalenceClassesToProvenances);
-    this.rightEquivalenceClassesToProvenances = ImmutableSetMultimap.copyOf(
-        rightEquivalenceClassesToProvenances);
+    this.leftEquivalenceClassesToProvenances =
+        ImmutableSetMultimap.copyOf(leftEquivalenceClassesToProvenances);
+    this.rightEquivalenceClassesToProvenances =
+        ImmutableSetMultimap.copyOf(rightEquivalenceClassesToProvenances);
   }
 
   // package-private
-  static <EqClassT, LeftProvT, RightProvT> EquivalenceBasedProvenancedAlignment<EqClassT, LeftProvT, RightProvT> fromEquivalenceClassMaps(
-      final Multimap<? extends EqClassT, ? extends LeftProvT> leftEquivalenceClassesToProvenances,
-      final Multimap<? extends EqClassT, ? extends RightProvT> rightEquivalenceClassesToProvenances) {
+  static <EqClassT, LeftProvT, RightProvT>
+      EquivalenceBasedProvenancedAlignment<EqClassT, LeftProvT, RightProvT>
+          fromEquivalenceClassMaps(
+              final Multimap<? extends EqClassT, ? extends LeftProvT>
+                  leftEquivalenceClassesToProvenances,
+              final Multimap<? extends EqClassT, ? extends RightProvT>
+                  rightEquivalenceClassesToProvenances) {
     return new EquivalenceBasedProvenancedAlignment<EqClassT, LeftProvT, RightProvT>(
         leftEquivalenceClassesToProvenances, rightEquivalenceClassesToProvenances);
   }
@@ -52,20 +55,24 @@ public final class EquivalenceBasedProvenancedAlignment<EqClassT, LeftT, RightT>
 
   @Override
   public Set<EqClassT> leftUnaligned() {
-    return difference(leftEquivalenceClassesToProvenances.keySet(),
+    return difference(
+        leftEquivalenceClassesToProvenances.keySet(),
         rightEquivalenceClassesToProvenances.keySet());
   }
 
   @Override
   public Set<EqClassT> rightUnaligned() {
-    return difference(rightEquivalenceClassesToProvenances.keySet(),
+    return difference(
+        rightEquivalenceClassesToProvenances.keySet(),
         leftEquivalenceClassesToProvenances.keySet());
   }
 
   @Override
   public Set<EqClassT> leftAligned() {
-    return Sets.intersection(leftEquivalenceClassesToProvenances.keySet(),
-        rightEquivalenceClassesToProvenances.keySet()).immutableCopy();
+    return Sets.intersection(
+            leftEquivalenceClassesToProvenances.keySet(),
+            rightEquivalenceClassesToProvenances.keySet())
+        .immutableCopy();
   }
 
   @Override
@@ -98,8 +105,8 @@ public final class EquivalenceBasedProvenancedAlignment<EqClassT, LeftT, RightT>
   }
 
   /**
-   * Any equivalence class is by definition aligned to itself if it is present on both the left
-   * and the right. Otherwise, it has no alignment.
+   * Any equivalence class is by definition aligned to itself if it is present on both the left and
+   * the right. Otherwise, it has no alignment.
    */
   private Collection<EqClassT> getAlignedTo(final Object item) {
     if (rightEquivalenceClassesToProvenances.containsKey(item)

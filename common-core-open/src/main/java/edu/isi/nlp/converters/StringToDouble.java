@@ -4,8 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StringToDouble implements StringConverter<Double> {
 
-  public StringToDouble() {
-  }
+  public StringToDouble() {}
 
   public Class<Double> getValueClass() {
     return Double.class;
@@ -16,8 +15,7 @@ public class StringToDouble implements StringConverter<Double> {
     try {
       return Double.parseDouble(s);
     } catch (NumberFormatException nfe) {
-      throw new ConversionException("Not a double: " + s,
-          checkNotNull(nfe));
+      throw new ConversionException("Not a double: " + s, checkNotNull(nfe));
     }
   }
 }

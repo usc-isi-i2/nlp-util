@@ -1,15 +1,15 @@
 package edu.isi.nlp.evaluation;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A pair of things being compared to each other, where one is in some sense "the correct one" (the
  * key).
  *
- * @param <KeyT>  The type of the "correct" item
+ * @param <KeyT> The type of the "correct" item
  * @param <TestT> The type of the other item
  */
 @Beta
@@ -23,25 +23,18 @@ public final class EvalPair<KeyT, TestT> {
     this.testItem = checkNotNull(testItem);
   }
 
-  /**
-   * The correct item.
-   */
+  /** The correct item. */
   public KeyT key() {
     return keyItem;
   }
 
-  /**
-   * The other item
-   */
+  /** The other item */
   public TestT test() {
     return testItem;
   }
 
-  /**
-   * Create an {@code EvalPair}. The "correct" (key) item comes first.
-   */
-  public static <KeyT, TestT> EvalPair<KeyT, TestT> of(
-      KeyT key, TestT test) {
+  /** Create an {@code EvalPair}. The "correct" (key) item comes first. */
+  public static <KeyT, TestT> EvalPair<KeyT, TestT> of(KeyT key, TestT test) {
     return new EvalPair<KeyT, TestT>(key, test);
   }
 
@@ -50,8 +43,8 @@ public final class EvalPair<KeyT, TestT> {
    * an {@link EvalPair}.
    */
   public static <F, T, KeyT extends F, TestT extends F>
-  Function<EvalPair<? extends KeyT, ? extends TestT>, EvalPair<T, T>> functionOnBoth(
-      final Function<F, T> func) {
+      Function<EvalPair<? extends KeyT, ? extends TestT>, EvalPair<T, T>> functionOnBoth(
+          final Function<F, T> func) {
     return new Function<EvalPair<? extends KeyT, ? extends TestT>, EvalPair<T, T>>() {
       @Override
       public EvalPair<T, T> apply(final EvalPair<? extends KeyT, ? extends TestT> input) {
@@ -66,12 +59,12 @@ public final class EvalPair<KeyT, TestT> {
   }
 
   /**
-   * Turns two Guava {@link Function}s into another {@code Function} which operates over both sides of
-   * an {@link EvalPair}.
+   * Turns two Guava {@link Function}s into another {@code Function} which operates over both sides
+   * of an {@link EvalPair}.
    */
   public static <F1, T1, F2, T2, KeyT extends F1, TestT extends F2>
-  Function<EvalPair<? extends KeyT, ? extends TestT>, EvalPair<T1, T2>> functionsOnBoth(
-      final Function<F1, T1> keyFunc, final Function<F2,T2> testFunc) {
+      Function<EvalPair<? extends KeyT, ? extends TestT>, EvalPair<T1, T2>> functionsOnBoth(
+          final Function<F1, T1> keyFunc, final Function<F2, T2> testFunc) {
     return new Function<EvalPair<? extends KeyT, ? extends TestT>, EvalPair<T1, T2>>() {
       @Override
       public EvalPair<T1, T2> apply(final EvalPair<? extends KeyT, ? extends TestT> input) {

@@ -1,13 +1,11 @@
 package edu.isi.nlp.io;
 
-import edu.isi.nlp.strings.offsets.ByteOffset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
-import edu.isi.nlp.symbols.Symbol;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-
+import edu.isi.nlp.strings.offsets.ByteOffset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
+import edu.isi.nlp.symbols.Symbol;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,15 +13,13 @@ import java.util.Set;
 
   private final ImmutableMap<Symbol, OffsetRange<ByteOffset>> map;
 
-  private MapOffsetIndex(
-      final Map<Symbol, OffsetRange<ByteOffset>> map) {
+  private MapOffsetIndex(final Map<Symbol, OffsetRange<ByteOffset>> map) {
     this.map = ImmutableMap.copyOf(map);
   }
 
   public static MapOffsetIndex fromMap(Map<Symbol, OffsetRange<ByteOffset>> map) {
     return new MapOffsetIndex(map);
   }
-
 
   @Override
   public Optional<OffsetRange<ByteOffset>> byteOffsetsOf(final Symbol key) {

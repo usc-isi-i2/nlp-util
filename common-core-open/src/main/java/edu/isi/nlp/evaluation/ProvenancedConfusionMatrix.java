@@ -1,9 +1,6 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.collections.CollectionUtils;
-import edu.isi.nlp.collections.MapUtils;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -19,17 +16,18 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
-
+import edu.isi.nlp.collections.CollectionUtils;
+import edu.isi.nlp.collections.MapUtils;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * A confusion matrix which tracks the actual identities of all its elements.
  *
- * Row and column labels may not be null.  Cell fillers may not be null. Entries in each cell are
+ * <p>Row and column labels may not be null. Cell fillers may not be null. Entries in each cell are
  * stored in the order they were added to the builder.
  *
  * @param <CellFiller> What sort of entry to keep in each cell.
@@ -40,16 +38,12 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
 
   private final Table<Symbol, Symbol, List<CellFiller>> table;
 
-  /**
-   * The left-hand labels of the confusion matrix.
-   */
+  /** The left-hand labels of the confusion matrix. */
   public Set<Symbol> leftLabels() {
     return table.rowKeySet();
   }
 
-  /**
-   * The right hand labels of the confusion matrix.
-   */
+  /** The right hand labels of the confusion matrix. */
   public Set<Symbol> rightLabels() {
     return table.columnKeySet();
   }
@@ -66,9 +60,7 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
     }
   }
 
-  /**
-   * Returns all provenance entries in this matrix, regardless of cell.
-   */
+  /** Returns all provenance entries in this matrix, regardless of cell. */
   public Set<CellFiller> entries() {
     return FluentIterable.from(table.cellSet())
         .transformAndConcat(CollectionUtils.<List<CellFiller>>TableCellValue())
@@ -84,12 +76,11 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
         ImmutableTable.builder();
 
     for (final Cell<Symbol, Symbol, List<CellFiller>> curCell : table.cellSet()) {
-      final List<CellFiller> newFiller = FluentIterable.from(curCell.getValue())
-          .filter(predicate).toList();
+      final List<CellFiller> newFiller =
+          FluentIterable.from(curCell.getValue()).filter(predicate).toList();
       if (!newFiller.isEmpty()) {
         newTable.put(curCell.getRowKey(), curCell.getColumnKey(), newFiller);
       }
-
     }
 
     return new ProvenancedConfusionMatrix<CellFiller>(newTable.build());
@@ -100,18 +91,19 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
    * For example, a confusion matrix for an event detection task could be further broken down into
    * separate confusion matrices for each event type.
    *
-   * To do this, you specify a signature function mapping from each provenance to some signature
-   * (e.g. to event types, to genres, etc.).  The output will be an {@link
+   * <p>To do this, you specify a signature function mapping from each provenance to some signature
+   * (e.g. to event types, to genres, etc.). The output will be an {@link
    * com.google.common.collect.ImmutableMap} from all observed signatures to {@link
-   * ProvenancedConfusionMatrix}es consisting of only those provenances with
-   * the corresponding signature under the provided function.
+   * ProvenancedConfusionMatrix}es consisting of only those provenances with the corresponding
+   * signature under the provided function.
    *
-   * The signature function may never return a signature of {@code null}.
+   * <p>The signature function may never return a signature of {@code null}.
    *
-   * {@code keyOrder} is the order the keys should be in the iteration order of the resulting map.
+   * <p>{@code keyOrder} is the order the keys should be in the iteration order of the resulting
+   * map.
    */
-  public <SignatureType> BrokenDownProvenancedConfusionMatrix<SignatureType, CellFiller>
-  breakdown(Function<? super CellFiller, SignatureType> signatureFunction,
+  public <SignatureType> BrokenDownProvenancedConfusionMatrix<SignatureType, CellFiller> breakdown(
+      Function<? super CellFiller, SignatureType> signatureFunction,
       Ordering<SignatureType> keyOrdering) {
     final Map<SignatureType, Builder<CellFiller>> ret = Maps.newHashMap();
 
@@ -134,8 +126,8 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
         ImmutableMap.builder();
     // to get consistent output, we make sure to sort by the keys
     for (final Map.Entry<SignatureType, Builder<CellFiller>> entry :
-        MapUtils.<SignatureType, Builder<CellFiller>>byKeyOrdering(keyOrdering).sortedCopy(
-            ret.entrySet())) {
+        MapUtils.<SignatureType, Builder<CellFiller>>byKeyOrdering(keyOrdering)
+            .sortedCopy(ret.entrySet())) {
       trueRet.put(entry.getKey(), entry.getValue().build());
     }
     return BrokenDownProvenancedConfusionMatrix.fromMap(trueRet.build());
@@ -151,7 +143,9 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
     return builder.build();
   }
 
-  private String prettyPrint(Ordering<Symbol> labelOrdering, Optional<? extends Ordering<? super CellFiller>> fillerOrdering) {
+  private String prettyPrint(
+      Ordering<Symbol> labelOrdering,
+      Optional<? extends Ordering<? super CellFiller>> fillerOrdering) {
     final StringBuilder sb = new StringBuilder();
 
     final List<Symbol> sortedColumns = labelOrdering.sortedCopy(table.columnKeySet());
@@ -185,10 +179,7 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
     return prettyPrint(SymbolUtils.byStringOrdering(), Optional.of(cellFillerOrdering));
   }
 
-
-  /**
-   * Generate an object which will let you create a confusion matrix.
-   */
+  /** Generate an object which will let you create a confusion matrix. */
   public static <CellFiller> Builder<CellFiller> builder() {
     return new Builder<CellFiller>();
   }
@@ -203,8 +194,8 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
     this.table = builder.build();
   }
 
-  public static <CellFiller> Function<ProvenancedConfusionMatrix<CellFiller>,
-      SummaryConfusionMatrix> ToSummaryMatrix() {
+  public static <CellFiller>
+      Function<ProvenancedConfusionMatrix<CellFiller>, SummaryConfusionMatrix> ToSummaryMatrix() {
     return new Function<ProvenancedConfusionMatrix<CellFiller>, SummaryConfusionMatrix>() {
       @Override
       public SummaryConfusionMatrix apply(ProvenancedConfusionMatrix<CellFiller> input) {
@@ -215,8 +206,7 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
 
   public static class Builder<CellFiller> {
 
-    private Builder() {
-    }
+    private Builder() {}
 
     /**
      * Add the specified {@code filler} to cell {@code (left, right)} of this confusion matrix being
@@ -230,12 +220,12 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
     }
 
     /**
-     * This is an alias for {@link #record(Symbol,
-     * Symbol, Object)} you can use to make your code clearer, since the
-     * predicted value is assumed to be on the rows for F-Measure calculations, etc.
+     * This is an alias for {@link #record(Symbol, Symbol, Object)} you can use to make your code
+     * clearer, since the predicted value is assumed to be on the rows for F-Measure calculations,
+     * etc.
      */
-    public void recordPredictedGold(final Symbol left, final Symbol right,
-        final CellFiller filler) {
+    public void recordPredictedGold(
+        final Symbol left, final Symbol right, final CellFiller filler) {
       record(left, right, filler);
     }
 
@@ -254,6 +244,4 @@ public final class ProvenancedConfusionMatrix<CellFiller> {
       }
     }
   }
-
-
 }

@@ -1,12 +1,11 @@
 package edu.isi.nlp.hppc.permutationProxies;
 
-import edu.isi.nlp.math.permutationProxies.PermutationProxy;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.ShortArrayList;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import edu.isi.nlp.math.permutationProxies.PermutationProxy;
 
 /**
  * A {@link PermutationProxy} for a parallel pair of {@link IntArrayList} and {@link ShortArrayList}
@@ -23,9 +22,11 @@ public final class PairedIntShortArrayListPermutationProxy implements Permutatio
   private short tmpShort;
   private boolean bufferFilled;
 
-  private PairedIntShortArrayListPermutationProxy(final IntArrayList intArr,
+  private PairedIntShortArrayListPermutationProxy(
+      final IntArrayList intArr,
       final ShortArrayList shortArr,
-      final int startIdxInclusive, final int endIdxExclusive) {
+      final int startIdxInclusive,
+      final int endIdxExclusive) {
     checkArgument(startIdxInclusive >= 0);
     checkArgument(startIdxInclusive <= endIdxExclusive);
     checkArgument(endIdxExclusive <= intArr.size());
@@ -38,16 +39,17 @@ public final class PairedIntShortArrayListPermutationProxy implements Permutatio
   }
 
   public static PairedIntShortArrayListPermutationProxy createForArrayListSlices(
-      final IntArrayList intArr, final ShortArrayList shortArr,
-      final int startIdxInclusive, final int endIdxExclusive) {
-    return new PairedIntShortArrayListPermutationProxy(intArr, shortArr,
-        startIdxInclusive, endIdxExclusive);
+      final IntArrayList intArr,
+      final ShortArrayList shortArr,
+      final int startIdxInclusive,
+      final int endIdxExclusive) {
+    return new PairedIntShortArrayListPermutationProxy(
+        intArr, shortArr, startIdxInclusive, endIdxExclusive);
   }
 
   public static PairedIntShortArrayListPermutationProxy createForArrays(
       final IntArrayList intArr, final ShortArrayList shortArr) {
-    return new PairedIntShortArrayListPermutationProxy(intArr, shortArr,
-        0, intArr.size());
+    return new PairedIntShortArrayListPermutationProxy(intArr, shortArr, 0, intArr.size());
   }
 
   @Override

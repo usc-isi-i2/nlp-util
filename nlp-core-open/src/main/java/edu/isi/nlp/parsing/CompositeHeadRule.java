@@ -1,15 +1,12 @@
 package edu.isi.nlp.parsing;
 
-
-import edu.isi.nlp.ConstituentNode;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import edu.isi.nlp.ConstituentNode;
 
 @Beta
-final class CompositeHeadRule<NodeT extends ConstituentNode<NodeT, ?>>
-    implements HeadRule<NodeT> {
+final class CompositeHeadRule<NodeT extends ConstituentNode<NodeT, ?>> implements HeadRule<NodeT> {
 
   private final ImmutableList<HeadRule<NodeT>> rulesInOrder;
 
@@ -29,8 +26,7 @@ final class CompositeHeadRule<NodeT extends ConstituentNode<NodeT, ?>>
   }
 
   @Override
-  public Optional<NodeT> matchForChildren(
-      final Iterable<NodeT> children) {
+  public Optional<NodeT> matchForChildren(final Iterable<NodeT> children) {
     for (final HeadRule<NodeT> r : rulesInOrder) {
       final Optional<NodeT> ret = r.matchForChildren(children);
       if (ret.isPresent()) {
@@ -38,6 +34,5 @@ final class CompositeHeadRule<NodeT extends ConstituentNode<NodeT, ?>>
       }
     }
     return Optional.absent();
-
   }
 }

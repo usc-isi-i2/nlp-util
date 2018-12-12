@@ -1,27 +1,24 @@
 package edu.isi.nlp.parameters;
 
-import edu.isi.nlp.files.FileUtils;
-
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.files.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates a copy of a parameter file such that all parameters with values that are absolute paths
  * to existing file are changed to point to a new copy of that file that is created inside the
  * specified base directory.
  *
- * For example, if a parameter has the value {@code /nfs/raid01/foo.bar} and the base directory
- * is {@code /nfs/raid02/archive}, the output parameter will have the value
- * {@code /nfs/raid02/archive/nfs/raid01/foo.bar}. Note that the entire original path is appended
- * to the base directory; this is necessary to ensure there are no collisions between source files.
+ * <p>For example, if a parameter has the value {@code /nfs/raid01/foo.bar} and the base directory
+ * is {@code /nfs/raid02/archive}, the output parameter will have the value {@code
+ * /nfs/raid02/archive/nfs/raid01/foo.bar}. Note that the entire original path is appended to the
+ * base directory; this is necessary to ensure there are no collisions between source files.
  *
  * @author Constantine Lignos
  */
@@ -69,10 +66,13 @@ public final class RebaseFileParameters {
           destFile.getParentFile().mkdirs();
           Files.copy(sourceFile, destFile);
         } else if (sourceFile.isDirectory()) {
-          log.info("Recursively copying directory value for parameter {} from {} to {}", key,
-              sourceFile, destFile);
-          FileUtils.recursivelyCopyDirectory(sourceFile, destFile,
-              StandardCopyOption.REPLACE_EXISTING);
+          log.info(
+              "Recursively copying directory value for parameter {} from {} to {}",
+              key,
+              sourceFile,
+              destFile);
+          FileUtils.recursivelyCopyDirectory(
+              sourceFile, destFile, StandardCopyOption.REPLACE_EXISTING);
         } else {
           throw new RuntimeException();
         }
@@ -80,8 +80,10 @@ public final class RebaseFileParameters {
       } else {
         // Add a warning if this looks like a file, because if we got here must not exist
         if (sourceFile.isAbsolute()) {
-          log.warn("Parameter value {} for parameter {} looks like a file but doesn't exist",
-              value, key);
+          log.warn(
+              "Parameter value {} for parameter {} looks like a file but doesn't exist",
+              value,
+              key);
         }
         log.info("Passing parameter unchanged: {}: {}", key, value);
         builder.set(key, value);

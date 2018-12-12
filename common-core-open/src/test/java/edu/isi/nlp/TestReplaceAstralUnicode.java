@@ -1,26 +1,21 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.files.FileUtils;
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
+import static org.junit.Assert.assertEquals;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.files.FileUtils;
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
+import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-
-import static org.junit.Assert.assertEquals;
-
-
 public class TestReplaceAstralUnicode {
 
-  @Rule
-  public TemporaryFolder inPlaceFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder inPlaceFolder = new TemporaryFolder();
 
   // \uD83E\uDDC0 is CHEESE WEDGE, the emoji with the highest code point (as of 2017)
   private static final String ASTRAL_STRING = "Hello world \uD83E\uDDC0\nfoo\uD83E\uDDC0foo";
@@ -40,22 +35,22 @@ public class TestReplaceAstralUnicode {
     final File mapFile = new File(root, "map.txt");
     FileUtils.writeSymbolToFileMap(map, Files.asCharSink(mapFile, Charsets.UTF_8));
 
-    final Parameters params = Parameters.builder()
-        .set(ReplaceAstralUnicodeCodepoints.IN_PLACE_PARAM, "true")
-        .set(ReplaceAstralUnicodeCodepoints.INPUT_MAP_PARAM, mapFile.getAbsolutePath())
-        .build();
+    final Parameters params =
+        Parameters.builder()
+            .set(ReplaceAstralUnicodeCodepoints.IN_PLACE_PARAM, "true")
+            .set(ReplaceAstralUnicodeCodepoints.INPUT_MAP_PARAM, mapFile.getAbsolutePath())
+            .build();
 
     final File paramsFile = new File(root, "params.params");
     Files.asCharSink(paramsFile, Charsets.UTF_8).write(params.dump());
 
-    ReplaceAstralUnicodeCodepoints.main(new String[]{paramsFile.getAbsolutePath()});
+    ReplaceAstralUnicodeCodepoints.main(new String[] {paramsFile.getAbsolutePath()});
     final String rereadString = Files.asCharSource(badFile, Charsets.UTF_8).read();
     assertEquals(DE_ASTRALIZE_STRING, rereadString);
     assertEquals(oldLength, rereadString.codePointCount(0, rereadString.length()));
   }
 
-  @Rule
-  public TemporaryFolder nonInPlaceFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder nonInPlaceFolder = new TemporaryFolder();
 
   @Test
   public void testNonInPlace() throws Exception {
@@ -74,25 +69,29 @@ public class TestReplaceAstralUnicode {
     Files.asCharSink(bar, Charsets.UTF_8).write(ASTRAL_STRING);
 
     final File mapFile = new File(root, "map.txt");
-    FileUtils.writeSymbolToFileMap(ImmutableMap.of(Symbol.from("meep"), meep,
-        Symbol.from("bar"), bar), Files.asCharSink(mapFile, Charsets.UTF_8));
+    FileUtils.writeSymbolToFileMap(
+        ImmutableMap.of(Symbol.from("meep"), meep, Symbol.from("bar"), bar),
+        Files.asCharSink(mapFile, Charsets.UTF_8));
 
-    final Parameters params = Parameters.builder()
-        .set(ReplaceAstralUnicodeCodepoints.INPUT_MAP_PARAM, mapFile.getAbsolutePath())
-        .set(ReplaceAstralUnicodeCodepoints.OUTPUT_DIR_PARAM, outputDir.getAbsolutePath())
-        .set(ReplaceAstralUnicodeCodepoints.BASE_PATH_PARAM, inputDir.getAbsolutePath())
-        .set(ReplaceAstralUnicodeCodepoints.OUTPUT_MAP_PARAM,
-            new File(root, "outputMap.txt").getAbsolutePath())
-        .build();
+    final Parameters params =
+        Parameters.builder()
+            .set(ReplaceAstralUnicodeCodepoints.INPUT_MAP_PARAM, mapFile.getAbsolutePath())
+            .set(ReplaceAstralUnicodeCodepoints.OUTPUT_DIR_PARAM, outputDir.getAbsolutePath())
+            .set(ReplaceAstralUnicodeCodepoints.BASE_PATH_PARAM, inputDir.getAbsolutePath())
+            .set(
+                ReplaceAstralUnicodeCodepoints.OUTPUT_MAP_PARAM,
+                new File(root, "outputMap.txt").getAbsolutePath())
+            .build();
 
     final File paramsFile = new File(root, "params.txt");
     Files.asCharSink(paramsFile, Charsets.UTF_8).write(params.dump());
 
-    ReplaceAstralUnicodeCodepoints.main(new String[]{paramsFile.getAbsolutePath()});
-    assertEquals(DE_ASTRALIZE_STRING, Files.asCharSource(new File(outputDir, "meep.txt"),
-        Charsets.UTF_8).read());
-    assertEquals(DE_ASTRALIZE_STRING, Files.asCharSource(new File(new File(outputDir, "foo"),
-            "bar.txt"),
-        Charsets.UTF_8).read());
+    ReplaceAstralUnicodeCodepoints.main(new String[] {paramsFile.getAbsolutePath()});
+    assertEquals(
+        DE_ASTRALIZE_STRING,
+        Files.asCharSource(new File(outputDir, "meep.txt"), Charsets.UTF_8).read());
+    assertEquals(
+        DE_ASTRALIZE_STRING,
+        Files.asCharSource(new File(new File(outputDir, "foo"), "bar.txt"), Charsets.UTF_8).read());
   }
 }

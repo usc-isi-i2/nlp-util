@@ -1,13 +1,12 @@
 package edu.isi.nlp.corenlp;
 
-import edu.isi.nlp.strings.offsets.CharOffset;
-import edu.isi.nlp.strings.offsets.OffsetRange;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import edu.isi.nlp.strings.offsets.CharOffset;
+import edu.isi.nlp.strings.offsets.OffsetRange;
 
 @Beta
 public final class CoreNLPDocument {
@@ -24,12 +23,13 @@ public final class CoreNLPDocument {
 
   /**
    * Returns the first {@code CoreNLPSentence} that contains these offsets, if any.
+   *
    * @param offsets
    * @return
    */
   public Optional<CoreNLPSentence> firstSentenceContaining(final OffsetRange<CharOffset> offsets) {
-    for(final CoreNLPSentence sentence: sentences) {
-      if(sentence.offsets().contains(offsets)) {
+    for (final CoreNLPSentence sentence : sentences) {
+      if (sentence.offsets().contains(offsets)) {
         return Optional.of(sentence);
       }
     }
@@ -44,8 +44,7 @@ public final class CoreNLPDocument {
 
     private ImmutableList<CoreNLPSentence> sentences;
 
-    private CoreNLPDocumentBuilder() {
-    }
+    private CoreNLPDocumentBuilder() {}
 
     public CoreNLPDocumentBuilder withSentences(Iterable<CoreNLPSentence> sentences) {
       this.sentences = ImmutableList.copyOf(sentences);

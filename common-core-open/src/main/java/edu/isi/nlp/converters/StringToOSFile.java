@@ -6,8 +6,7 @@ import java.io.File;
 
 public class StringToOSFile implements StringConverter<File> {
 
-  public StringToOSFile() {
-  }
+  public StringToOSFile() {}
 
   public Class<File> getValueClass() {
     return File.class;
@@ -16,7 +15,7 @@ public class StringToOSFile implements StringConverter<File> {
   @Override
   public File decode(final String s) {
     String path = s;
-      path = path.replace("\\\\", "/nfs/").replace("\\", "/");
+    path = path.replace("\\\\", "/nfs/").replace("\\", "/");
     return new File(checkNotNull(path));
   }
 }

@@ -1,13 +1,12 @@
 package edu.isi.nlp.corpora.ere;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class EREDocument {
   private final String docid;
@@ -18,9 +17,13 @@ public final class EREDocument {
   private final ImmutableList<EREEvent> events;
   private final ImmutableMap<EREEntityMention, EREEntity> mentionToEntityMap;
 
-  private EREDocument(final String docid, final String sourceType,
-      final List<EREEntity> entities, final List<EREFiller> fillers,
-      final List<ERERelation> relations, final List<EREEvent> events) {
+  private EREDocument(
+      final String docid,
+      final String sourceType,
+      final List<EREEntity> entities,
+      final List<EREFiller> fillers,
+      final List<ERERelation> relations,
+      final List<EREEvent> events) {
     this.docid = checkNotNull(docid);
     this.sourceType = checkNotNull(sourceType);
     this.entities = ImmutableList.copyOf(entities);
@@ -102,7 +105,6 @@ public final class EREDocument {
       this.events.add(e);
       return this;
     }
-
   }
 
   private ImmutableMap<EREEntityMention, EREEntity> buildMentionToEntityMap() {

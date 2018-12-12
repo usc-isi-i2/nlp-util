@@ -1,15 +1,13 @@
 package edu.isi.nlp;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
-
 import java.lang.annotation.Annotation;
 import java.util.Objects;
-
 import javax.annotation.Nullable;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Declares a map-based multibinding injection site, but doesn't put anything in the map. This is
@@ -22,33 +20,34 @@ public final class EmptyMapBindingM extends AbstractModule {
 
   private final TypeLiteral<?> keyType;
   private final TypeLiteral<?> valueType;
-  @Nullable
-  private final Class<? extends Annotation> annotation;
+  @Nullable private final Class<? extends Annotation> annotation;
 
-  private EmptyMapBindingM(final TypeLiteral<?> keyType, final TypeLiteral<?> valueType,
+  private EmptyMapBindingM(
+      final TypeLiteral<?> keyType,
+      final TypeLiteral<?> valueType,
       @Nullable final Class<? extends Annotation> annotation) {
     this.keyType = checkNotNull(keyType);
     this.valueType = checkNotNull(valueType);
     this.annotation = annotation;
   }
 
-  public static EmptyMapBindingM forKeyValueTypes(final TypeLiteral<?> keyType,
-      final TypeLiteral<?> valueType) {
+  public static EmptyMapBindingM forKeyValueTypes(
+      final TypeLiteral<?> keyType, final TypeLiteral<?> valueType) {
     return new EmptyMapBindingM(keyType, valueType, null);
   }
 
-  public static EmptyMapBindingM forKeyValueTypes(final Class<?> keyType,
-      final TypeLiteral<?> valueType) {
+  public static EmptyMapBindingM forKeyValueTypes(
+      final Class<?> keyType, final TypeLiteral<?> valueType) {
     return new EmptyMapBindingM(TypeLiteral.get(keyType), valueType, null);
   }
 
-  public static EmptyMapBindingM forKeyValueTypes(final TypeLiteral<?> keyType,
-      final Class<?> valueType) {
+  public static EmptyMapBindingM forKeyValueTypes(
+      final TypeLiteral<?> keyType, final Class<?> valueType) {
     return new EmptyMapBindingM(keyType, TypeLiteral.get(valueType), null);
   }
 
-  public static EmptyMapBindingM forKeyValueTypes(final Class<?> keyType,
-      final Class<?> valueType) {
+  public static EmptyMapBindingM forKeyValueTypes(
+      final Class<?> keyType, final Class<?> valueType) {
     return new EmptyMapBindingM(TypeLiteral.get(keyType), TypeLiteral.get(valueType), null);
   }
 

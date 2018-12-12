@@ -1,23 +1,19 @@
 package edu.isi.nlp.io;
 
-import edu.isi.nlp.files.KeyValueSource;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-
+import edu.isi.nlp.files.KeyValueSource;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utility methods for creating {@link DocIDToFileMapping}s.
  *
- *
- * This should be merged into the newer {@link KeyValueSource}
- * code.
+ * <p>This should be merged into the newer {@link KeyValueSource} code.
  *
  * @author Ryan Gabbard
  */
@@ -29,15 +25,13 @@ public final class DocIDToFileMappings {
 
   /**
    * Gets a DocIDToFileMapping which does lookup in the provieded map and returns {@link
-   * com.google.common.base.Optional#absent()}  if no mapping is present.
+   * com.google.common.base.Optional#absent()} if no mapping is present.
    */
   public static DocIDToFileMapping forMap(Map<Symbol, File> map) {
     return new ForMap(map);
   }
 
-  /**
-   * Returns a {@code DocIDToFileMapping} which calls the specified function.
-   */
+  /** Returns a {@code DocIDToFileMapping} which calls the specified function. */
   public static DocIDToFileMapping forFunction(Function<Symbol, Optional<File>> function) {
     return new ForFunction(function);
   }

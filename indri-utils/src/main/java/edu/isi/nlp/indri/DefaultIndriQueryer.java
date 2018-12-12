@@ -1,24 +1,17 @@
 package edu.isi.nlp.indri;
 
-import edu.isi.nlp.scoring.Scored;
-
-import com.google.common.collect.ImmutableList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-
-import lemurproject.indri.QueryEnvironment;
-import lemurproject.indri.ScoredExtentResult;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Wraps Indri index in convenience methods.  Create instances using {@link
- * Indri}.
- */
+import com.google.common.collect.ImmutableList;
+import edu.isi.nlp.scoring.Scored;
+import java.util.List;
+import lemurproject.indri.QueryEnvironment;
+import lemurproject.indri.ScoredExtentResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/** Wraps Indri index in convenience methods. Create instances using {@link Indri}. */
 /* package-private */ final class DefaultIndriQueryer implements IndriQueryer {
 
   private final QueryEnvironment indriIndex;

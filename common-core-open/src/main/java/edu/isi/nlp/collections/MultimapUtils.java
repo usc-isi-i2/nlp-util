@@ -1,5 +1,8 @@
 package edu.isi.nlp.collections;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -10,12 +13,8 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-
 import java.util.Collection;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utilities for working with {@link Multimap}s.
@@ -33,10 +32,10 @@ public final class MultimapUtils {
    * of it as an {@link com.google.common.collect.ImmutableMap}. If the same key if mapped to
    * multiple values in the input multimap, an {@link java.lang.IllegalArgumentException} is thrown,
    * so this should generally not be used on multimaps built from user input unless this property is
-   * guaranteed to hold.  This is mostly useful for statically building maps which are more
-   * naturally represented as inverted multimaps.
+   * guaranteed to hold. This is mostly useful for statically building maps which are more naturally
+   * represented as inverted multimaps.
    *
-   * Preserves iteration order.
+   * <p>Preserves iteration order.
    */
   public static <K, V> Map<K, V> copyAsMap(Multimap<K, V> multimap) {
     final Map<K, Collection<V>> inputAsMap = multimap.asMap();
@@ -55,8 +54,8 @@ public final class MultimapUtils {
    * by {@code reducerFunction}, which may not return {@code null}. Additionally, {@code multimap}
    * may not have {@code null} keys.
    */
-  public static <K, V> ImmutableMap<K, V> reduceToMap(Multimap<K, V> multimap,
-      Function<? super Collection<V>, ? extends V> reducerFunction) {
+  public static <K, V> ImmutableMap<K, V> reduceToMap(
+      Multimap<K, V> multimap, Function<? super Collection<V>, ? extends V> reducerFunction) {
     final ImmutableMap.Builder<K, V> ret = ImmutableMap.builder();
 
     for (final Map.Entry<K, Collection<V>> entry : multimap.asMap().entrySet()) {
@@ -72,8 +71,8 @@ public final class MultimapUtils {
    * Returns an {@link ImmutableSet} of all items in the multimap for the given set of keys, without
    * preserving mulitiplicity.
    */
-  public static <K, V> ImmutableSet<V> getAllAsSet(final Multimap<K, V> multimap,
-      final Iterable<K> keys) {
+  public static <K, V> ImmutableSet<V> getAllAsSet(
+      final Multimap<K, V> multimap, final Iterable<K> keys) {
     final ImmutableSet.Builder<V> ret = ImmutableSet.builder();
     for (final K key : keys) {
       ret.addAll(multimap.get(key));
@@ -85,12 +84,12 @@ public final class MultimapUtils {
    * Performs a (non-strict) composition of two multimaps to an {@link ImmutableSetMultimap}. This
    * returns a new {@link ImmutableSetMultimap} which will contain an entry {@code (k,v)} if and
    * only if there is some {@code i} such that {@code (k, i)} is in {@code first} and {@code (i,v)}
-   * is in {@code second}.  Neither {@code first} nor {@code second} is permitted to contain null
+   * is in {@code second}. Neither {@code first} nor {@code second} is permitted to contain null
    * keys or values. The output of this method is not a view and will not be updated for changes to
    * the input multimaps.
    *
-   * This method will allow {@code first} to contain values not found as keys of {@code second}. If
-   * you wish to disallow this, see {@link #composeToSetMultimapStrictly(Multimap, Multimap)}.
+   * <p>This method will allow {@code first} to contain values not found as keys of {@code second}.
+   * If you wish to disallow this, see {@link #composeToSetMultimapStrictly(Multimap, Multimap)}.
    */
   public static <K1, K2, V1 extends K2, V2> ImmutableSetMultimap<K1, V2> composeToSetMultimap(
       final Multimap<K1, V1> first, final Multimap<K2, V2> second) {
@@ -109,13 +108,14 @@ public final class MultimapUtils {
    * Performs a (strict) composition of two multimaps to an {@link ImmutableSetMultimap}. This
    * returns a new {@link ImmutableSetMultimap} which will contain an entry {@code (k,v)} if and
    * only if there is some {@code i} such that {@code (k, i)} is in {@code first} and {@code (i, v)}
-   * is in {@code second}.  Neither {@code first} nor {@code second} is permitted to contain null
+   * is in {@code second}. Neither {@code first} nor {@code second} is permitted to contain null
    * keys or values. The output of this method is not a view and will not be updated for changes to
    * the input multimaps. Strict compositions require that for each entry {@code (k,i)} in {@code
    * first}, there exists an entry {@code (i,v)} in {@code second}.
    */
-  public static <K1, K2, V1 extends K2, V2> ImmutableSetMultimap<K1, V2> composeToSetMultimapStrictly(
-      final Multimap<K1, V1> first, final Multimap<K2, V2> second) {
+  public static <K1, K2, V1 extends K2, V2>
+      ImmutableSetMultimap<K1, V2> composeToSetMultimapStrictly(
+          final Multimap<K1, V1> first, final Multimap<K2, V2> second) {
     checkArgument(second.keySet().containsAll(first.values()));
     return composeToSetMultimap(first, second);
   }
@@ -123,12 +123,11 @@ public final class MultimapUtils {
   /**
    * Creates a copy of the supplied multimap with its keys transformed by the supplied function.
    *
-   * The {@code injection} must never return null and the input multimap must contain no nulls.
+   * <p>The {@code injection} must never return null and the input multimap must contain no nulls.
    */
   public static <K1, K2, V> ImmutableListMultimap<K2, V> copyWithTransformedKeys(
-      final ListMultimap<K1,V> listMultimap,
-      final Function<? super K1, ? extends K2> injection) {
-    final ImmutableListMultimap.Builder<K2,V> ret = ImmutableListMultimap.builder();
+      final ListMultimap<K1, V> listMultimap, final Function<? super K1, ? extends K2> injection) {
+    final ImmutableListMultimap.Builder<K2, V> ret = ImmutableListMultimap.builder();
     for (final Map.Entry<K1, V> entry : listMultimap.entries()) {
       // nulls banned by contract
       //noinspection ConstantConditions
@@ -140,28 +139,28 @@ public final class MultimapUtils {
   /**
    * Creates a copy of the supplied multimap with its keys transformed by the supplied function.
    *
-   * The {@code  function} must never return null and the input multimap must contain no nulls.
+   * <p>The {@code function} must never return null and the input multimap must contain no nulls.
    */
   public static <K1, K2, V> ImmutableSetMultimap<K2, V> copyWithTransformedKeys(
-      final SetMultimap<K1,V> setMultimap,
-      final Function<? super K1, ? extends K2> function) {
-    final ImmutableSetMultimap.Builder<K2,V> ret = ImmutableSetMultimap.builder();
+      final SetMultimap<K1, V> setMultimap, final Function<? super K1, ? extends K2> function) {
+    final ImmutableSetMultimap.Builder<K2, V> ret = ImmutableSetMultimap.builder();
     for (final Map.Entry<K1, V> entry : setMultimap.entries()) {
       // nulls banned by contract
       //noinspection ConstantConditions
-      ret.put( function.apply(entry.getKey()), entry.getValue());
+      ret.put(function.apply(entry.getKey()), entry.getValue());
     }
     return ret.build();
   }
 
   /**
-   * Exactly like {@link Multimaps#index(Iterable, Function)}, except the key function can
-   * provide multiple keys for a given value.  The {@code keyFunction} may never return
-   * {@code null} or a collection containing {@code null}.
+   * Exactly like {@link Multimaps#index(Iterable, Function)}, except the key function can provide
+   * multiple keys for a given value. The {@code keyFunction} may never return {@code null} or a
+   * collection containing {@code null}.
    */
   public static <K, V> ImmutableSetMultimap<K, V> indexToSetMultimapWithMultipleKeys(
-      Iterable<? extends V> values, Function<? super V, ? extends Collection<? extends K>> keyFunction) {
-    final ImmutableSetMultimap.Builder<K,V> ret = ImmutableSetMultimap.builder();
+      Iterable<? extends V> values,
+      Function<? super V, ? extends Collection<? extends K>> keyFunction) {
+    final ImmutableSetMultimap.Builder<K, V> ret = ImmutableSetMultimap.builder();
 
     for (final V value : values) {
       // nulls banned by contract
@@ -175,13 +174,14 @@ public final class MultimapUtils {
   }
 
   /**
-   * Exactly like {@link Multimaps#index(Iterable, Function)}, except the key function can
-   * provide multiple keys for a given value.  The {@code keyFunction} may never return
-   * {@code null} or a collection containing {@code null}.
+   * Exactly like {@link Multimaps#index(Iterable, Function)}, except the key function can provide
+   * multiple keys for a given value. The {@code keyFunction} may never return {@code null} or a
+   * collection containing {@code null}.
    */
   public static <K, V> ImmutableListMultimap<K, V> indexToListMultimapWithMultipleKeys(
-      Iterable<? extends V> values, Function<? super V, ? extends Collection<? extends K>> keyFunction) {
-    final ImmutableListMultimap.Builder<K,V> ret = ImmutableListMultimap.builder();
+      Iterable<? extends V> values,
+      Function<? super V, ? extends Collection<? extends K>> keyFunction) {
+    final ImmutableListMultimap.Builder<K, V> ret = ImmutableListMultimap.builder();
 
     for (final V value : values) {
       // nulls banned by contract

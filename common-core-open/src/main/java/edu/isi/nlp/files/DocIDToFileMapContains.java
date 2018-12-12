@@ -1,19 +1,16 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.StringUtils;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
 /**
- * Utility to check that a doc ID-to-file-map contains all documents
- * on a given list.
+ * Utility to check that a doc ID-to-file-map contains all documents on a given list.
  *
  * @author Ryan Gabbard
  */
@@ -44,7 +41,8 @@ public final class DocIDToFileMapContains {
     final ImmutableSet<String> idsInDocList =
         ImmutableSet.copyOf(Files.asCharSource(docListFile, Charsets.UTF_8).readLines());
     final Set<String> idsMapped = FileUtils.loadStringToFileMap(docIdMapFile).keySet();
-    final ImmutableSet<String> difference = Sets.difference(idsInDocList, idsMapped).immutableCopy();
+    final ImmutableSet<String> difference =
+        Sets.difference(idsInDocList, idsMapped).immutableCopy();
 
     if (!difference.isEmpty()) {
       System.out.println(StringUtils.unixNewlineJoiner().join(difference));

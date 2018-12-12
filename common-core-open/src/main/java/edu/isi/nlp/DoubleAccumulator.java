@@ -1,16 +1,14 @@
 package edu.isi.nlp;
 
 /**
- * An {@link Accumulator} for {@code double}s.  This class is not thread-safe!
+ * An {@link Accumulator} for {@code double}s. This class is not thread-safe!
  *
- * Based on FACTORIE's {@code DoubleAccumulator}.
+ * <p>Based on FACTORIE's {@code DoubleAccumulator}.
  */
 public final class DoubleAccumulator implements ScalableAccumulator<Double> {
   private double val = 0.0;
 
-  private DoubleAccumulator() {
-
-  }
+  private DoubleAccumulator() {}
 
   public static DoubleAccumulator create() {
     return new DoubleAccumulator();
@@ -18,7 +16,7 @@ public final class DoubleAccumulator implements ScalableAccumulator<Double> {
 
   @Override
   public void accumulate(final Double x) {
-    val+=x;
+    val += x;
   }
 
   @Override
@@ -28,14 +26,13 @@ public final class DoubleAccumulator implements ScalableAccumulator<Double> {
 
   @Override
   public void accumulate(final Accumulator<Double> accumulator) {
-    val+=accumulator.value();
+    val += accumulator.value();
   }
 
   @Override
   public void accumulate(final Accumulator<Double> accumulator, double factor) {
-    val+=accumulator.value()*factor;
+    val += accumulator.value() * factor;
   }
-
 
   @Override
   public void reset() {

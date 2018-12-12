@@ -1,15 +1,13 @@
 package edu.isi.nlp.collections;
 
 import com.google.common.collect.Range;
-
 import java.util.Collection;
 
 /**
  * A container for a set of potentially overlapping {@code Range<T>} which supports various
- * containment queries. All operations support the closedness notion of the inserted {@link
- * Range}s.
+ * containment queries. All operations support the closedness notion of the inserted {@link Range}s.
  *
- * Guava supports collections of disjoint and nested ranges, see {@link
+ * <p>Guava supports collections of disjoint and nested ranges, see {@link
  * com.google.common.collect.RangeSet} and {@link com.google.common.collect.TreeRangeSet}, however
  * there is no current implementation for a structured set of {@link Range}s which may overlap. This
  * class aims to fill that gap.

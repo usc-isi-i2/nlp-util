@@ -1,8 +1,6 @@
 package edu.isi.nlp.strings.offsets;
 
-/**
- * Represents an offset into a token sequence (whether sentence- or document-based)
- */
+/** Represents an offset into a token sequence (whether sentence- or document-based) */
 public final class TokenOffset extends AbstractOffset<TokenOffset> {
 
   private TokenOffset(final int val) {

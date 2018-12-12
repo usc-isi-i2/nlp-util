@@ -1,7 +1,6 @@
 package edu.isi.nlp.validators;
 
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
 public class And<T> implements Validator<T> {

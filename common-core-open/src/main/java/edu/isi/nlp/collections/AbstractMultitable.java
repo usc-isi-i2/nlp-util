@@ -3,19 +3,19 @@ package edu.isi.nlp.collections;
 import javax.annotation.Nullable;
 
 /**
- * Abstract class for implementing {@link Multitable}s which satisfy the {@link #equals(Object)}
- * and {@link #hashCode()} contract.
+ * Abstract class for implementing {@link Multitable}s which satisfy the {@link #equals(Object)} and
+ * {@link #hashCode()} contract.
  *
  * @author Chester Palen-Michel, Constantine Lignos, Ryan Gabbard
  */
-public abstract class AbstractMultitable<R,C,V> implements Multitable<R,C,V> {
+public abstract class AbstractMultitable<R, C, V> implements Multitable<R, C, V> {
   @Override
   public final int hashCode() {
     return cellSet().hashCode();
   }
 
   @Override
-  public final boolean equals(@Nullable Object obj){
+  public final boolean equals(@Nullable Object obj) {
     if (obj == this) {
       return true;
     } else if (obj instanceof Multitable) {

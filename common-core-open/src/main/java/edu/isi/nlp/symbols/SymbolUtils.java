@@ -92,9 +92,7 @@ public class SymbolUtils {
   public static ImmutableSet<Symbol> setFrom(final Iterable<String> strings) {
     checkNotNull(strings);
 
-    return FluentIterable.from(strings)
-        .transform(symbolizeFunction())
-        .toSet();
+    return FluentIterable.from(strings).transform(symbolizeFunction()).toSet();
   }
 
   /**
@@ -105,9 +103,7 @@ public class SymbolUtils {
    */
   public static ImmutableList<Symbol> listFrom(final Iterable<String> strings) {
     checkNotNull(strings);
-    return FluentIterable.from(strings)
-        .transform(symbolizeFunction())
-        .toList();
+    return FluentIterable.from(strings).transform(symbolizeFunction()).toList();
   }
 
   public static ImmutableSet<String> toStringSet(final Iterable<Symbol> syms) {
@@ -137,15 +133,13 @@ public class SymbolUtils {
   }
 
   /**
-   * Creates a map of {@link Symbol}s from a map of {@link String}s.  No keys or values may be
-   * null.
+   * Creates a map of {@link Symbol}s from a map of {@link String}s. No keys or values may be null.
    */
   public static ImmutableMap<Symbol, Symbol> mapFrom(Map<String, String> stringMap) {
     final ImmutableMap.Builder<Symbol, Symbol> ret = ImmutableMap.builder();
 
     for (Map.Entry<String, String> stringEntry : stringMap.entrySet()) {
-      ret.put(Symbol.from(stringEntry.getKey()),
-          Symbol.from(stringEntry.getValue()));
+      ret.put(Symbol.from(stringEntry.getKey()), Symbol.from(stringEntry.getValue()));
     }
 
     return ret.build();

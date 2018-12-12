@@ -1,20 +1,20 @@
 package edu.isi.nlp;
 
+import com.google.common.base.Optional;
 import edu.isi.nlp.strings.offsets.CharOffset;
 import edu.isi.nlp.strings.offsets.OffsetRange;
 
-import com.google.common.base.Optional;
-
 /**
  * Ensures certain common behaviors for {@link UnicodeFriendlyString} implementations, especially
- * that equality and hashcode are done by the UTF-16 code units (that is, the underlying Java
- * {@code String}).
+ * that equality and hashcode are done by the UTF-16 code units (that is, the underlying Java {@code
+ * String}).
  */
 abstract class AbstractUnicodeFriendlyString implements UnicodeFriendlyString {
 
   @Override
   public final UnicodeFriendlyString substringByCodePoints(OffsetRange<CharOffset> codePointRange) {
-    return substringByCodePoints(codePointRange.startInclusive(),
+    return substringByCodePoints(
+        codePointRange.startInclusive(),
         // version with separate arguments has exclusive endpoint
         codePointRange.endInclusive().shiftedCopy(1));
   }
@@ -51,8 +51,8 @@ abstract class AbstractUnicodeFriendlyString implements UnicodeFriendlyString {
     if (this == other) {
       return true;
     }
-    return other instanceof UnicodeFriendlyString && utf16CodeUnits()
-        .equals(((UnicodeFriendlyString) other).utf16CodeUnits());
+    return other instanceof UnicodeFriendlyString
+        && utf16CodeUnits().equals(((UnicodeFriendlyString) other).utf16CodeUnits());
   }
 
   @Override
@@ -64,5 +64,4 @@ abstract class AbstractUnicodeFriendlyString implements UnicodeFriendlyString {
   public final Optional<CharOffset> codePointIndexOf(UnicodeFriendlyString other) {
     return codePointIndexOf(other, CharOffset.asCharOffset(0));
   }
-
 }

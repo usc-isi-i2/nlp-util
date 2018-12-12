@@ -1,16 +1,13 @@
 package edu.isi.nlp.indri.bin;
 
+import com.google.common.base.Charsets;
 import edu.isi.nlp.indri.Indri;
 import edu.isi.nlp.indri.IndriQueryer;
-
-import com.google.common.base.Charsets;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class QueryResultCounter {
 

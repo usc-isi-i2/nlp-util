@@ -9,10 +9,10 @@ import com.google.common.base.Optional;
 interface FunctionalOffsetMapping extends OffsetMapping {
 
   /**
-   * Maps an offset in the source to the corresponding offset  in the target, which is guaranteed to
-   * be unique.  This is {@code f_b(f_a^-1(sourceIndex))}.
+   * Maps an offset in the source to the corresponding offset in the target, which is guaranteed to
+   * be unique. This is {@code f_b(f_a^-1(sourceIndex))}.
    *
-   * If offsetIdx is out-of-bounds in the source, throws an {@link IndexOutOfBoundsException}.
+   * <p>If offsetIdx is out-of-bounds in the source, throws an {@link IndexOutOfBoundsException}.
    */
   Optional<Integer> mapOffsetUniquely(int sourceIdx);
 }

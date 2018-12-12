@@ -11,7 +11,7 @@ public final class Point2D {
   }
 
   public static Point2D fromXY(final double x, final double y) {
-    return new Point2D(x,y);
+    return new Point2D(x, y);
   }
 
   public double x() {

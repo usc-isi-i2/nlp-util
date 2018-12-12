@@ -1,17 +1,15 @@
 package edu.isi.nlp;
 
-import edu.isi.nlp.parameters.Parameters;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.PrivateModule;
-
+import edu.isi.nlp.parameters.Parameters;
 import java.util.Objects;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Just like {@link AbstractParameterizedModule} except a {@link com.google.inject.PrivateModule}.
- * Remember, only things explicitly exposed will be visible outside a private module. See
- * the Guice documentation for details.
+ * Remember, only things explicitly exposed will be visible outside a private module. See the Guice
+ * documentation for details.
  *
  * @author Ryan Gabbard
  */
@@ -26,9 +24,7 @@ public abstract class AbstractPrivateParameterizedModule extends PrivateModule {
   // frequently these modules don't need to do any configuration,
   // so providing a default implementation reduces boilerplate
   @Override
-  protected void configure() {
-
-  }
+  protected void configure() {}
 
   protected final Parameters params() {
     return parameters;

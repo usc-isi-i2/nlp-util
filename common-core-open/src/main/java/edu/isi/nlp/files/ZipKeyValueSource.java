@@ -1,18 +1,15 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
-
+import edu.isi.nlp.symbols.Symbol;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import javax.annotation.Nonnull;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An {@link ImmutableKeyValueSource} based on the contents of a zip file.

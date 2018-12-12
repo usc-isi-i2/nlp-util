@@ -1,8 +1,8 @@
 package edu.isi.nlp.corenlp;
 
-import edu.isi.nlp.collections.RangeUtils;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.parsing.HeadFinder;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.getFirst;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
@@ -19,17 +19,14 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
-
+import edu.isi.nlp.collections.RangeUtils;
+import edu.isi.nlp.parsing.HeadFinder;
+import edu.isi.nlp.symbols.Symbol;
+import java.util.Collection;
+import java.util.Stack;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.Stack;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.getFirst;
 
 @Beta
 public final class CoreNLPConstituencyParse {
@@ -40,8 +37,10 @@ public final class CoreNLPConstituencyParse {
   private final CoreNLPParseNode root;
   private final String coreNLPString;
 
-  private CoreNLPConstituencyParse(final ImmutableList<CoreNLPToken> tokens,
-      final CoreNLPParseNode root, final String coreNLPString) {
+  private CoreNLPConstituencyParse(
+      final ImmutableList<CoreNLPToken> tokens,
+      final CoreNLPParseNode root,
+      final String coreNLPString) {
     this.coreNLPString = checkNotNull(coreNLPString);
     this.tokens = checkNotNull(tokens);
     this.root = checkNotNull(root);
@@ -55,9 +54,7 @@ public final class CoreNLPConstituencyParse {
     return root;
   }
 
-  /**
-   * @return StanfordParseNodes in a pre-order Depth First Search.
-   */
+  /** @return StanfordParseNodes in a pre-order Depth First Search. */
   public Iterable<CoreNLPParseNode> preorderDFSTraversal() {
     return root.preorderDFSTraversal();
   }
@@ -66,14 +63,18 @@ public final class CoreNLPConstituencyParse {
     return coreNLPString;
   }
 
-  static CoreNLPConstituencyParse create(final HeadFinder<CoreNLPParseNode> headFinder,
+  static CoreNLPConstituencyParse create(
+      final HeadFinder<CoreNLPParseNode> headFinder,
       final ImmutableList<CoreNLPToken> tokens,
-      final String rawParse, final boolean stripFunctionTags) {
+      final String rawParse,
+      final boolean stripFunctionTags) {
     // remove empty nodes so they are recognized as children.
     final String parse = rawParse.replaceAll("\\(\\)", "");
     final int openParens = CharMatcher.is('(').countIn(parse);
     final int closeParens = CharMatcher.is(')').countIn(parse);
-    checkArgument(openParens == closeParens, "Found " + openParens + " open parens but have " + closeParens + " close parens");
+    checkArgument(
+        openParens == closeParens,
+        "Found " + openParens + " open parens but have " + closeParens + " close parens");
 
     // TODO: consider refactoring this cruft into a PTBParseParser
     // find all open and close boundaries
@@ -84,24 +85,27 @@ public final class CoreNLPConstituencyParse {
 
     // find and build terminals
     final ImmutableSet<Range<Integer>> terminals = findAllTerminals(ranges);
-    final ImmutableMap<Range<Integer>, CoreNLPParseNode>
-        terminalNodes = createTerminalNodes(terminals, parse, tokens, stripFunctionTags);
+    final ImmutableMap<Range<Integer>, CoreNLPParseNode> terminalNodes =
+        createTerminalNodes(terminals, parse, tokens, stripFunctionTags);
 
     // build the tree
     final Range<Integer> rootRange = findRoot(ranges);
-    final CoreNLPParseNode
-        rootNode = buildParseNodes(headFinder, rootRange, parentToChildren, terminalNodes, parse, stripFunctionTags);
+    final CoreNLPParseNode rootNode =
+        buildParseNodes(
+            headFinder, rootRange, parentToChildren, terminalNodes, parse, stripFunctionTags);
 
     return new CoreNLPConstituencyParse(tokens, rootNode, rawParse);
   }
 
-  private static CoreNLPParseNode buildParseNodes(final HeadFinder<CoreNLPParseNode> headFinder,
+  private static CoreNLPParseNode buildParseNodes(
+      final HeadFinder<CoreNLPParseNode> headFinder,
       final Range<Integer> subtreeRoot,
       final ImmutableMultimap<Range<Integer>, Range<Integer>> parentToChildren,
-      final ImmutableMap<Range<Integer>, CoreNLPParseNode> terminalNodes, final String parse,
+      final ImmutableMap<Range<Integer>, CoreNLPParseNode> terminalNodes,
+      final String parse,
       final boolean stripFunctionTags) {
-    final CoreNLPParseNode.CoreNLPParseNodeBuilder
-        builder = CoreNLPParseNode.builderForNonTerminal(headFinder);
+    final CoreNLPParseNode.CoreNLPParseNodeBuilder builder =
+        CoreNLPParseNode.builderForNonTerminal(headFinder);
     builder.withTag(extractTag(subtreeRoot, parse, stripFunctionTags));
     for (final Range<Integer> child : parentToChildren.get(subtreeRoot)) {
       // base case
@@ -109,8 +113,8 @@ public final class CoreNLPConstituencyParse {
         builder.addChildren(terminalNodes.get(child));
       } else {
         builder.addChildren(
-            buildParseNodes(headFinder, child, parentToChildren, terminalNodes, parse,
-                stripFunctionTags));
+            buildParseNodes(
+                headFinder, child, parentToChildren, terminalNodes, parse, stripFunctionTags));
       }
     }
     return builder.build();
@@ -131,28 +135,30 @@ public final class CoreNLPConstituencyParse {
 
   private static ImmutableMap<Range<Integer>, CoreNLPParseNode> createTerminalNodes(
       final ImmutableSet<Range<Integer>> terminals,
-      final String parse, final ImmutableList<CoreNLPToken> tokens, final boolean stripFunctionTags) {
+      final String parse,
+      final ImmutableList<CoreNLPToken> tokens,
+      final boolean stripFunctionTags) {
     final ImmutableList<Range<Integer>> orderedTerminals =
-        Ordering.natural().onResultOf(RangeUtils.<Integer>lowerEndPointFunction())
+        Ordering.natural()
+            .onResultOf(RangeUtils.<Integer>lowerEndPointFunction())
             .immutableSortedCopy(terminals);
     final ListMultimap<String, CoreNLPToken> textToToken =
-        ArrayListMultimap
-            .create(FluentIterable.from(tokens).index(CoreNLPToken.contentFunction()));
+        ArrayListMultimap.create(FluentIterable.from(tokens).index(CoreNLPToken.contentFunction()));
 
     final ImmutableMap.Builder<Range<Integer>, CoreNLPParseNode> ret = ImmutableMap.builder();
     for (final Range<Integer> r : orderedTerminals) {
-      final CoreNLPParseNode.CoreNLPParseNodeBuilder builder =
-          CoreNLPParseNode.buildForTerminal();
+      final CoreNLPParseNode.CoreNLPParseNodeBuilder builder = CoreNLPParseNode.buildForTerminal();
       builder.withTag(extractTag(r, parse, stripFunctionTags));
       // it looks like Stanford double escapes XML in their parse output.
       final String text = StringEscapeUtils.unescapeXml(rangeToText(parse).apply(r));
       builder.withText(Optional.fromNullable(text));
-      if(text.isEmpty()) {
+      if (text.isEmpty()) {
         log.warn("Found an empty token for parse {}, range {}, likely a bug", parse, r);
         continue;
       }
       // find token, we know the first token is the one that matches since our ranges are ordered,
-      // and the keys and the associated values of the FluentIterable produced map have their order preserved.
+      // and the keys and the associated values of the FluentIterable produced map have their order
+      // preserved.
       final CoreNLPToken matching = checkNotNull(getFirst(textToToken.get(text), null));
       textToToken.remove(text, matching);
       builder.withToken(Optional.fromNullable(matching));
@@ -176,17 +182,18 @@ public final class CoreNLPConstituencyParse {
   private static Range<Integer> findRoot(final ImmutableList<Range<Integer>> ranges) {
     final ImmutableMap<Range<Integer>, Range<Integer>> childrenToParent = childrenToParent(ranges);
     // the root node doesn't point anywhere
-    final Range<Integer> rootRange = Iterables
-        .getOnlyElement(Sets.difference(ImmutableSet.copyOf(ranges), childrenToParent.keySet()));
+    final Range<Integer> rootRange =
+        Iterables.getOnlyElement(
+            Sets.difference(ImmutableSet.copyOf(ranges), childrenToParent.keySet()));
     return rootRange;
   }
 
-  private static Symbol extractTag(final Range<Integer> r, final String parse,
-      final boolean stripFunctionTags) {
+  private static Symbol extractTag(
+      final Range<Integer> r, final String parse, final boolean stripFunctionTags) {
     final String wholeTag =
         parse.substring(r.lowerEndpoint() + 1, parse.indexOf(" ", r.lowerEndpoint()));
     final String tag;
-    if(stripFunctionTags && wholeTag.contains("-")) {
+    if (stripFunctionTags && wholeTag.contains("-")) {
       tag = wholeTag.substring(0, wholeTag.indexOf('-'));
     } else {
       tag = wholeTag;
@@ -246,5 +253,4 @@ public final class CoreNLPConstituencyParse {
 
     return ret.build();
   }
-
 }

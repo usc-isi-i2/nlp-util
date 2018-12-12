@@ -2,12 +2,9 @@ package edu.isi.nlp.corpora.lightERE;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class EREDocument {
 
   // xml entities
@@ -21,9 +18,14 @@ public final class EREDocument {
   private final Optional<String> conversation_id;
   private final SourceType source_type;
 
-  public EREDocument(final List<EREEntity> entities, final List<ERERelation> relations,
-      final List<EREEvent> events, final String kit_id, final String docid,
-      final Optional<String> conversation_id, final SourceType source_type) {
+  public EREDocument(
+      final List<EREEntity> entities,
+      final List<ERERelation> relations,
+      final List<EREEvent> events,
+      final String kit_id,
+      final String docid,
+      final Optional<String> conversation_id,
+      final SourceType source_type) {
     this.entities = entities;
     this.relations = relations;
     this.events = events;
@@ -32,7 +34,6 @@ public final class EREDocument {
     this.conversation_id = conversation_id;
     this.source_type = source_type;
   }
-
 
   public List<EREEntity> getEntities() {
     return entities;
@@ -70,15 +71,23 @@ public final class EREDocument {
 
   @Override
   public String toString() {
-    return "EREDocument{" +
-        "entities=" + entities +
-        ", relations=" + relations +
-        ", events=" + events +
-        ", kit_id='" + kit_id + '\'' +
-        ", docid=" + docid +
-        ", conversation_id=" + conversation_id +
-        ", source_type=" + source_type +
-        '}';
+    return "EREDocument{"
+        + "entities="
+        + entities
+        + ", relations="
+        + relations
+        + ", events="
+        + events
+        + ", kit_id='"
+        + kit_id
+        + '\''
+        + ", docid="
+        + docid
+        + ", conversation_id="
+        + conversation_id
+        + ", source_type="
+        + source_type
+        + '}';
   }
 
   public static Builder builder(String docid, String source_type) {
@@ -120,8 +129,14 @@ public final class EREDocument {
     }
 
     public EREDocument build() {
-      return new EREDocument(this.entities, this.relations, this.events, this.kit_id, this.docid,
-          this.conversation_id, this.source_type);
+      return new EREDocument(
+          this.entities,
+          this.relations,
+          this.events,
+          this.kit_id,
+          this.docid,
+          this.conversation_id,
+          this.source_type);
     }
 
     public void withEntity(final EREEntity ereEntity) {
@@ -137,4 +152,3 @@ public final class EREDocument {
     }
   }
 }
-

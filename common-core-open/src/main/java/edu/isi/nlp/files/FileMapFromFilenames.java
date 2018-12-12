@@ -1,14 +1,11 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.parameters.Parameters;
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.nlp.parameters.Parameters;
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -16,13 +13,13 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Given a directory, writes tab-separated ID-to-file map for all files beneath that directory
- * (recursively), where the filename is the ID.  This will fail if duplicate IDs are generated.
- * This typically will not happen with LDC-sourced text documents, which is our primary use case.
+ * (recursively), where the filename is the ID. This will fail if duplicate IDs are generated. This
+ * typically will not happen with LDC-sourced text documents, which is our primary use case.
  *
  * @author Ryan Gabbard
  */
@@ -55,8 +52,8 @@ public final class FileMapFromFilenames {
     Files.walkFileTree(inputDirectory.toPath(), new FileMapFromFilenamesVisitor(mapB));
 
     final ImmutableMap<Symbol, File> ret = mapB.build();
-    FileUtils.writeSymbolToFileMap(ret, com.google.common.io.Files.asCharSink(outputMapFile,
-        Charsets.UTF_8));
+    FileUtils.writeSymbolToFileMap(
+        ret, com.google.common.io.Files.asCharSink(outputMapFile, Charsets.UTF_8));
     log.info("Mapped {} files to {}", ret.size(), outputMapFile);
   }
 

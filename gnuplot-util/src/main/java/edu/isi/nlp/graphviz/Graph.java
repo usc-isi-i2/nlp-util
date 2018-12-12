@@ -1,17 +1,14 @@
 package edu.isi.nlp.graphviz;
 
-import edu.isi.nlp.StringUtils;
-
-import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
-/**
- * Very beta. Do not use for anything but throw-away code.
- */
+import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableSet;
+import edu.isi.nlp.StringUtils;
+
+/** Very beta. Do not use for anything but throw-away code. */
 @Beta
 public final class Graph {
 
@@ -29,7 +26,8 @@ public final class Graph {
       public String dotString() {
         return "TB";
       }
-    }, LEFT_RIGHT {
+    },
+    LEFT_RIGHT {
       @Override
       public String dotString() {
         return "LR";
@@ -39,9 +37,13 @@ public final class Graph {
     public abstract String dotString();
   }
 
-  Graph(String name, boolean directed,
-      Iterable<Node> nodes, Iterable<Edge> edges,
-      RankDirection rankDirection, double rankSep,
+  Graph(
+      String name,
+      boolean directed,
+      Iterable<Node> nodes,
+      Iterable<Edge> edges,
+      RankDirection rankDirection,
+      double rankSep,
       Iterable<SameRankGroup> sameRankGroups) {
     this.name = checkNotNull(name);
     checkArgument(!name.isEmpty());
@@ -112,8 +114,14 @@ public final class Graph {
     }
 
     public Graph build() {
-      return new Graph(name, directed, nodes.build(), edges.build(),
-          rankDirection, rankSep, sameRankGroups.build());
+      return new Graph(
+          name,
+          directed,
+          nodes.build(),
+          edges.build(),
+          rankDirection,
+          rankSep,
+          sameRankGroups.build());
     }
 
     public void addNodes(final Iterable<Node> nodes) {
@@ -125,16 +133,20 @@ public final class Graph {
 
   public String toDot() {
     final String graphElement = directed ? "digraph" : "graph";
-    return graphElement + " \"" + name + "\" {\n"
-        + "rankdir=" + rankDirection.dotString() + ";\n"
-        + "ranksep=" + Double.toString(rankSep) + ";\n"
-        + StringUtils.unixNewlineJoiner().join(
-        transform(nodes, Node.toDotFunction()))
-        + StringUtils.unixNewlineJoiner().join(transform(edges, Edge
-        .toDotFunction()))
+    return graphElement
+        + " \""
+        + name
+        + "\" {\n"
+        + "rankdir="
+        + rankDirection.dotString()
+        + ";\n"
+        + "ranksep="
+        + Double.toString(rankSep)
+        + ";\n"
+        + StringUtils.unixNewlineJoiner().join(transform(nodes, Node.toDotFunction()))
+        + StringUtils.unixNewlineJoiner().join(transform(edges, Edge.toDotFunction()))
         + StringUtils.unixNewlineJoiner()
-        .join(transform(sameRankGroups, SameRankGroup.toDotFunction()))
+            .join(transform(sameRankGroups, SameRankGroup.toDotFunction()))
         + "}";
   }
-
 }

@@ -24,12 +24,15 @@ import org.immutables.value.Value;
 @IsiNlpImmutable
 @Value.Immutable
 @Functional
-@JsonSerialize(as=ImmutableFMeasureCounts.class)
-@JsonDeserialize(as=ImmutableFMeasureCounts.class)
+@JsonSerialize(as = ImmutableFMeasureCounts.class)
+@JsonDeserialize(as = ImmutableFMeasureCounts.class)
 public abstract class FMeasureCounts extends FMeasureInfo {
   public abstract double falsePositives();
+
   public abstract double falseNegatives();
+
   public abstract double numPredicted();
+
   public abstract double numItemsInKey();
 
   @Value.Check
@@ -46,29 +49,36 @@ public abstract class FMeasureCounts extends FMeasureInfo {
    * Creates an {@link FMeasureCounts} from counts of true positives, false positives, and false
    * negatives.
    */
-  public static FMeasureCounts fromTPFPFN(final double truePositives,
-      final double falsePositives, final double falseNegatives) {
-    return fromFPFNKeyCountSysCount(falsePositives, falseNegatives,
-        truePositives + falseNegatives, truePositives + falsePositives);
+  public static FMeasureCounts fromTPFPFN(
+      final double truePositives, final double falsePositives, final double falseNegatives) {
+    return fromFPFNKeyCountSysCount(
+        falsePositives,
+        falseNegatives,
+        truePositives + falseNegatives,
+        truePositives + falsePositives);
   }
 
   /**
    * Creates an {@link FMeasureCounts} from counts of true positives, false positives, the number of
    * items in the key, and the number of items in the system response.
    */
-  public static FMeasureCounts fromFPFNKeyCountSysCount(final double falsePositives,
-      final double falseNegatives, final double keyCount, final double sysCount) {
+  public static FMeasureCounts fromFPFNKeyCountSysCount(
+      final double falsePositives,
+      final double falseNegatives,
+      final double keyCount,
+      final double sysCount) {
     return new Builder()
-      .falsePositives(falsePositives)
-      .falseNegatives(falseNegatives)
-      .numItemsInKey(keyCount)
-      .numPredicted(sysCount).build();
+        .falsePositives(falsePositives)
+        .falseNegatives(falseNegatives)
+        .numItemsInKey(keyCount)
+        .numPredicted(sysCount)
+        .build();
   }
 
   // derived accessors
 
   public final double truePositives() {
-    return numPredicted() -falsePositives();
+    return numPredicted() - falsePositives();
   }
 
   @Override
@@ -76,7 +86,7 @@ public abstract class FMeasureCounts extends FMeasureInfo {
     if (numPredicted() < EPSILON) {
       return 0.0;
     } else {
-      return 1.0-falsePositives() / numPredicted();
+      return 1.0 - falsePositives() / numPredicted();
     }
   }
 
@@ -90,8 +100,13 @@ public abstract class FMeasureCounts extends FMeasureInfo {
   }
 
   public final String compactPrettyString() {
-    return String.format("TP: %.2f, FP: %.2f, FN: %.2f; P: %3.2f; R: %3.2f; F: %3.2f",
-        truePositives(), falsePositives(), falseNegatives(), 100.0 * precision(), 100.0 * recall(),
+    return String.format(
+        "TP: %.2f, FP: %.2f, FN: %.2f; P: %3.2f; R: %3.2f; F: %3.2f",
+        truePositives(),
+        falsePositives(),
+        falseNegatives(),
+        100.0 * precision(),
+        100.0 * recall(),
         100.0 * F1());
   }
 
@@ -108,15 +123,15 @@ public abstract class FMeasureCounts extends FMeasureInfo {
       sysCount += info.numPredicted();
     }
 
-    return FMeasureCounts
-        .fromFPFNKeyCountSysCount(falsePositives, falseNegatives, keyCount, sysCount);
+    return FMeasureCounts.fromFPFNKeyCountSysCount(
+        falsePositives, falseNegatives, keyCount, sysCount);
   }
 
   private static final double EPSILON = 0.000001;
 
   @Beta
-  public static <T> Map<T, FMeasureCounts> fromLabels(final List<T> goldLabels,
-      final List<T> predictedLabels) {
+  public static <T> Map<T, FMeasureCounts> fromLabels(
+      final List<T> goldLabels, final List<T> predictedLabels) {
     checkArgument(goldLabels.size() == predictedLabels.size());
 
     final Multiset<T> truePositives = HashMultiset.create();
@@ -143,15 +158,20 @@ public abstract class FMeasureCounts extends FMeasureInfo {
     final ImmutableMap.Builder<T, FMeasureCounts> ret = ImmutableMap.builder();
 
     for (final T label : labels) {
-      ret.put(label, FMeasureCounts.fromFPFNKeyCountSysCount(falsePositives.count(label),
-          falseNegatives.count(label), goldLabels.size(), predictedLabels.size()));
+      ret.put(
+          label,
+          FMeasureCounts.fromFPFNKeyCountSysCount(
+              falsePositives.count(label),
+              falseNegatives.count(label),
+              goldLabels.size(),
+              predictedLabels.size()));
     }
 
     return ret.build();
   }
 
-  public static <T> FMeasureCounts fromHashableItems(final Set<T> predictedPositiveItems,
-      final Set<T> allPositiveItems) {
+  public static <T> FMeasureCounts fromHashableItems(
+      final Set<T> predictedPositiveItems, final Set<T> allPositiveItems) {
     final int truePositives = Sets.intersection(predictedPositiveItems, allPositiveItems).size();
     final int falsePositives = predictedPositiveItems.size() - truePositives;
     final int falseNegatives = allPositiveItems.size() - truePositives;
@@ -172,8 +192,8 @@ public abstract class FMeasureCounts extends FMeasureInfo {
     final double keyCount = in.readDouble();
     final double sysCount = in.readDouble();
 
-    return FMeasureCounts
-        .fromFPFNKeyCountSysCount(falsePositives, falseNegatives, keyCount, sysCount);
+    return FMeasureCounts.fromFPFNKeyCountSysCount(
+        falsePositives, falseNegatives, keyCount, sysCount);
   }
 
   public static Ordering<FMeasureCounts> byF1Ordering() {
@@ -182,14 +202,14 @@ public abstract class FMeasureCounts extends FMeasureInfo {
       public int compare(final FMeasureCounts left, final FMeasureCounts right) {
         return Doubles.compare(left.F1(), right.F1());
       }
-
     };
   }
 
   @Override
   public String toString() {
-    return String.format("TP=%.3f;FP=%.3f;#Key=%.3f;#Sys=%.3f", truePositives(), falsePositives(),
-        numItemsInKey(), numPredicted());
+    return String.format(
+        "TP=%.3f;FP=%.3f;#Key=%.3f;#Sys=%.3f",
+        truePositives(), falsePositives(), numItemsInKey(), numPredicted());
   }
 
   public static class Builder extends ImmutableFMeasureCounts.Builder {}

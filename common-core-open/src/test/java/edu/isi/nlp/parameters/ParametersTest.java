@@ -1,23 +1,22 @@
 package edu.isi.nlp.parameters;
 
-import edu.isi.nlp.parameters.exceptions.ParameterConversionException;
+import static edu.isi.nlp.parameters.Parameters.builder;
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import edu.isi.nlp.parameters.exceptions.ParameterConversionException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static edu.isi.nlp.parameters.Parameters.builder;
-import static edu.isi.nlp.parameters.Parameters.fromMap;
-import static org.junit.Assert.assertEquals;
-
 /**
- * Tests some of {@link Parameters}. As these tests were developed long after the fact, they do not have full coverage.
+ * Tests some of {@link Parameters}. As these tests were developed long after the fact, they do not
+ * have full coverage.
  */
 public final class ParametersTest {
-  @Rule
-  public final ExpectedException exception = ExpectedException.none();
+  @Rule public final ExpectedException exception = ExpectedException.none();
 
   @Test
   public void testFromMap() {
@@ -28,12 +27,17 @@ public final class ParametersTest {
     Assert.assertEquals("", Parameters.fromMap(map).getString("b"));
     // Namespace specified by list
     Assert.assertEquals("", Parameters.fromMap(map, ImmutableList.of("")).namespace());
-    Assert.assertEquals(ImmutableList.of(), Parameters.fromMap(map, ImmutableList.<String>of()).namespaceAsList());
+    Assert.assertEquals(
+        ImmutableList.of(), Parameters.fromMap(map, ImmutableList.<String>of()).namespaceAsList());
     Assert.assertEquals("foo", Parameters.fromMap(map, ImmutableList.of("foo")).namespace());
-    Assert.assertEquals(ImmutableList.of("foo"), Parameters.fromMap(map, ImmutableList.of("foo")).namespaceAsList());
-    Assert.assertEquals("foo.bar", Parameters.fromMap(map, ImmutableList.of("foo", "bar")).namespace());
-    Assert.assertEquals(ImmutableList.of("foo", "bar"), Parameters
-        .fromMap(map, ImmutableList.of("foo", "bar")).namespaceAsList());
+    Assert.assertEquals(
+        ImmutableList.of("foo"),
+        Parameters.fromMap(map, ImmutableList.of("foo")).namespaceAsList());
+    Assert.assertEquals(
+        "foo.bar", Parameters.fromMap(map, ImmutableList.of("foo", "bar")).namespace());
+    Assert.assertEquals(
+        ImmutableList.of("foo", "bar"),
+        Parameters.fromMap(map, ImmutableList.of("foo", "bar")).namespaceAsList());
   }
 
   @Test
@@ -73,16 +77,31 @@ public final class ParametersTest {
     Assert.assertEquals("1", Parameters.builder().putAll(map).build().getString("a"));
     Assert.assertEquals("1", Parameters.fromMap(map).modifiedCopyBuilder().build().getString("a"));
     // With namespace
-    Assert.assertEquals("1", Parameters.builder(ImmutableList.of("foo")).putAll(map).build().getString("a"));
-    Assert.assertEquals("1", Parameters.fromMap(map, ImmutableList.of("foo")).modifiedCopyBuilder().build().getString("a"));
+    Assert.assertEquals(
+        "1", Parameters.builder(ImmutableList.of("foo")).putAll(map).build().getString("a"));
+    Assert.assertEquals(
+        "1",
+        Parameters.fromMap(map, ImmutableList.of("foo"))
+            .modifiedCopyBuilder()
+            .build()
+            .getString("a"));
     // Check namespace
     Assert.assertEquals("", Parameters.builder().putAll(map).build().namespace());
     Assert.assertEquals("", Parameters.fromMap(map).modifiedCopyBuilder().build().namespace());
-    Assert.assertEquals("foo", Parameters.builder(ImmutableList.of("foo")).putAll(map).build().namespace());
-    Assert
-        .assertEquals("foo", Parameters.fromMap(map, ImmutableList.of("foo")).modifiedCopyBuilder().build().namespace());
-    Assert.assertEquals("foo.bar", Parameters.builder(ImmutableList.of("foo", "bar")).putAll(map).build().namespace());
-    Assert.assertEquals("foo.bar", Parameters.fromMap(map, ImmutableList.of("foo", "bar")).modifiedCopyBuilder().build().namespace());
+    Assert.assertEquals(
+        "foo", Parameters.builder(ImmutableList.of("foo")).putAll(map).build().namespace());
+    Assert.assertEquals(
+        "foo",
+        Parameters.fromMap(map, ImmutableList.of("foo")).modifiedCopyBuilder().build().namespace());
+    Assert.assertEquals(
+        "foo.bar",
+        Parameters.builder(ImmutableList.of("foo", "bar")).putAll(map).build().namespace());
+    Assert.assertEquals(
+        "foo.bar",
+        Parameters.fromMap(map, ImmutableList.of("foo", "bar"))
+            .modifiedCopyBuilder()
+            .build()
+            .namespace());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -126,8 +145,7 @@ public final class ParametersTest {
   @Test
   public void testStringList() {
     Assert.assertEquals(
-        ImmutableList.of(),
-        Parameters.fromMap(ImmutableMap.of("list", "")).getStringList("list"));
+        ImmutableList.of(), Parameters.fromMap(ImmutableMap.of("list", "")).getStringList("list"));
     Assert.assertEquals(
         ImmutableList.of("a"),
         Parameters.fromMap(ImmutableMap.of("list", "a")).getStringList("list"));

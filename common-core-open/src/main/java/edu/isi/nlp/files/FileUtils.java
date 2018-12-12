@@ -81,9 +81,7 @@ public final class FileUtils {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * Create the parent directories of the given file, if needed.
-   */
+  /** Create the parent directories of the given file, if needed. */
   public static void ensureParentDirectoryExists(File f) throws IOException {
     final File parent = f.getParentFile();
     if (parent != null) {
@@ -93,8 +91,7 @@ public final class FileUtils {
 
   /**
    * Takes a file with filenames listed one per line and returns a list of the corresponding File
-   * objects.  Ignores blank lines and lines beginning with "#". Treats the
-   * file as UTF-8 encoded.
+   * objects. Ignores blank lines and lines beginning with "#". Treats the file as UTF-8 encoded.
    */
   public static ImmutableList<File> loadFileList(final File fileList) throws IOException {
     return loadFileList(Files.asCharSource(fileList, Charsets.UTF_8));
@@ -134,12 +131,11 @@ public final class FileUtils {
   }
 
   /**
-   * Writes the absolutes paths of the given files in iteration order, one-per-line. Each line
-   * will end with a Unix newline.
+   * Writes the absolutes paths of the given files in iteration order, one-per-line. Each line will
+   * end with a Unix newline.
    */
   public static void writeFileList(Iterable<File> files, CharSink sink) throws IOException {
-    writeUnixLines(FluentIterable.from(files)
-        .transform(toAbsolutePathFunction()), sink);
+    writeUnixLines(FluentIterable.from(files).transform(toAbsolutePathFunction()), sink);
   }
 
   /**
@@ -203,8 +199,8 @@ public final class FileUtils {
   }
 
   /**
-   * Derives one {@link File} from another by adding the provided extension.
-   * The extension will be separated from the base file name by a ".".
+   * Derives one {@link File} from another by adding the provided extension. The extension will be
+   * separated from the base file name by a ".".
    */
   public static File addExtension(final File f, final String extension) {
     checkNotNull(f);
@@ -216,15 +212,12 @@ public final class FileUtils {
     return new File(absolutePath + "." + extension);
   }
 
-
-
-  public static ImmutableMap<Symbol, File> loadSymbolToFileMap(
-      final File f) throws IOException {
+  public static ImmutableMap<Symbol, File> loadSymbolToFileMap(final File f) throws IOException {
     return loadSymbolToFileMap(Files.asCharSource(f, Charsets.UTF_8));
   }
 
-  public static ImmutableMap<Symbol, File> loadSymbolToFileMap(
-      final CharSource source) throws IOException {
+  public static ImmutableMap<Symbol, File> loadSymbolToFileMap(final CharSource source)
+      throws IOException {
     return loadMap(source, SymbolUtils.symbolizeFunction(), FileFunction.INSTANCE);
   }
 
@@ -234,40 +227,39 @@ public final class FileUtils {
   }
 
   /**
-   * Writes a map from symbols to file absolute paths to a file. Each line has a mapping with the key and value
-   * separated by a single tab.  The file will have a trailing newline.
+   * Writes a map from symbols to file absolute paths to a file. Each line has a mapping with the
+   * key and value separated by a single tab. The file will have a trailing newline.
    */
-  public static void writeSymbolToFileMap(Map<Symbol, File> symbolToFileMap, CharSink sink) throws IOException {
+  public static void writeSymbolToFileMap(Map<Symbol, File> symbolToFileMap, CharSink sink)
+      throws IOException {
     writeSymbolToFileEntries(symbolToFileMap.entrySet(), sink);
   }
 
-  private static final Function<Map.Entry<Symbol, String>, String>
-      TO_TAB_SEPARATED_ENTRY = MapUtils.toStringWithKeyValueSeparator("\t");
+  private static final Function<Map.Entry<Symbol, String>, String> TO_TAB_SEPARATED_ENTRY =
+      MapUtils.toStringWithKeyValueSeparator("\t");
 
   /**
    * Writes map entries from symbols to file absolute paths to a file. Each line has a mapping with
-   * the key and value separated by a single tab.  The file will have a trailing newline.  Note that
+   * the key and value separated by a single tab. The file will have a trailing newline. Note that
    * the same "key" may appear in the file with multiple mappings.
    */
-  public static void writeSymbolToFileEntries(final Iterable<Map.Entry<Symbol, File>> entries,
-      final CharSink sink) throws IOException {
+  public static void writeSymbolToFileEntries(
+      final Iterable<Map.Entry<Symbol, File>> entries, final CharSink sink) throws IOException {
 
     writeUnixLines(
         transform(
-            MapUtils.transformValues(entries, toAbsolutePathFunction()),
-            TO_TAB_SEPARATED_ENTRY),
+            MapUtils.transformValues(entries, toAbsolutePathFunction()), TO_TAB_SEPARATED_ENTRY),
         sink);
   }
 
   public static Map<Symbol, CharSource> loadSymbolToFileCharSourceMap(CharSource source)
       throws IOException {
-    return Maps.transformValues(loadSymbolToFileMap(source),
-        FileUtils.asUTF8CharSourceFunction());
+    return Maps.transformValues(loadSymbolToFileMap(source), FileUtils.asUTF8CharSourceFunction());
   }
 
   /**
-   * Reads an {@link Map} from a {@link File}, where each line is a key, a tab character
-   * ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   * Reads an {@link Map} from a {@link File}, where each line is a key, a tab character ("\t"), and
+   * a value. Blank lines and lines beginning with "#" are ignored.
    */
   public static Map<String, File> loadStringToFileMap(final File f) throws IOException {
     return loadStringToFileMap(Files.asCharSource(f, Charsets.UTF_8));
@@ -278,30 +270,32 @@ public final class FileUtils {
    * ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
    */
   public static Map<String, File> loadStringToFileMap(final CharSource source) throws IOException {
-    return loadMap(source, Functions.<String>identity(), FileFunction.INSTANCE,
-        IsCommentLine.INSTANCE);
+    return loadMap(
+        source, Functions.<String>identity(), FileFunction.INSTANCE, IsCommentLine.INSTANCE);
   }
 
   /**
-   * Reads an {@link ImmutableListMultimap} from a {@link CharSource}, where each line is a
-   * key, a tab character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   * Reads an {@link ImmutableListMultimap} from a {@link CharSource}, where each line is a key, a
+   * tab character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
    */
   public static ImmutableListMultimap<String, File> loadStringToFileListMultimap(
       final CharSource source) throws IOException {
-    return loadMultimap(source, Functions.<String>identity(), FileFunction.INSTANCE,
-        IsCommentLine.INSTANCE);
+    return loadMultimap(
+        source, Functions.<String>identity(), FileFunction.INSTANCE, IsCommentLine.INSTANCE);
   }
 
   /**
    * Reads an {@link ImmutableMap} from a {@link CharSource}, where each line is a key, a tab
    * character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
    */
-  public static <K, V> ImmutableMap<K, V> loadMap(final CharSource source,
-      final Function<String, K> keyFunction, final Function<String, V> valueFunction)
+  public static <K, V> ImmutableMap<K, V> loadMap(
+      final CharSource source,
+      final Function<String, K> keyFunction,
+      final Function<String, V> valueFunction)
       throws IOException {
     final ImmutableMap.Builder<K, V> ret = ImmutableMap.builder();
-    loadMapToSink(source, MapUtils.asMapSink(ret), keyFunction, valueFunction,
-        IsCommentLine.INSTANCE);
+    loadMapToSink(
+        source, MapUtils.asMapSink(ret), keyFunction, valueFunction, IsCommentLine.INSTANCE);
     return ret.build();
   }
 
@@ -310,8 +304,10 @@ public final class FileUtils {
    * character ("\t"), and a value. Blank lines and lines for which {@code skipLinePredicate} is
    * true are ignored.
    */
-  public static <K, V> ImmutableMap<K, V> loadMap(final CharSource source,
-      final Function<String, K> keyFunction, final Function<String, V> valueFunction,
+  public static <K, V> ImmutableMap<K, V> loadMap(
+      final CharSource source,
+      final Function<String, K> keyFunction,
+      final Function<String, V> valueFunction,
       final Predicate<String> skipLinePredicate)
       throws IOException {
     final ImmutableMap.Builder<K, V> ret = ImmutableMap.builder();
@@ -320,11 +316,13 @@ public final class FileUtils {
   }
 
   /**
-   * Reads an {@link ImmutableMap} from a {@link File}, where each line is a key, a tab
-   * character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   * Reads an {@link ImmutableMap} from a {@link File}, where each line is a key, a tab character
+   * ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
    */
-  public static <K, V> ImmutableMap<K, V> loadMap(final File file,
-      final Function<String, K> keyFunction, final Function<String, V> valueFunction)
+  public static <K, V> ImmutableMap<K, V> loadMap(
+      final File file,
+      final Function<String, K> keyFunction,
+      final Function<String, V> valueFunction)
       throws IOException {
     return loadMap(Files.asCharSource(file, Charsets.UTF_8), keyFunction, valueFunction);
   }
@@ -333,23 +331,30 @@ public final class FileUtils {
    * Reads an {@link ImmutableListMultimap} from a {@link CharSource}, where each line is a key, a
    * tab character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
    */
-  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(final CharSource source,
-      final Function<String, K> keyFunction, final Function<String, V> valueFunction)
+  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(
+      final CharSource source,
+      final Function<String, K> keyFunction,
+      final Function<String, V> valueFunction)
       throws IOException {
     final ImmutableListMultimap.Builder<K, V> ret = ImmutableListMultimap.builder();
-    loadMapToSink(source, MapUtils.asMapSink(ret), keyFunction, valueFunction,
-        IsCommentLine.INSTANCE);
+    loadMapToSink(
+        source, MapUtils.asMapSink(ret), keyFunction, valueFunction, IsCommentLine.INSTANCE);
     return ret.build();
   }
 
   /**
-   * Reads an {@link ImmutableListMultimap} from a {@link File}, where each line is a key, a
-   * tab character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
+   * Reads an {@link ImmutableListMultimap} from a {@link File}, where each line is a key, a tab
+   * character ("\t"), and a value. Blank lines and lines beginning with "#" are ignored.
    */
-  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(final File file,
-      final Function<String, K> keyFunction, final Function<String, V> valueFunction)
+  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(
+      final File file,
+      final Function<String, K> keyFunction,
+      final Function<String, V> valueFunction)
       throws IOException {
-    return loadMultimap(Files.asCharSource(file, Charsets.UTF_8), keyFunction, valueFunction,
+    return loadMultimap(
+        Files.asCharSource(file, Charsets.UTF_8),
+        keyFunction,
+        valueFunction,
         IsCommentLine.INSTANCE);
   }
 
@@ -358,29 +363,39 @@ public final class FileUtils {
    * tab character ("\t"), and a value. Lines for which {@code skipLinePredicate} is true are
    * ignored.
    */
-  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(final CharSource source,
-      final Function<String, K> keyFunction, final Function<String, V> valueFunction,
-      final Predicate<String> skipLinePredicate) throws IOException {
+  public static <K, V> ImmutableListMultimap<K, V> loadMultimap(
+      final CharSource source,
+      final Function<String, K> keyFunction,
+      final Function<String, V> valueFunction,
+      final Predicate<String> skipLinePredicate)
+      throws IOException {
     final ImmutableListMultimap.Builder<K, V> ret = ImmutableListMultimap.builder();
     loadMapToSink(source, MapUtils.asMapSink(ret), keyFunction, valueFunction, skipLinePredicate);
     return ret.build();
   }
 
-  private static <K, V> void loadMapToSink(final CharSource source,
-      final KeyValueSink<K, V> mapSink, final Function<String, K> keyFunction,
-      final Function<String, V> valueFunction, final Predicate<String> skipLinePredicate)
+  private static <K, V> void loadMapToSink(
+      final CharSource source,
+      final KeyValueSink<K, V> mapSink,
+      final Function<String, K> keyFunction,
+      final Function<String, V> valueFunction,
+      final Predicate<String> skipLinePredicate)
       throws IOException {
     // Using a LineProcessor saves memory by not loading the whole file into memory. This can matter
     // for multi-gigabyte Gigaword-scale maps.
     final MapLineProcessor<K, V> processor =
-        new MapLineProcessor<>(mapSink, keyFunction, valueFunction, skipLinePredicate,
+        new MapLineProcessor<>(
+            mapSink,
+            keyFunction,
+            valueFunction,
+            skipLinePredicate,
             Splitter.on("\t").trimResults());
     source.readLines(processor);
   }
 
   /**
    * Writes a single integer to the beginning of a file, overwriting what was there originally but
-   * leaving the rest of the file intact.  This is useful when you are writing a long binary file
+   * leaving the rest of the file intact. This is useful when you are writing a long binary file
    * with a size header, but don't know how many elements are there until the end.
    */
   public static void writeIntegerToStart(final File f, final int num) throws IOException {
@@ -389,8 +404,8 @@ public final class FileUtils {
     fixupFile.close();
   }
 
-  public static int[] loadBinaryIntArray(final ByteSource inSup,
-      final boolean compressed) throws IOException {
+  public static int[] loadBinaryIntArray(final ByteSource inSup, final boolean compressed)
+      throws IOException {
     InputStream in = inSup.openStream();
     if (compressed) {
       try {
@@ -421,8 +436,8 @@ public final class FileUtils {
     return Ints.toArray(ret);
   }
 
-  public static void writeBinaryIntArray(final int[] arr,
-      final ByteSink outSup) throws IOException {
+  public static void writeBinaryIntArray(final int[] arr, final ByteSink outSup)
+      throws IOException {
     try (OutputStream out = outSup.openBufferedStream()) {
       try (DataOutputStream dos = new DataOutputStream(out)) {
         dos.writeInt(arr.length);
@@ -434,36 +449,29 @@ public final class FileUtils {
   }
 
   public static void backup(final File f) throws IOException {
-    new BackupRequest.Builder()
-        .fileToBackup(f)
-        .build().doBackup();
+    new BackupRequest.Builder().fileToBackup(f).build().doBackup();
   }
 
   public static void backup(final File f, final String extension) throws IOException {
-    new BackupRequest.Builder()
-        .fileToBackup(f)
-        .extension(extension)
-        .build().doBackup();
+    new BackupRequest.Builder().fileToBackup(f).extension(extension).build().doBackup();
   }
 
-  /**
-   * A request to backup a file. This request is executed by calling {@link #doBackup()}.
-   */
+  /** A request to backup a file. This request is executed by calling {@link #doBackup()}. */
   @IsiNlpImmutable
   @Value.Immutable
-  public static abstract class BackupRequest {
+  public abstract static class BackupRequest {
 
     public abstract File fileToBackup();
 
     /**
-     * The name of the type of object being backed up (e.g. "geonames database").  If this is
+     * The name of the type of object being backed up (e.g. "geonames database"). If this is
      * provided, a message is logged.
      */
     public abstract Optional<String> nameOfThingToBackup();
 
     /**
-     * The logger to write a log message to. If not specified, defaults to the logger of
-     * {@link FileUtils}
+     * The logger to write a log message to. If not specified, defaults to the logger of {@link
+     * FileUtils}
      */
     @Value.Default
     public Logger logger() {
@@ -471,16 +479,15 @@ public final class FileUtils {
     }
 
     /**
-     * The extension to append to the backup file.  A "." is automatically inserted.  Defaults to "bak"
+     * The extension to append to the backup file. A "." is automatically inserted. Defaults to
+     * "bak"
      */
     @Value.Default
     public String extension() {
       return "bak";
     }
 
-    /**
-     * Whether to delete the file being backed up.
-     */
+    /** Whether to delete the file being backed up. */
     @Value.Default
     public boolean deleteOriginal() {
       return false;
@@ -491,26 +498,29 @@ public final class FileUtils {
       checkArgument(!extension().isEmpty(), "Backup extension may not be empty");
     }
 
-    /**
-     * Execute the backup request.
-     */
+    /** Execute the backup request. */
     public final void doBackup() throws IOException {
       if (fileToBackup().isFile()) {
         final File backupFile = addExtension(fileToBackup(), extension());
         final String operationMessage;
         if (deleteOriginal()) {
           operationMessage = "Moved";
-          java.nio.file.Files.move(fileToBackup().toPath(),
-              backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+          java.nio.file.Files.move(
+              fileToBackup().toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } else {
           operationMessage = "Copied";
-          java.nio.file.Files.copy(fileToBackup().toPath(),
-              backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+          java.nio.file.Files.copy(
+              fileToBackup().toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
 
         if (nameOfThingToBackup().isPresent()) {
-          logger().info("{} existing {} from {} to {}", operationMessage, nameOfThingToBackup().get(),
-              fileToBackup().getAbsolutePath(), backupFile.getAbsolutePath());
+          logger()
+              .info(
+                  "{} existing {} from {} to {}",
+                  operationMessage,
+                  nameOfThingToBackup().get(),
+                  fileToBackup().getAbsolutePath(),
+                  backupFile.getAbsolutePath());
         }
       }
     }
@@ -521,7 +531,7 @@ public final class FileUtils {
   /**
    * Given a file, returns a File representing a sibling directory with the specified name.
    *
-   * @param f              If f is the filesystem root, a runtime exeption will be thrown.
+   * @param f If f is the filesystem root, a runtime exeption will be thrown.
    * @param siblingDirName The non-empty name of the sibling directory.
    */
   public static File siblingDirectory(final File f, final String siblingDirName) {
@@ -533,14 +543,15 @@ public final class FileUtils {
     if (parent != null) {
       return new File(parent, siblingDirName);
     } else {
-      throw new RuntimeException(String
-          .format("Cannot create sibling directory %s of %s because the latter has no parent.",
+      throw new RuntimeException(
+          String.format(
+              "Cannot create sibling directory %s of %s because the latter has no parent.",
               siblingDirName, f));
     }
   }
 
-  public static BufferedReader optionallyCompressedBufferedReader(final File f,
-      final boolean compressed) throws IOException {
+  public static BufferedReader optionallyCompressedBufferedReader(
+      final File f, final boolean compressed) throws IOException {
     InputStream stream = new BufferedInputStream(new FileInputStream(f));
     if (compressed) {
       try {
@@ -565,8 +576,6 @@ public final class FileUtils {
     return SymbolUtils.listFrom(loadStringList(source));
   }
 
-
-
   public static Function<File, String> toNameFunction() {
     return ToNameEnum.INSTANCE;
   }
@@ -579,7 +588,6 @@ public final class FileUtils {
       return f.getName();
     }
   }
-
 
   public static Function<File, String> toAbsolutePathFunction() {
     return ToAbsolutePathFunction.INSTANCE;
@@ -595,10 +603,8 @@ public final class FileUtils {
   }
 
   public static boolean isEmptyDirectory(final File directory) {
-    return directory.exists() && directory.isDirectory()
-        && directory.listFiles().length == 0;
+    return directory.exists() && directory.isDirectory() && directory.listFiles().length == 0;
   }
-
 
   /**
    * Make a predicate to test files for their name ending with the specified suffix.
@@ -610,7 +616,6 @@ public final class FileUtils {
 
     return new EndsWithPredicate(suffix);
   }
-
 
   /**
    * Loads a file in the format {@code key value1 value2 value3} (tab-separated) into a {@link
@@ -639,14 +644,12 @@ public final class FileUtils {
     return ret.build();
   }
 
-
   /**
    * Loads a file in the format {@code key value1 value2 value3} (tab-separated) into a {@link
-   * com.google.common.collect.Multimap} of {@link Symbol} to Symbol.
-   * Each key should only appear on one line, and there should be no duplicate values. Each key and
-   * value has whitespace trimmed off. Skips empty lines and allows comment-lines with {@code #} in
-   * the first position. If a key has no values, it will not show up in the keySet of the returned
-   * multimap.
+   * com.google.common.collect.Multimap} of {@link Symbol} to Symbol. Each key should only appear on
+   * one line, and there should be no duplicate values. Each key and value has whitespace trimmed
+   * off. Skips empty lines and allows comment-lines with {@code #} in the first position. If a key
+   * has no values, it will not show up in the keySet of the returned multimap.
    */
   public static ImmutableMultimap<Symbol, Symbol> loadSymbolMultimap(CharSource multimapSource)
       throws IOException {
@@ -654,8 +657,8 @@ public final class FileUtils {
     final ImmutableMultimap.Builder<Symbol, Symbol> ret = ImmutableMultimap.builder();
 
     for (final Map.Entry<String, Collection<String>> entry : stringMM.asMap().entrySet()) {
-      ret.putAll(Symbol.from(entry.getKey()),
-          Collections2.transform(entry.getValue(), Symbol.FromString));
+      ret.putAll(
+          Symbol.from(entry.getKey()), Collections2.transform(entry.getValue(), Symbol.FromString));
     }
 
     return ret.build();
@@ -675,9 +678,9 @@ public final class FileUtils {
   }
 
   /**
-   * Like {@link #loadStringMap(CharSource)}, but differs in that lines can contain only
-   * a key and no value and will be treated as having a value of empty string in the resulting
-   * map. This is useful for specifying absent values for a specific key.
+   * Like {@link #loadStringMap(CharSource)}, but differs in that lines can contain only a key and
+   * no value and will be treated as having a value of empty string in the resulting map. This is
+   * useful for specifying absent values for a specific key.
    *
    * @see FileUtils#loadStringMap(CharSource)
    */
@@ -686,8 +689,8 @@ public final class FileUtils {
     return loadStringMap(source, true);
   }
 
-  private static ImmutableMap<String, String> loadStringMap(CharSource source,
-      final boolean allowEmptyValues) throws IOException {
+  private static ImmutableMap<String, String> loadStringMap(
+      CharSource source, final boolean allowEmptyValues) throws IOException {
     final ImmutableMap.Builder<String, String> ret = ImmutableMap.builder();
 
     int count = 0;
@@ -706,8 +709,7 @@ public final class FileUtils {
         ret.put(parts.get(0), "");
       } else {
         throw new RuntimeException(
-            "When reading a map from " + source + ", line " + count + " is invalid: "
-                + line);
+            "When reading a map from " + source + ", line " + count + " is invalid: " + line);
       }
     }
 
@@ -733,15 +735,17 @@ public final class FileUtils {
   public static void writeSymbolMultimap(Multimap<Symbol, Symbol> mm, CharSink charSink)
       throws IOException {
     final Joiner tabJoiner = Joiner.on('\t');
-    writeUnixLines(transform(mm.asMap().entrySet(),
-        new Function<Map.Entry<Symbol, Collection<Symbol>>, String>() {
-          @Override
-          public String apply(Map.Entry<Symbol, Collection<Symbol>> input) {
-            return input.getKey() + "\t" + tabJoiner.join(input.getValue());
-          }
-        }), charSink);
+    writeUnixLines(
+        transform(
+            mm.asMap().entrySet(),
+            new Function<Map.Entry<Symbol, Collection<Symbol>>, String>() {
+              @Override
+              public String apply(Map.Entry<Symbol, Collection<Symbol>> input) {
+                return input.getKey() + "\t" + tabJoiner.join(input.getValue());
+              }
+            }),
+        charSink);
   }
-
 
   public static ImmutableTable<Symbol, Symbol, Symbol> loadSymbolTable(CharSource input)
       throws IOException {
@@ -751,8 +755,8 @@ public final class FileUtils {
     for (final String line : input.readLines()) {
       final List<String> parts = StringUtils.onTabs().splitToList(line);
       if (parts.size() != 3) {
-        throw new IOException(String.format("Invalid line %d when reading symbol table: %s",
-            lineNo, line));
+        throw new IOException(
+            String.format("Invalid line %d when reading symbol table: %s", lineNo, line));
       }
       ret.put(Symbol.from(parts.get(0)), Symbol.from(parts.get(1)), Symbol.from(parts.get(2)));
       ++lineNo;
@@ -773,9 +777,7 @@ public final class FileUtils {
     }
   }
 
-  /**
-   * Transforms a file to a {@link com.google.common.io.CharSource} with UTF-8 encoding.
-   */
+  /** Transforms a file to a {@link com.google.common.io.CharSource} with UTF-8 encoding. */
   public static Function<File, CharSource> asUTF8CharSourceFunction() {
     return AsUTF8CharSource.INSTANCE;
   }
@@ -832,9 +834,7 @@ public final class FileUtils {
     };
   }
 
-  /**
-   * wraps any IOException and throws a RuntimeException
-   */
+  /** wraps any IOException and throws a RuntimeException */
   public static Function<File, Iterable<String>> toLinesFunction(final Charset charset) {
     return new Function<File, Iterable<String>>() {
       @Override
@@ -850,34 +850,30 @@ public final class FileUtils {
   }
 
   /**
-   * Loads a list of {@link Symbol}s from a file, one-per-line, skipping lines starting with "#"
-   * as comments.
+   * Loads a list of {@link Symbol}s from a file, one-per-line, skipping lines starting with "#" as
+   * comments.
    */
   public static ImmutableSet<Symbol> loadSymbolSet(final CharSource source) throws IOException {
     return ImmutableSet.copyOf(loadSymbolList(source));
   }
 
   /**
-   * Returns a {@link List} consisting of the lines of the provided {@link CharSource} in the
-   * order given.
+   * Returns a {@link List} consisting of the lines of the provided {@link CharSource} in the order
+   * given.
    */
   public static ImmutableList<String> loadStringList(final CharSource source) throws IOException {
-    return FluentIterable.from(source.readLines())
-        .filter(not(IsCommentLine.INSTANCE))
-        .toList();
+    return FluentIterable.from(source.readLines()).filter(not(IsCommentLine.INSTANCE)).toList();
   }
 
   /**
-   * Loads a list of {@link String}s from a file, one-per-line, skipping lines starting with "#"
-   * as comments.
+   * Loads a list of {@link String}s from a file, one-per-line, skipping lines starting with "#" as
+   * comments.
    */
   public static ImmutableSet<String> loadStringSet(final CharSource source) throws IOException {
     return ImmutableSet.copyOf(loadStringList(source));
   }
 
-  /**
-   * Recursively delete this directory and all its contents.
-   */
+  /** Recursively delete this directory and all its contents. */
   public static void recursivelyDeleteDirectory(File directory) throws IOException {
     if (!directory.exists()) {
       return;
@@ -915,38 +911,38 @@ public final class FileUtils {
     }
   }
 
-  /**
-   * Calls {@link #recursivelyDeleteDirectory(File)} on JVM exit.
-   */
+  /** Calls {@link #recursivelyDeleteDirectory(File)} on JVM exit. */
   public static void recursivelyDeleteDirectoryOnExit(final File directory) {
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        try {
-          recursivelyDeleteDirectory(directory);
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread() {
+              @Override
+              public void run() {
+                try {
+                  recursivelyDeleteDirectory(directory);
+                } catch (IOException e) {
+                  throw new RuntimeException(e);
+                }
+              }
+            });
   }
 
   /**
    * Recursively copies a directory.
    *
-   * @param sourceDir  the source directory
-   * @param destDir    the destination directory, which does not need to already exist
+   * @param sourceDir the source directory
+   * @param destDir the destination directory, which does not need to already exist
    * @param copyOption options to be used for copying files
    */
-  public static void recursivelyCopyDirectory(final File sourceDir, final File destDir,
-      final StandardCopyOption copyOption)
+  public static void recursivelyCopyDirectory(
+      final File sourceDir, final File destDir, final StandardCopyOption copyOption)
       throws IOException {
     checkNotNull(sourceDir);
     checkNotNull(destDir);
     checkArgument(sourceDir.isDirectory(), "Source directory does not exist");
     java.nio.file.Files.createDirectories(destDir.toPath());
-    walkFileTree(sourceDir.toPath(), new CopyFileVisitor(sourceDir.toPath(), destDir.toPath(),
-        copyOption));
+    walkFileTree(
+        sourceDir.toPath(), new CopyFileVisitor(sourceDir.toPath(), destDir.toPath(), copyOption));
   }
 
   private static class CopyFileVisitor implements FileVisitor<Path> {
@@ -992,7 +988,6 @@ public final class FileUtils {
     }
   }
 
-
   /**
    * Generally we want to avoid {@link CharSink#writeLines(Iterable)} because it uses the OS default
    * line separator, but our code always works with Unix line endings regardless of platform. This
@@ -1003,9 +998,7 @@ public final class FileUtils {
     sink.writeLines(lines, "\n");
   }
 
-  /**
-   * Creates a {@link File} from a {@link String} using the {@link File} constructor.
-   */
+  /** Creates a {@link File} from a {@link String} using the {@link File} constructor. */
   public Function<String, File> asFileFunction() {
     return FileFunction.INSTANCE;
   }
@@ -1028,9 +1021,12 @@ public final class FileUtils {
     private final Predicate<String> skipLinePredicate;
     private final Splitter splitter;
 
-    private MapLineProcessor(final KeyValueSink<K, V> mapSink,
-        final Function<String, K> keyFunction, final Function<String, V> valueFunction,
-        final Predicate<String> skipLinePredicate, final Splitter splitter) {
+    private MapLineProcessor(
+        final KeyValueSink<K, V> mapSink,
+        final Function<String, K> keyFunction,
+        final Function<String, V> valueFunction,
+        final Predicate<String> skipLinePredicate,
+        final Splitter splitter) {
       this.mapSink = checkNotNull(mapSink);
       this.keyFunction = checkNotNull(keyFunction);
       this.valueFunction = checkNotNull(valueFunction);
@@ -1073,8 +1069,8 @@ public final class FileUtils {
       try {
         mapSink.put(keyFunction.apply(key), valueFunction.apply(value));
       } catch (IllegalArgumentException iae) {
-        throw new IOException(String.format("Error processing line %d of file map: %s",
-            lineNo, line), iae);
+        throw new IOException(
+            String.format("Error processing line %d of file map: %s", lineNo, line), iae);
       }
       // all lines should be processed
       return true;
@@ -1114,5 +1110,4 @@ public final class FileUtils {
       return f.getName().endsWith(suffix);
     }
   }
-
 }

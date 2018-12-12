@@ -3,15 +3,13 @@ package edu.isi.nlp.files;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
-
 import java.io.IOException;
-
 import javax.annotation.Nonnull;
 
 /**
  * Provides an implementation of {@link KeyValueSource#getRequired(Object)} for convenience.
  *
- * See {@link KeyValueSource} for general documentation of the key-value classes.
+ * <p>See {@link KeyValueSource} for general documentation of the key-value classes.
  *
  * @author Constantine Lignos, Ryan Gabbard
  */

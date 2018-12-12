@@ -60,9 +60,13 @@ public final class SubtractFileMaps {
               stuffToSubtract.docIDsToFileMap().get().get(inputEntry.getKey());
           final boolean pathsMatch = pathInSubtractMap.equals(inputEntry.getValue());
           if (!pathsMatch) {
-            throw new RuntimeException("Mismatch in file maps: for " + inputEntry.getKey()
-                + " input has " + inputEntry.getValue() + " to subtract has "
-                + pathInSubtractMap);
+            throw new RuntimeException(
+                "Mismatch in file maps: for "
+                    + inputEntry.getKey()
+                    + " input has "
+                    + inputEntry.getValue()
+                    + " to subtract has "
+                    + pathInSubtractMap);
           }
         }
       } else {
@@ -72,10 +76,14 @@ public final class SubtractFileMaps {
 
     final ImmutableMap<Symbol, File> outputFileMap = outputFilesB.build();
 
-    log.info("Subtracting {}'s {} files from {}'s {} files and writing {} files to to {}",
-        stuffToSubtract.path(), stuffToSubtract.docIDs().size(),
-        inputFileMapFile, inputFiles.size(),
-        outputFileMap.size(), outputFile);
+    log.info(
+        "Subtracting {}'s {} files from {}'s {} files and writing {} files to to {}",
+        stuffToSubtract.path(),
+        stuffToSubtract.docIDs().size(),
+        inputFileMapFile,
+        inputFiles.size(),
+        outputFileMap.size(),
+        outputFile);
 
     FileUtils.writeSymbolToFileMap(outputFileMap, Files.asCharSink(outputFile, Charsets.UTF_8));
   }
@@ -90,9 +98,8 @@ public final class SubtractFileMaps {
     if (toSubtractIsMap) {
       final ImmutableMap<Symbol, File> filesToSubtract =
           FileUtils.loadSymbolToFileMap(toSubtractFile);
-      final StuffToSubtract.Builder ret = new StuffToSubtract.Builder()
-          .path(toSubtractFile)
-          .docIDs(filesToSubtract.keySet());
+      final StuffToSubtract.Builder ret =
+          new StuffToSubtract.Builder().path(toSubtractFile).docIDs(filesToSubtract.keySet());
       if (requirePathMatch) {
         ret.docIDsToFileMap(filesToSubtract).build();
       }
@@ -116,7 +123,5 @@ abstract class StuffToSubtract {
 
   public abstract Optional<ImmutableMap<Symbol, File>> docIDsToFileMap();
 
-  public static class Builder extends ImmutableStuffToSubtract.Builder {
-
-  }
+  public static class Builder extends ImmutableStuffToSubtract.Builder {}
 }

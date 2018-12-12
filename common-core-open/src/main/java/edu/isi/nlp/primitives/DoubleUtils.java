@@ -4,9 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.primitives.Doubles;
 
-/**
- * Utilities for working with primitive {@code doubles}.
- */
+/** Utilities for working with primitive {@code doubles}. */
 public final class DoubleUtils {
 
   private DoubleUtils() {
@@ -22,10 +20,7 @@ public final class DoubleUtils {
     return ret;
   }
 
-
-  /**
-   * Sum an array of doubles
-   */
+  /** Sum an array of doubles */
   public static double sum(final double[] data) {
     double ret = 0.0;
     for (final double x : data) {
@@ -34,9 +29,7 @@ public final class DoubleUtils {
     return ret;
   }
 
-  /**
-   * Sum over the doubles at the given indices of {@code data}
-   */
+  /** Sum over the doubles at the given indices of {@code data} */
   public static double sum(final double[] data, final int startInclusive, final int endExclusive) {
     checkArgument(startInclusive >= 0);
     checkArgument(endExclusive <= data.length);
@@ -49,10 +42,7 @@ public final class DoubleUtils {
     return ret;
   }
 
-
-  /**
-   * Computes {@code x / y}, returning zero if {@code y} is zero.
-   */
+  /** Computes {@code x / y}, returning zero if {@code y} is zero. */
   public static double XOverYOrZero(final double x, final double y) {
     if (y != 0.0) {
       return x / y;
@@ -105,7 +95,6 @@ public final class DoubleUtils {
     return minIndex;
   }
 
-
   /**
    * Returns the index of the first maximal element of the array. That is, if there is a unique
    * maximum, its index is returned. If there are multiple values tied for largest, the index of the
@@ -126,7 +115,6 @@ public final class DoubleUtils {
     }
     return maxIndex;
   }
-
 
   /**
    * Returns the index of the first maximal element of the array within the specified bounds. That
@@ -184,25 +172,18 @@ public final class DoubleUtils {
     return minValue;
   }
 
-
-  /**
-   * Is {@code value} within {@code tolerance} of being an integer?
-   */
+  /** Is {@code value} within {@code tolerance} of being an integer? */
   public static boolean isCloseToIntegral(final double value, final double tolerance) {
     return Math.abs(value - Math.round(value)) <= tolerance;
   }
 
-  /**
-   * Returns true if the two provided values are within {@code tolerance} of one another.
-   */
-  public static boolean withinEpsilonOf(final double value1, final double value2,
-      final double tolerance) {
+  /** Returns true if the two provided values are within {@code tolerance} of one another. */
+  public static boolean withinEpsilonOf(
+      final double value1, final double value2, final double tolerance) {
     return Math.abs(value1 - value2) < tolerance;
   }
 
-  /**
-   * Sums an iterable of non-null {@code Doubles}.
-   */
+  /** Sums an iterable of non-null {@code Doubles}. */
   public static double sum(final Iterable<Double> values) {
     double ret = 0.0;
     for (final double d : values) {
@@ -213,7 +194,7 @@ public final class DoubleUtils {
 
   /**
    * Calculates {@code log(sum_i(exp(x_i)))} in a more numerically stable way than the naive
-   * implementation.  Such sums commonly arise in machine learning algorithms (e.g. calculating
+   * implementation. Such sums commonly arise in machine learning algorithms (e.g. calculating
    * expectations in conditional random fields). If the input array is empty, {@link
    * Double#NEGATIVE_INFINITY} is returned.
    */
@@ -231,18 +212,17 @@ public final class DoubleUtils {
     return maxVal + Math.log(ret);
   }
 
-
   /**
-   * Shifts the provided {@code val} towards but not past zero.  If the absolute value of
-   * {@code val} is less than or equal to shift, zero will be returned. Otherwise, negative {@code val}s
-   * will have {@code shift} added and positive vals will have {@code shift} subtracted.
+   * Shifts the provided {@code val} towards but not past zero. If the absolute value of {@code val}
+   * is less than or equal to shift, zero will be returned. Otherwise, negative {@code val}s will
+   * have {@code shift} added and positive vals will have {@code shift} subtracted.
    *
-   * {@code shift} must be non-negative
+   * <p>{@code shift} must be non-negative
    *
-   * Inspired by AdaGradRDA.ISTAHelper from FACTORIE.
+   * <p>Inspired by AdaGradRDA.ISTAHelper from FACTORIE.
    */
   public static double shiftTowardsZeroWithClipping(double val, double shift) {
-    checkArgument(shift>=0.0);
+    checkArgument(shift >= 0.0);
     if (val > shift) {
       return val - shift;
     } else if (val < -shift) {
@@ -253,15 +233,15 @@ public final class DoubleUtils {
   }
 
   /**
-   * Shifts the provided {@code val} towards but not past zero.  If the absolute value of {@code
-   * val} is less than or equal to shift, zero will be returned. Otherwise, negative {@code val}s
-   * will have {@code shift} added and positive vals will have {@code shift} subtracted.
+   * Shifts the provided {@code val} towards but not past zero. If the absolute value of {@code val}
+   * is less than or equal to shift, zero will be returned. Otherwise, negative {@code val}s will
+   * have {@code shift} added and positive vals will have {@code shift} subtracted.
    *
-   * If {@code shift} is negative, the result is undefined.  This method is the same as {@link
+   * <p>If {@code shift} is negative, the result is undefined. This method is the same as {@link
    * #shiftTowardsZeroWithClipping(double, double)} except that it eliminates the check on {@code
    * shift} for speed in deep-inner loops. This is a profile/jitwatch-guided optimization.
    *
-   * Inspired by AdaGradRDA.ISTAHelper from FACTORIE.
+   * <p>Inspired by AdaGradRDA.ISTAHelper from FACTORIE.
    */
   public static double shiftTowardsZeroWithClippingRecklessly(double val, double shift) {
     if (val > shift) {
@@ -274,13 +254,14 @@ public final class DoubleUtils {
   }
 
   /**
-   * Clips the given value within the given bounds.  If {@code -bounds <=  val <= bounds}, {@code
-   * val} is returned unchanged. Otherwise, {@code -bounds} is returned if {@code val<bounds} and
-   * {@code bounds} is returned if {@code val>bounds}. If {@code bounds} is negative, an {@link
-   * IllegalArgumentException} will be thrown.  In inner loops, consider using {@link
+   * Clips the given value within the given bounds. If {@code -bounds <= val <= bounds}, {@code val}
+   * is returned unchanged. Otherwise, {@code -bounds} is returned if {@code val<bounds} and {@code
+   * bounds} is returned if {@code val>bounds}. If {@code bounds} is negative, an {@link
+   * IllegalArgumentException} will be thrown. In inner loops, consider using {@link
    * #clipRecklessly(double, double)}.
    *
-   * {@code NaN} values will be left unchanged, but positive and negative infinity will be clipped.
+   * <p>{@code NaN} values will be left unchanged, but positive and negative infinity will be
+   * clipped.
    */
   public static double clip(double val, double bounds) {
     checkArgument(bounds >= 0.0);
@@ -288,12 +269,13 @@ public final class DoubleUtils {
   }
 
   /**
-   * Clips the given value within the given bounds.  If {@code -bounds <=  val <= bounds}, {@code
-   * val} is returned unchanged. Otherwise, {@code -bounds} is returned if {@code val<bounds} and
-   * {@code bounds} is returned if {@code val>bounds}. {@code bounds} must be non-negative, but this
-   * is not enforced, so prefer using {@link #clip(double, double)} except in inner-loops.
+   * Clips the given value within the given bounds. If {@code -bounds <= val <= bounds}, {@code val}
+   * is returned unchanged. Otherwise, {@code -bounds} is returned if {@code val<bounds} and {@code
+   * bounds} is returned if {@code val>bounds}. {@code bounds} must be non-negative, but this is not
+   * enforced, so prefer using {@link #clip(double, double)} except in inner-loops.
    *
-   * {@code NaN} values will be left unchanged, but positive and negative infinity will be clipped.
+   * <p>{@code NaN} values will be left unchanged, but positive and negative infinity will be
+   * clipped.
    */
   public static double clipRecklessly(double val, double bounds) {
     if (val > bounds) {
@@ -304,5 +286,4 @@ public final class DoubleUtils {
       return val;
     }
   }
-
 }

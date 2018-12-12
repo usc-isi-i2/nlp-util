@@ -1,9 +1,8 @@
 package edu.isi.nlp.evaluation;
 
-import edu.isi.nlp.StringUtils;
-import edu.isi.nlp.primitives.DoubleUtils;
-import edu.isi.nlp.symbols.Symbol;
-import edu.isi.nlp.symbols.SymbolUtils;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.all;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -16,21 +15,20 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
-
+import edu.isi.nlp.StringUtils;
+import edu.isi.nlp.primitives.DoubleUtils;
+import edu.isi.nlp.symbols.Symbol;
+import edu.isi.nlp.symbols.SymbolUtils;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.all;
-
 /**
- * Utilities for working with {@link SummaryConfusionMatrix}es.  In particular, to build a
- * {@link SummaryConfusionMatrix}, use {@link  #builder()}.
+ * Utilities for working with {@link SummaryConfusionMatrix}es. In particular, to build a {@link
+ * SummaryConfusionMatrix}, use {@link #builder()}.
  *
- * Other useful things: computing F-measures ({@link #FMeasureVsAllOthers(SummaryConfusionMatrix, Symbol)})
- * and pretty-printing ({@link #prettyPrint(SummaryConfusionMatrix)}.
+ * <p>Other useful things: computing F-measures ({@link #FMeasureVsAllOthers(SummaryConfusionMatrix,
+ * Symbol)}) and pretty-printing ({@link #prettyPrint(SummaryConfusionMatrix)}.
  *
  * @author rgabbard
  */
@@ -56,8 +54,10 @@ public final class SummaryConfusionMatrices {
     return prettyDelimPrint(m, delimiter, SymbolUtils.byStringOrdering());
   }
 
-  public static String prettyDelimPrint(final SummaryConfusionMatrix m,
-      final String delimiter, final Ordering<Symbol> labelOrdering) {
+  public static String prettyDelimPrint(
+      final SummaryConfusionMatrix m,
+      final String delimiter,
+      final Ordering<Symbol> labelOrdering) {
     final Joiner delimJoiner = Joiner.on(delimiter);
     final ImmutableList.Builder<String> lines = ImmutableList.builder();
 
@@ -88,13 +88,13 @@ public final class SummaryConfusionMatrices {
     return prettyPrint(m, SymbolUtils.byStringOrdering());
   }
 
-  public static final FMeasureCounts FMeasureVsAllOthers(SummaryConfusionMatrix m,
-      final Symbol positiveSymbol) {
+  public static final FMeasureCounts FMeasureVsAllOthers(
+      SummaryConfusionMatrix m, final Symbol positiveSymbol) {
     return FMeasureVsAllOthers(m, ImmutableSet.of(positiveSymbol));
   }
 
-  public static final FMeasureCounts FMeasureVsAllOthers(SummaryConfusionMatrix m,
-      final Set<Symbol> positiveSymbols) {
+  public static final FMeasureCounts FMeasureVsAllOthers(
+      SummaryConfusionMatrix m, final Set<Symbol> positiveSymbols) {
     double truePositives = 0;
 
     for (final Symbol goodSymbol : positiveSymbols) {
@@ -111,13 +111,12 @@ public final class SummaryConfusionMatrices {
       falseNegatives += m.columnSum(goodSymbol);
     }
 
-    return FMeasureCounts.fromTPFPFN( truePositives,  falsePositives, falseNegatives);
+    return FMeasureCounts.fromTPFPFN(truePositives, falsePositives, falseNegatives);
   }
-
 
   /**
    * Returns accuracy, which is defined as the sum of the cells of the form (X,X) over the sum of
-   * all cells.  If the sum is 0, 0 is returned.  To pretty-print this you probably want to multiply
+   * all cells. If the sum is 0, 0 is returned. To pretty-print this you probably want to multiply
    * by 100.
    */
   public static final double accuracy(SummaryConfusionMatrix m) {
@@ -130,8 +129,8 @@ public final class SummaryConfusionMatrices {
   }
 
   /**
-   * Returns the maximum accuracy that would be achieved if a single classification were
-   *   selected for all instances.
+   * Returns the maximum accuracy that would be achieved if a single classification were selected
+   * for all instances.
    */
   public static final double chooseMostCommonRightHandClassAccuracy(SummaryConfusionMatrix m) {
     final double total = m.sumOfallCells();
@@ -141,6 +140,7 @@ public final class SummaryConfusionMatrices {
     }
     return DoubleUtils.XOverYOrZero(max, total);
   }
+
   public static final double chooseMostCommonLeftHandClassAccuracy(SummaryConfusionMatrix m) {
     final double total = m.sumOfallCells();
     double max = 0.0;
@@ -149,7 +149,6 @@ public final class SummaryConfusionMatrices {
     }
     return DoubleUtils.XOverYOrZero(max, total);
   }
-
 
   public static Builder builder() {
     return new Builder();
@@ -161,7 +160,7 @@ public final class SummaryConfusionMatrices {
    * the number of times a system response corresponds to a gold standard responses for some item.
    * Typically the double value will be 1.0 unless you are using fractional counts for some reason.
    *
-   * When done, call {@link #build()} to get a {@link SummaryConfusionMatrix}.
+   * <p>When done, call {@link #build()} to get a {@link SummaryConfusionMatrix}.
    */
   public static class Builder {
 
@@ -189,8 +188,8 @@ public final class SummaryConfusionMatrices {
      * predictions are on the rows and the gold-standard on the columns, using this method in such
      * cases and make the code clearer and reduce errors.
      */
-    public Builder accumulatePredictedGold(final Symbol prediction, final Symbol gold,
-        final double val) {
+    public Builder accumulatePredictedGold(
+        final Symbol prediction, final Symbol gold, final double val) {
       accumulate(prediction, gold, val);
       return this;
     }
@@ -214,8 +213,7 @@ public final class SummaryConfusionMatrices {
           }
         };
 
-    private Builder() {
-    }
+    private Builder() {}
   }
 }
 
@@ -235,26 +233,21 @@ class TableBasedSummaryConfusionMatrix implements SummaryConfusionMatrix {
     }
   }
 
-  /**
-   * The left-hand labels of the confusion matrix.
-   */
+  /** The left-hand labels of the confusion matrix. */
   @Override
   public Set<Symbol> leftLabels() {
     return table.rowKeySet();
   }
 
-  /**
-   * The right hand labels of the confusion matrix.
-   */
+  /** The right hand labels of the confusion matrix. */
   @Override
   public Set<Symbol> rightLabels() {
     return table.columnKeySet();
   }
 
-
   TableBasedSummaryConfusionMatrix(final Table<Symbol, Symbol, Double> table) {
     this.table = ImmutableTable.copyOf(table);
-    checkArgument(all(table.values(), x -> x>=0));
+    checkArgument(all(table.values(), x -> x >= 0));
   }
 
   @Override
@@ -302,7 +295,7 @@ class TableBasedSummaryConfusionMatrix implements SummaryConfusionMatrix {
 
 /**
  * The special case where there are only two labels is very common, so we provide a much more
- * efficient implementation for it.  This makes a noticeable difference when e.g. doing bootstrap
+ * efficient implementation for it. This makes a noticeable difference when e.g. doing bootstrap
  * sampling with many different score breakdowns.
  */
 class BinarySummaryConfusionMatrix implements SummaryConfusionMatrix {
@@ -323,8 +316,7 @@ class BinarySummaryConfusionMatrix implements SummaryConfusionMatrix {
   }
 
   public static boolean canUseFor(Table<Symbol, Symbol, Double> table) {
-    return table.rowKeySet().size() == 2 &&
-        table.rowKeySet().equals(table.columnKeySet());
+    return table.rowKeySet().size() == 2 && table.rowKeySet().equals(table.columnKeySet());
   }
 
   public static Optional<BinarySummaryConfusionMatrix> attemptCreate(
@@ -333,9 +325,16 @@ class BinarySummaryConfusionMatrix implements SummaryConfusionMatrix {
       final Iterator<Symbol> keyIt = table.rowKeySet().iterator();
       final Symbol key0 = keyIt.next();
       final Symbol key1 = keyIt.next();
-      return Optional.of(new BinarySummaryConfusionMatrix(key0, key1,
-          new double[]{cell(table, key0, key0), cell(table, key0, key1),
-              cell(table, key1, key0), cell(table, key1, key1)}));
+      return Optional.of(
+          new BinarySummaryConfusionMatrix(
+              key0,
+              key1,
+              new double[] {
+                cell(table, key0, key0),
+                cell(table, key0, key1),
+                cell(table, key1, key0),
+                cell(table, key1, key1)
+              }));
     } else {
       return Optional.absent();
     }
@@ -434,6 +433,4 @@ class BinarySummaryConfusionMatrix implements SummaryConfusionMatrix {
     }
     return builder.build();
   }
-
 }
-

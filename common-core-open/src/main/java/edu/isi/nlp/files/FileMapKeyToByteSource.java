@@ -1,23 +1,20 @@
 package edu.isi.nlp.files;
 
-import edu.isi.nlp.symbols.Symbol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-
+import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
 import javax.annotation.Nonnull;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * An immutable key-value source built from a symbol to file map, such as those created by
- * {@link FileUtils#loadSymbolToFileMap(File)}.
+ * An immutable key-value source built from a symbol to file map, such as those created by {@link
+ * FileUtils#loadSymbolToFileMap(File)}.
  *
  * @author Constantine Lignos, Ryan Gabbard
  */

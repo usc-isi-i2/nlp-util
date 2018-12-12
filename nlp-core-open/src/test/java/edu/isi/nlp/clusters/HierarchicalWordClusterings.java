@@ -9,9 +9,7 @@ import edu.isi.nlp.symbols.Symbol;
 import java.util.Collection;
 import org.immutables.value.Value;
 
-/**
- * Utilities for working with {@link HierarchicalWordClusterings}
- */
+/** Utilities for working with {@link HierarchicalWordClusterings} */
 public final class HierarchicalWordClusterings {
 
   private HierarchicalWordClusterings() {
@@ -23,10 +21,11 @@ public final class HierarchicalWordClusterings {
    * lookup.
    */
   public static HierarchicalWordClustering normalizeClustering(
-      HierarchicalWordClustering clustering,
-      StringNormalizer normalizer) {
-    return new NormalizedWordClustering.Builder().innerClustering(clustering)
-        .stringNormalizer(normalizer).build();
+      HierarchicalWordClustering clustering, StringNormalizer normalizer) {
+    return new NormalizedWordClustering.Builder()
+        .innerClustering(clustering)
+        .stringNormalizer(normalizer)
+        .build();
   }
 }
 
@@ -56,7 +55,5 @@ abstract class NormalizedWordClustering implements HierarchicalWordClustering {
     return innerClustering().getWords(cluster, nBits);
   }
 
-  public static class Builder extends ImmutableNormalizedWordClustering.Builder {
-
-  }
+  public static class Builder extends ImmutableNormalizedWordClustering.Builder {}
 }

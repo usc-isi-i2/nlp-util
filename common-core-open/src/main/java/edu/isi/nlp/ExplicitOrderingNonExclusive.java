@@ -6,10 +6,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import org.immutables.value.Value;
 
-/**
- * For documentation, see {@link OrderingUtils#explicitOrderingUnrankedLast(List)}
- * and friends.
- */
+/** For documentation, see {@link OrderingUtils#explicitOrderingUnrankedLast(List)} and friends. */
 @IsiNlpImmutable
 @Value.Immutable
 abstract class ExplicitOrderingNonExclusive<T> extends Ordering<T> {

@@ -1,8 +1,6 @@
 package edu.isi.nlp.corpora.lightERE;
 
-/**
- * @author Jay DeYoung
- */
+/** @author Jay DeYoung */
 public final class ERENormalizedDate {
 
   private final String date;
@@ -17,13 +15,10 @@ public final class ERENormalizedDate {
 
   @Override
   public String toString() {
-    return "ERENormalizedDate{" +
-        "date='" + date + '\'' +
-        '}';
+    return "ERENormalizedDate{" + "date='" + date + '\'' + '}';
   }
 
   public static ERENormalizedDate from(final String date) {
     return new ERENormalizedDate(date);
   }
 }
-
