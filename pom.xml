@@ -58,6 +58,8 @@
     <maven.surefire.plugin.version>2.12.2</maven.surefire.plugin.version>
     <maven.surefire.report.plugin.version>2.12.2</maven.surefire.report.plugin.version>
     <maven.failsafe.plugin.version>2.12.2</maven.failsafe.plugin.version>
+    <kotlin.version>1.3.21</kotlin.version>
+    <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
     <skipITs>true</skipITs>
 
@@ -73,6 +75,12 @@
           </dependency>
 
           <!-- external dependencies -->
+        <dependency>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-jdk8</artifactId>
+          <version>${kotlin.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -178,6 +186,20 @@
       </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-test</artifactId>
+      <version>${kotlin.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -233,10 +255,32 @@
                 </execution>
             </executions>
         </plugin>
+
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals> <goal>compile</goal> </goals>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <phase>test-compile</phase>
+            <goals> <goal>test-compile</goal> </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <jvmTarget>1.8</jvmTarget>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.3</version>
+          <version>3.5.1</version>
         <configuration>
             <compilerId>javac-with-errorprone</compilerId>
             <forceJavacCompilerUse>true</forceJavacCompilerUse>
@@ -263,6 +307,31 @@
                 <version>2.1.1</version>
               </dependency>
           </dependencies>
+        <executions>
+          <!-- these are to make Java and Kotlin play nicely together
+          See https://kotlinlang.org/docs/reference/using-maven.html
+          -->
+          <!-- Replacing default-compile as it is treated specially by maven -->
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+          <!-- Replacing default-testCompile as it is treated specially by maven -->
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>java-compile</id>
+            <phase>compile</phase>
+            <goals> <goal>compile</goal> </goals>
+          </execution>
+          <execution>
+          <id>java-test-compile</id>
+          <phase>test-compile</phase>
+          <goals> <goal>testCompile</goal> </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
