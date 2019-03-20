@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LCTL_TEXT SYSTEM "ltf.v1.5.dtd">
+<LCTL_TEXT lang="eng">
+  <DOC id="TEST" lang="eng" tokenization="tokenization_parameters.v5.0" grammar="none" raw_text_char_length="35" raw_text_md5="b948d7399b910e000dd4346e34eb3bda">
+    <TEXT>
+      <SEG id="segment-0" start_char="0" end_char="12">
+        <ORIGINAL_TEXT>Hello, world.</ORIGINAL_TEXT>
+        <TOKEN id="token-0-0" pos="word" morph="none" start_char="0" end_char="4">Hello</TOKEN>
+        <TOKEN id="token-0-1" pos="word" morph="none" start_char="5" end_char="5">,</TOKEN>
+        <TOKEN id="token-0-2" pos="word" morph="none" start_char="7" end_char="11">world</TOKEN>
+        <TOKEN id="token-0-3" pos="word" morph="none" start_char="12" end_char="12">.</TOKEN>
+      </SEG>
+      <SEG id="segment-1" start_char="14" end_char="33">
+        <ORIGINAL_TEXT>This is an LTF file.</ORIGINAL_TEXT>
+        <TOKEN id="token-0-0" pos="word" morph="none" start_char="14" end_char="17">This</TOKEN>
+        <TOKEN id="token-0-1" pos="word" morph="none" start_char="19" end_char="20">is</TOKEN>
+        <TOKEN id="token-0-2" pos="word" morph="none" start_char="22" end_char="23">an</TOKEN>
+        <TOKEN id="token-0-3" pos="word" morph="none" start_char="25" end_char="27">LTF</TOKEN>
+        <TOKEN id="token-0-3" pos="word" morph="none" start_char="29" end_char="32">file</TOKEN>
+        <TOKEN id="token-0-3" pos="word" morph="none" start_char="33" end_char="33">.</TOKEN>
+      </SEG>
+    </TEXT>
+  </DOC>
+</LCTL_TEXT>
