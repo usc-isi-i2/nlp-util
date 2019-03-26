@@ -22,6 +22,7 @@ public class TestLtf {
     assertEquals(
         "Hello, world.\nThis is an LTF file.\n",
         ltfDocument.getOriginalText().content().utf16CodeUnits());
+    assertEquals("TEST", ltfDocument.getId());
     // TODO: test tokens, etc.
   }
 }

@@ -29,7 +29,8 @@ data class LctlText(val documents: ImmutableList<LtfDocument>,
  *
  * Please see the LDC's LTF documentation for details.
  */
-data class LtfDocument(val text: LtfDocumentText, val lang: String? = null, val tokenization: String? = null,
+data class LtfDocument(val id: String, val text: LtfDocumentText, val lang: String? = null,
+                       val tokenization: String? = null,
                        val grammar: String? = null, val rawTextCharLength: Int? = null,
                        val rawTextMd5: String? = null, val headline: String? = null,
                        val dateline: String? = null, val authorLine: String? = null) {
@@ -161,6 +162,8 @@ class LtfReader {
                 encoding = root.attribute("encoding"))
 
         private fun parseDocument(e: Element): LtfDocument = LtfDocument(
+                id = e.attribute("id")
+                        ?: throw RuntimeException("Document is missing document ID"),
                 text = e.requiredChildElement("text", this::parseText),
                 lang = e.attribute("lang"),
                 tokenization = e.attribute("tokenization"),
