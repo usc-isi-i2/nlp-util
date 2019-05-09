@@ -119,7 +119,7 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
 
     private void topLoad(final File configFile) throws IOException {
       try {
-        internalLoad(configFile, new Stack<File>());
+        internalLoad(configFile, new Stack<>());
       } catch (UnrecoverableParseError pfe) {
         // if a PFE was thrown, an error should have gotten added to
         // the errors list and will be reported below
