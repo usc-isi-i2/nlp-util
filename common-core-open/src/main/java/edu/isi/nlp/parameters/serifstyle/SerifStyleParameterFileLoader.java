@@ -245,20 +245,26 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
           if (value == null
               && interpolateEnvironmentalVariables()
               && environmentalVariables.containsKey(key)) {
-            value = environmentalVariables.get(value);
+            value = environmentalVariables.get(key);
           }
 
           if (value != null) {
             line = line.replace("%" + matcher.group(1) + "%", value);
             changed = true;
           } else {
+            final StringBuilder msg =
+                new StringBuilder(
+                    "Could not interpolate for " + key + ". Available parameters are " + ret);
+            if (interpolateEnvironmentalVariables()) {
+              msg.append(". Available environmental variables are ").append(environmentalVariables);
+            }
+
             // we treat interpolation errors as recoverable
             errors.add(
                 ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
                     .includeStack(includeStack)
                     .line(curLine)
-                    .message(
-                        "Could not interpolate for " + key + ". Available parameters are " + ret)
+                    .message(msg.toString())
                     .build());
           }
         }
