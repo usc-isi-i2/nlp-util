@@ -53,7 +53,12 @@ import org.slf4j.LoggerFactory;
  *
  * Lines prefixed with <code>#</code> are treated as comments.
  *
- * @author rgabbard
+ * <p>If {@link #interpolateEnvironmentalVariables()} is enabled (default: false), then parameters
+ * can have environmental variables interpolate into their value. The environment will not be
+ * directly incorporated into the returned parameters. An parameter value defined in the parameter
+ * file will trump an environmental variable value.
+ *
+ * @author Ryan Gabbard
  */
 @IsiNlpImmutable
 @Value.Immutable
@@ -71,6 +76,11 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
   @Value.Default
   public boolean crashOnUndeclaredOverrides() {
     return true;
+  }
+
+  @Value.Default
+  public boolean interpolateEnvironmentalVariables() {
+    return false;
   }
 
   public static class Builder extends ImmutableSerifStyleParameterFileLoader.Builder {}
@@ -105,10 +115,11 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
     final Map<String, String> ret = new HashMap<>();
     final List<ParseIssue> warnings = new ArrayList<>();
     final List<ParseIssue> errors = new ArrayList<>();
+    final Map<String, String> environmentalVariables = System.getenv();
 
     private void topLoad(final File configFile) throws IOException {
       try {
-        internalLoad(configFile, new Stack<File>());
+        internalLoad(configFile, new Stack<>());
       } catch (UnrecoverableParseError pfe) {
         // if a PFE was thrown, an error should have gotten added to
         // the errors list and will be reported below
@@ -227,18 +238,33 @@ public abstract class SerifStyleParameterFileLoader implements ParameterFileLoad
         final Matcher matcher = INTERPOLATE_REGEX.matcher(line);
         if (matcher.find()) {
           final String key = matcher.group(1);
-          final String value = ret.get(key);
+          String value = ret.get(key);
+
+          // if requested, try to interpolate from environmental variables, but only if
+          // the user hasn't explicitly defined the variable.
+          if (value == null
+              && interpolateEnvironmentalVariables()
+              && environmentalVariables.containsKey(key)) {
+            value = environmentalVariables.get(key);
+          }
+
           if (value != null) {
             line = line.replace("%" + matcher.group(1) + "%", value);
             changed = true;
           } else {
+            final StringBuilder msg =
+                new StringBuilder(
+                    "Could not interpolate for " + key + ". Available parameters are " + ret);
+            if (interpolateEnvironmentalVariables()) {
+              msg.append(". Available environmental variables are ").append(environmentalVariables);
+            }
+
             // we treat interpolation errors as recoverable
             errors.add(
                 ImmutableSerifStyleParameterFileLoader.ParseIssue.builder()
                     .includeStack(includeStack)
                     .line(curLine)
-                    .message(
-                        "Could not interpolate for " + key + ". Available parameters are " + ret)
+                    .message(msg.toString())
                     .build());
           }
         }
