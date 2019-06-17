@@ -37,6 +37,9 @@ public final class IndexFlatGigaword {
     final File outputDirectory = params.getCreatableDirectory("rawGigawordOffsetIndexDir");
 
     for (final File sourceDir : gigawordRawRoot.listFiles()) {
+      if (!sourceDir.isDirectory()) {
+        continue;
+      }
       final File outputDir = new File(outputDirectory, sourceDir.getName());
       outputDir.mkdir();
       for (final File chunkFile : sourceDir.listFiles()) {
