@@ -3,7 +3,7 @@
 
   <groupId>edu.isi.vista</groupId>
   <artifactId>common-all-open</artifactId>
-  <version>8.2.2-SNAPSHOT</version>
+  <version>8.2.2</version>
   <packaging>pom</packaging>
 
   <name>edu.isi.vista:common-all-open</name>
@@ -71,7 +71,7 @@
           <dependency>
               <groupId>edu.isi.vista</groupId>
               <artifactId>common-core-open</artifactId>
-              <version>8.2.2-SNAPSHOT</version>
+              <version>8.2.2</version>
           </dependency>
 
           <!-- external dependencies -->
@@ -410,7 +410,7 @@
   <connection>scm:git:https://github.com/isi-vista/nlp-util.git</connection>
   <developerConnection>scm:git:https://github.com/isi-vista/nlp-util.git</developerConnection>
   <url>https://github.com/isi-vista/nlp-util</url>
-  <tag>HEAD</tag>
+  <tag>common-all-open-8.2.2</tag>
   </scm>
 
   <profiles>
