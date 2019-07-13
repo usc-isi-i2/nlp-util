@@ -27,6 +27,13 @@
                             </mainClass>
                             <id>BuildRichEREDocIDToFileList</id>
                         </program>
+                        <program>
+                            <mainClass>ExportGraphDB</mainClass>
+                            <id>exportGraphDB</id>
+                            <jvmSettings>
+                                <maxMemorySize>96G</maxMemorySize>
+                            </jvmSettings>
+                        </program>
                     </programs>
                 </configuration>
             </plugin>
