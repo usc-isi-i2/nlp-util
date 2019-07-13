@@ -140,6 +140,12 @@
             <version>1.1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.ontotext.graphdb</groupId>
+            <artifactId>graphdb-free-runtime</artifactId>
+            <version>8.10.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>
