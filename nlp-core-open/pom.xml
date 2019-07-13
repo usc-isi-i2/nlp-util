@@ -28,7 +28,7 @@
                             <id>BuildRichEREDocIDToFileList</id>
                         </program>
                         <program>
-                            <mainClass>ExportGraphDB</mainClass>
+                            <mainClass>edu.isi.nlp.ExportGraphDB</mainClass>
                             <id>exportGraphDB</id>
                             <jvmSettings>
                                 <maxMemorySize>96G</maxMemorySize>
