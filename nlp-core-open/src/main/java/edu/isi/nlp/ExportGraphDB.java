@@ -1,5 +1,7 @@
 package edu.isi.nlp;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import edu.isi.nlp.parameters.Parameters;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,10 +12,14 @@ import org.eclipse.rdf4j.repository.manager.LocalRepositoryManager;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFWriter;
 import org.eclipse.rdf4j.rio.Rio;
+import org.slf4j.LoggerFactory;
 
 // this doesn't belong here, but I needed a spot to stick an emergency evaluation hack
 public final class ExportGraphDB {
   public static void main(String[] argv) throws IOException {
+    Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    root.setLevel(Level.INFO);
+
     final Parameters params = Parameters.loadSerifStyle(new File(argv[0]));
     final File outputFile = params.getCreatableFile("outputFile");
     final LocalRepositoryManager localRepositoryManager =
