@@ -33,6 +33,9 @@
                             <jvmSettings>
                                 <maxMemorySize>96G</maxMemorySize>
                             </jvmSettings>
+                            <extraArguments>
+                                <extraArgument>-Dgraphdb.logger.root.level=INFO</extraArgument>
+                            </extraArguments>
                         </program>
                     </programs>
                 </configuration>
