@@ -32,10 +32,10 @@
                             <id>exportGraphDB</id>
                             <jvmSettings>
                                 <maxMemorySize>96G</maxMemorySize>
+                                <extraArguments>
+                                    <extraArgument>-Dgraphdb.logger.root.level=INFO</extraArgument>
+                                </extraArguments>
                             </jvmSettings>
-                            <extraArguments>
-                                <extraArgument>-Dgraphdb.logger.root.level=INFO</extraArgument>
-                            </extraArguments>
                         </program>
                     </programs>
                 </configuration>
