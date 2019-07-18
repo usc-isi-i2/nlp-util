@@ -20,8 +20,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Produces document-ID to byte-offset indices for the flat representation of Gigaword (which comes
- * on the CDs). This is often useful because copying the 'exploded' verison of Gigaword with a 12 M
- * separate files is prohibitively expensive.
+ * on the CDs). You must unzip all the individual `.gz` files before running this indexer. These
+ * offsets often useful because copying the 'exploded' verison of Gigaword with a 12 M separate
+ * files is prohibitively expensive.
  */
 public final class IndexFlatGigaword {
 
