@@ -125,6 +125,11 @@ public final class Edge {
       return this;
     }
 
+    public Builder dashed() {
+      this.styles.add("dashed");
+      return this;
+    }
+
     public Builder withPenWidth(double penWidth) {
       checkArgument(penWidth > 0.0);
       this.penWidth = penWidth;
