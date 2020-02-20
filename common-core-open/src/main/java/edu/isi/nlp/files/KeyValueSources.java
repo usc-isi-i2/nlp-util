@@ -89,7 +89,7 @@ public final class KeyValueSources {
   public static ImmutableKeyValueSource<Symbol, ByteSource> fromZip(
       final ZipFile zipFile,
       final Function<String, Symbol> idExtractor,
-      final Function<ZipEntry, Boolean> entryValidator) {
+      final Function<ZipEntry, Boolean> entryFilter) {
 
     final ImmutableMap.Builder<Symbol, String> ret = ImmutableMap.builder();
     // Build a map of the key for each file to the filename
@@ -97,8 +97,8 @@ public final class KeyValueSources {
     while (entries.hasMoreElements()) {
       final ZipEntry entry = entries.nextElement();
       final String name = entry.getName();
-      // Skip directories
-      if (entryValidator.apply(entry)) {
+      // Skip entries caught by the filter
+      if (entryFilter.apply(entry)) {
         continue;
       }
       final Symbol id = checkNotNull(idExtractor.apply(name));
