@@ -59,7 +59,18 @@ public final class KeyValueSources {
    */
   @Nonnull
   public static ImmutableKeyValueSource<Symbol, ByteSource> fromZip(final ZipFile zipFile) {
-    return fromZip(zipFile, SymbolUtils.symbolizeFunction());
+    return fromZip(zipFile, SymbolUtils.symbolizeFunction(), directoryFilterFunction());
+  }
+
+  @Nonnull
+  public static ImmutableKeyValueSource<Symbol, ByteSource> fromZip(
+      final ZipFile zipFile, final Function<String, Symbol> idExtractor) {
+    return fromZip(zipFile, idExtractor, directoryFilterFunction());
+  }
+
+  @Nonnull
+  public static ImmutableKeyValueSource<Symbol, ByteSource> fromZipKeyValue(final ZipFile zipFile) {
+    return fromZip(zipFile, SymbolUtils.symbolizeFunction(), keyFilterFunction());
   }
 
   /**
@@ -76,7 +87,10 @@ public final class KeyValueSources {
    */
   @Nonnull
   public static ImmutableKeyValueSource<Symbol, ByteSource> fromZip(
-      final ZipFile zipFile, final Function<String, Symbol> idExtractor) {
+      final ZipFile zipFile,
+      final Function<String, Symbol> idExtractor,
+      final Function<ZipEntry, Boolean> entryValidator) {
+
     final ImmutableMap.Builder<Symbol, String> ret = ImmutableMap.builder();
     // Build a map of the key for each file to the filename
     final Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -84,12 +98,39 @@ public final class KeyValueSources {
       final ZipEntry entry = entries.nextElement();
       final String name = entry.getName();
       // Skip directories
-      if (entry.isDirectory()) {
+      if (entryValidator.apply(entry)) {
         continue;
       }
       final Symbol id = checkNotNull(idExtractor.apply(name));
       ret.put(id, name);
     }
     return new ZipKeyValueSource(zipFile, ret.build());
+  }
+
+  /** Returns a function ... */
+  public static Function<ZipEntry, Boolean> directoryFilterFunction() {
+    return DirectoryFilterFunction.INSTANCE;
+  }
+
+  private enum DirectoryFilterFunction implements Function<ZipEntry, Boolean> {
+    INSTANCE;
+
+    @Override
+    public Boolean apply(final ZipEntry e) {
+      return e.isDirectory();
+    }
+  }
+
+  public static Function<ZipEntry, Boolean> keyFilterFunction() {
+    return KeyFilterFunction.INSTANCE;
+  }
+
+  private enum KeyFilterFunction implements Function<ZipEntry, Boolean> {
+    INSTANCE;
+
+    @Override
+    public Boolean apply(final ZipEntry e) {
+      return e.isDirectory() || e.getName().equals("__keys");
+    }
   }
 }
