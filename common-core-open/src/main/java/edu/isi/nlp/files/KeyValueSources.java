@@ -9,6 +9,7 @@ import edu.isi.nlp.symbols.Symbol;
 import edu.isi.nlp.symbols.SymbolUtils;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -59,18 +60,7 @@ public final class KeyValueSources {
    */
   @Nonnull
   public static ImmutableKeyValueSource<Symbol, ByteSource> fromZip(final ZipFile zipFile) {
-    return fromZip(zipFile, SymbolUtils.symbolizeFunction(), directoryFilterFunction());
-  }
-
-  @Nonnull
-  public static ImmutableKeyValueSource<Symbol, ByteSource> fromZip(
-      final ZipFile zipFile, final Function<String, Symbol> idExtractor) {
-    return fromZip(zipFile, idExtractor, directoryFilterFunction());
-  }
-
-  @Nonnull
-  public static ImmutableKeyValueSource<Symbol, ByteSource> fromZipKeyValue(final ZipFile zipFile) {
-    return fromZip(zipFile, SymbolUtils.symbolizeFunction(), keyFilterFunction());
+    return fromZip(zipFile, SymbolUtils.symbolizeFunction());
   }
 
   /**
@@ -87,18 +77,15 @@ public final class KeyValueSources {
    */
   @Nonnull
   public static ImmutableKeyValueSource<Symbol, ByteSource> fromZip(
-      final ZipFile zipFile,
-      final Function<String, Symbol> idExtractor,
-      final Function<ZipEntry, Boolean> entryFilter) {
-
+      final ZipFile zipFile, final Function<String, Symbol> idExtractor) {
     final ImmutableMap.Builder<Symbol, String> ret = ImmutableMap.builder();
     // Build a map of the key for each file to the filename
     final Enumeration<? extends ZipEntry> entries = zipFile.entries();
     while (entries.hasMoreElements()) {
       final ZipEntry entry = entries.nextElement();
       final String name = entry.getName();
-      // Skip entries caught by the filter
-      if (entryFilter.apply(entry)) {
+      // Skip directories
+      if (entry.isDirectory()) {
         continue;
       }
       final Symbol id = checkNotNull(idExtractor.apply(name));
@@ -107,30 +94,25 @@ public final class KeyValueSources {
     return new ZipKeyValueSource(zipFile, ret.build());
   }
 
-  /** Returns a function ... */
-  public static Function<ZipEntry, Boolean> directoryFilterFunction() {
-    return DirectoryFilterFunction.INSTANCE;
-  }
-
-  private enum DirectoryFilterFunction implements Function<ZipEntry, Boolean> {
-    INSTANCE;
-
-    @Override
-    public Boolean apply(final ZipEntry e) {
-      return e.isDirectory();
+  @Nonnull
+  public static ImmutableKeyValueSource<Symbol, ByteSource> fromVistaUtilsZipKeyValueSource(
+      final ZipFile zipFile) {
+    // read "__keys" file
+    ZipEntry keysEntry = zipFile.getEntry(("__keys"));
+    String keysString = null;
+    try {
+      keysString = ZipFiles.entryAsString(zipFile, keysEntry, StandardCharsets.US_ASCII);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-  }
+    String[] keysArray = keysString.split("\n");
 
-  public static Function<ZipEntry, Boolean> keyFilterFunction() {
-    return KeyFilterFunction.INSTANCE;
-  }
-
-  private enum KeyFilterFunction implements Function<ZipEntry, Boolean> {
-    INSTANCE;
-
-    @Override
-    public Boolean apply(final ZipEntry e) {
-      return e.isDirectory() || e.getName().equals("__keys");
+    // explicitly construct the second argument to the ZipKeyValueSource constructor
+    final ImmutableMap.Builder<Symbol, String> keyMapBuilder = ImmutableMap.builder();
+    for (int i = 0; i < keysArray.length; i++) {
+      String key = keysArray[i];
+      keyMapBuilder.put(Symbol.from(key), key);
     }
+    return new ZipKeyValueSource(zipFile, keyMapBuilder.build());
   }
 }
