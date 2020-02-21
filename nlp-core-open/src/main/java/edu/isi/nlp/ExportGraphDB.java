@@ -13,6 +13,7 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFWriter;
 import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.io.IOUtils;
 
 // this doesn't belong here, but I needed a spot to stick an emergency evaluation hack
 public final class ExportGraphDB {
@@ -33,5 +34,7 @@ public final class ExportGraphDB {
         connection.exportStatements(null, null, null, false, writer);
       }
     }
+    
+    localRepositoryManager.shutDown();
   }
 }
