@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -124,7 +125,23 @@ public final class Node {
 
   public enum Shape {
     BOX("box"),
-    ELLIPSE("ellipse");
+    ELLIPSE("ellipse"),
+    POLYGON("polygon"),
+    OVAL("oval"),
+    CIRCLE("circle"),
+    POINT("point"),
+    EGG("egg"),
+    TRIANGLE("triangle"),
+    PLAINTEXT("plaintext"),
+    PLAIN("plain"),
+    DIAMOND("diamond"),
+    TRAPEZIUM("trapezium"),
+    PARALLELOGRAM("parallelogram"),
+    HOUSE("house"),
+    PENTAGON("pentagon"),
+    HEXAGON("hexagon"),
+    OCTAGON("octagon"),
+    STAR("star");
 
     Shape(String nameInDot) {
       this.nameInDot = checkNotNull(nameInDot);

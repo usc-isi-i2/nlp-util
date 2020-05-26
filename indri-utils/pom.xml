@@ -2,7 +2,7 @@
     <parent>
         <artifactId>common-all-open</artifactId>
         <groupId>edu.isi.vista</groupId>
-        <version>8.2.3-SNAPSHOT</version>
+        <version>8.3.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>edu.isi.vista</groupId>
             <artifactId>common-core-open</artifactId>
-            <version>8.2.3-SNAPSHOT</version>
+            <version>8.3.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>edu.isi.vista</groupId>

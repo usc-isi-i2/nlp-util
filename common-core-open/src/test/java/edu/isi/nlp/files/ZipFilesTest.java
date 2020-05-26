@@ -12,6 +12,7 @@ import com.google.common.io.Resources;
 import edu.isi.nlp.symbols.Symbol;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.annotation.Nonnull;
@@ -29,12 +30,17 @@ public class ZipFilesTest {
   @Rule public TemporaryFolder folder = new TemporaryFolder();
   private ZipFile zipFile;
   private ZipEntry entry;
+  private ZipFile vistaUtilsZipFile;
 
   @Before
   public void setUp() throws IOException {
     zipFile =
         new ZipFile(Resources.getResource(ZipFilesTest.class, "test_zip_source.zip").getFile());
     entry = zipFile.getEntry("docs/2016-09-20-01.txt");
+
+    vistaUtilsZipFile =
+        new ZipFile(
+            Resources.getResource(ZipFilesTest.class, "test_vistautils_zip_source.zip").getFile());
   }
 
   @Test
@@ -62,6 +68,22 @@ public class ZipFilesTest {
     final ImmutableKeyValueSource<Symbol, ByteSource> source =
         KeyValueSources.fromZip(zipFile, docIdExtractor);
     assertEquals(ImmutableSet.of(Symbol.from("2016-09-20-01")), source.keySet());
+  }
+
+  @Test
+  public void testVistaUtilsKeyValueSource() throws IOException {
+    final ImmutableKeyValueSource<Symbol, ByteSource> source =
+        KeyValueSources.fromVistaUtilsZipKeyValueSource(vistaUtilsZipFile);
+
+    assertEquals(ImmutableSet.of(Symbol.from("A"), Symbol.from("B")), source.keySet());
+
+    ByteSource entryA = source.getRequired(Symbol.from("A"));
+    String valueA = entryA.asCharSource(StandardCharsets.US_ASCII).read();
+    assertEquals(valueA, "this is value A");
+
+    ByteSource entryB = source.getRequired(Symbol.from("B"));
+    String valueB = entryB.asCharSource(StandardCharsets.US_ASCII).read();
+    assertEquals(valueB, "this is value B");
   }
 
   @Test
